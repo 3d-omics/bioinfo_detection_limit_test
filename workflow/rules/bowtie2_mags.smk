@@ -48,11 +48,11 @@ rule bowtie2_mags_map_one_library_to_one_catalogue:
         samtools_mem=params["bowtie2"]["samtools"]["mem_per_thread"],
         rg_id=compose_rg_id,
         rg_extra=compose_rg_extra,
-    threads: 24
+    threads: 4
     conda:
         "../envs/bowtie2.yml"
     resources:
-        mem_mb=64 * 1024,
+        mem_mb=8 * 1024,
         runtime=24 * 60,
     shell:
         """
