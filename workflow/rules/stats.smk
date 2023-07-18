@@ -77,7 +77,7 @@ rule stats_singlem_pipe_one:
         forward_=BOWTIE2_NONCHICKEN / "{sample}.{library}_1.fq.gz",
         reverse_=BOWTIE2_NONCHICKEN / "{sample}.{library}_2.fq.gz",
     output:
-        otu_table=STATS_SINGLEM / "{sample}.{library}.otu_table.tsv",
+        touch(otu_table=STATS_SINGLEM / "{sample}.{library}.otu_table.tsv"),
     log:
         STATS_SINGLEM / "{sample}.{library}.log",
     conda:
@@ -92,7 +92,7 @@ rule stats_singlem_pipe_one:
             --reverse {input.reverse_} \
             --otu_table {output.otu_table} \
             --threads {threads} \
-        2> {log} 1>&2
+        2> {log} 1>&2 || true
         """
 
 
