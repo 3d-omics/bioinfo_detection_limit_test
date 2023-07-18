@@ -67,7 +67,7 @@ rule stats_nonpareil:
         """
 
 
-rule stats_singlem_one:
+rule stats_singlem_pipe_one:
     """Run singlem over one sample
 
     Note: SingleM asks in the documentation for the raw reads. Here we are
@@ -97,7 +97,7 @@ rule stats_singlem_one:
         """
 
 
-rule stats_singlem_all:
+rule stats_singlem_pipe_all:
     """Run stats_singlem_one for all the samples"""
     input:
         [
@@ -106,25 +106,30 @@ rule stats_singlem_all:
         ],
 
 
-rule stats_singlem:
+rule stats_singlem_summarize:
     """Aggregate all the singlem results into a single table"""
     input:
-        rules.stats_singlem_all.input,
+        rules.stats_singlem_pipe_all.input,
     output:
         STATS / "singlem.tsv",
     log:
         STATS / "singlem.log",
     conda:
-        "../envs/stats_r.yml"
+        "../envs/stats.yml"
     params:
         input_dir=STATS_SINGLEM,
     shell:
         """
-        Rscript --no-init-file workflow/scripts/aggregate_singlem.R \
-            --input-folder {params.input_dir} \
-            --output-file {output} \
-        2> {log}
+        singlem summarise \
+            --input_otu_tables {input} \
+            --output_otu_table {output} \
+        2> {log} 1>&2
         """
+
+
+rule stats_singlem:
+    input:
+        STATS / "singlem.tsv",
 
 
 rule stats_cram_to_mapped_bam:
@@ -276,7 +281,7 @@ rule stats:
     """Run all the stats rules: nonpareil, singlem, and coverm"""
     input:
         rules.stats_nonpareil.output,
-        rules.stats_singlem.output,
+        rules.stats_singlem.input,
         rules.stats_coverm.input,
 
 
