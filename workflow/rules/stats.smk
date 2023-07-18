@@ -170,7 +170,7 @@ rule stats_coverm_genome_one_library_one_mag_catalogue:
     input:
         bam=STATS_COVERM / "{mag_catalogue}/bams/{sample}.{library}.bam",
     output:
-        tsv=STATS_COVERM / "{mag_catalogue}/genome/{sample}.{library}.tsv",
+        tsv=touch(STATS_COVERM / "{mag_catalogue}/genome/{sample}.{library}.tsv"),
     conda:
         "../envs/stats.yml"
     log:
@@ -186,7 +186,7 @@ rule stats_coverm_genome_one_library_one_mag_catalogue:
             --methods {params.methods} \
             --separator {params.separator} \
             --min-covered-fraction {params.min_covered_fraction} \
-        > {output} \
+        > {output}  || true \
         2> {log}
         """
 
