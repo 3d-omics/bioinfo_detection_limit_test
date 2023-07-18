@@ -82,10 +82,9 @@ rule stats_singlem_pipe_one:
         STATS_SINGLEM / "{sample}.{library}.log",
     conda:
         "../envs/stats.yml"
-    threads: params["singlem"]["threads"]
+    threads: 4
     resources:
-        runtime=24 * 60,
-        mem_mb=4 * 1024,
+        runtime=4 * 60,
     shell:
         """
         singlem pipe \
@@ -128,6 +127,7 @@ rule stats_singlem_summarize:
 
 
 rule stats_singlem:
+    """Run all stats singlem rules"""
     input:
         STATS / "singlem.tsv",
 
@@ -148,10 +148,10 @@ rule stats_cram_to_mapped_bam:
         STATS_COVERM / "{mag_catalogue}/bams/{sample}.{library}.log",
     conda:
         "../envs/samtools.yml"
-    threads: 8
+    threads: 24
     resources:
-        runtime=24 * 60,
-        mem_mb=8 * 1024,
+        runtime=1 * 60,
+        mem_mb=4 * 1024,
     shell:
         """
         samtools view \
@@ -166,6 +166,7 @@ rule stats_cram_to_mapped_bam:
 
 
 rule stats_coverm_genome_one_library_one_mag_catalogue:
+    """Run coverm genome for one library and one mag catalogue"""
     input:
         bam=STATS_COVERM / "{mag_catalogue}/bams/{sample}.{library}.bam",
     output:
@@ -212,6 +213,7 @@ rule stats_coverm_genome_aggregate_one_mag_catalogue:
 
 
 rule stats_coverm_genome:
+    """Run all rules to run coverm genome over all MAG catalogues"""
     input:
         [
             STATS / f"coverm_genome_{mag_catalogue}.tsv"
@@ -220,6 +222,7 @@ rule stats_coverm_genome:
 
 
 rule stats_coverm_contig_one_library_one_mag_catalogue:
+    """Run coverm contig for one library and one mag catalogue"""
     input:
         bam=STATS_COVERM / "{mag_catalogue}/bams/{sample}.{library}.bam",
     output:
@@ -263,6 +266,7 @@ rule stats_coverm_contig_aggregate_mag_catalogue:
 
 
 rule stats_coverm_contig:
+    """Run all rules to run coverm contig over all MAG catalogues"""
     input:
         [
             STATS / f"coverm_contig_{mag_catalogue}.tsv"
