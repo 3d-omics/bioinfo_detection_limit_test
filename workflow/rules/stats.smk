@@ -77,7 +77,7 @@ rule stats_singlem_pipe_one:
         forward_=BOWTIE2_NONCHICKEN / "{sample}.{library}_1.fq.gz",
         reverse_=BOWTIE2_NONCHICKEN / "{sample}.{library}_2.fq.gz",
     output:
-        touch(otu_table=STATS_SINGLEM / "{sample}.{library}.otu_table.tsv"),
+        otu_table=touch(STATS_SINGLEM / "{sample}.{library}.otu_table.tsv"),
     log:
         STATS_SINGLEM / "{sample}.{library}.log",
     conda:
