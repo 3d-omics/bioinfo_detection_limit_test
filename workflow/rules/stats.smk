@@ -85,7 +85,7 @@ rule stats_singlem_pipe_one:
     threads: params["singlem"]["threads"]
     resources:
         runtime=24 * 60,
-        mem_mb=32 * 1024,
+        mem_mb=4 * 1024,
     shell:
         """
         singlem pipe \
