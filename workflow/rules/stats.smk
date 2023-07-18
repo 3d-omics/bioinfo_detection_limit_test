@@ -186,8 +186,7 @@ rule stats_coverm_genome_one_library_one_mag_catalogue:
             --methods {params.methods} \
             --separator {params.separator} \
             --min-covered-fraction {params.min_covered_fraction} \
-        > {output}  || true \
-        2> {log}
+        > {output} 2> {log} || true \
         """
 
 
@@ -239,8 +238,7 @@ rule stats_coverm_contig_one_library_one_mag_catalogue:
             --bam-files {input.bam} \
             --methods {params.methods} \
             --proper-pairs-only \
-        > {output} \
-        2> {log}
+        > {output} 2> {log} || true
         """
 
 
