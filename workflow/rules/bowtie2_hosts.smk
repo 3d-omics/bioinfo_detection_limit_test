@@ -50,11 +50,11 @@ rule bowtie2_hosts_map_human_one:
         samtools_mem=params["bowtie2"]["samtools"]["mem_per_thread"],
         rg_id=compose_rg_id,
         rg_extra=compose_rg_extra,
-    threads: 4
+    threads: 24
     conda:
         "../envs/bowtie2.yml"
     resources:
-        mem_mb=4 * 1024,
+        mem_mb=32 * 1024,
         runtime=24 * 60,
     shell:
         """
@@ -92,10 +92,10 @@ rule bowtie2_hosts_extract_nonhuman_one:
         BOWTIE2_NONHUMAN / "{sample}.{library}.log",
     conda:
         "../envs/bowtie2.yml"
-    threads: 1
+    threads: 24
     resources:
         runtime=1 * 60,
-        mem_mb=4 * 1024,
+        mem_mb=32 * 1024,
     shell:
         """
         (samtools view \
@@ -150,11 +150,11 @@ rule bowtie2_hosts_map_chicken_one:
         samtools_mem=params["bowtie2"]["samtools"]["mem_per_thread"],
         rg_id=compose_rg_id,
         rg_extra=compose_rg_extra,
-    threads: 4
+    threads: 24
     conda:
         "../envs/bowtie2.yml"
     resources:
-        mem_mb=8 * 1024,
+        mem_mb=32 * 1024,
         runtime=6 * 60,
     shell:
         """
@@ -192,10 +192,10 @@ rule bowtie2_hosts_extract_nonchicken_one:
         BOWTIE2_NONCHICKEN / "{sample}.{library}.log",
     conda:
         "../envs/bowtie2.yml"
-    threads: 1
+    threads: 24
     resources:
         runtime=1 * 60,
-        mem_mb=4 * 1024,
+        mem_mb=32 * 1024,
     shell:
         """
         (samtools view \

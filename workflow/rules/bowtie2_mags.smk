@@ -52,7 +52,7 @@ rule bowtie2_mags_map_one_library_to_one_catalogue:
     conda:
         "../envs/bowtie2.yml"
     resources:
-        mem_mb=8 * 1024,
+        mem_mb=32 * 1024,
         runtime=24 * 60,
     shell:
         """
