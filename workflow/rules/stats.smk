@@ -92,6 +92,7 @@ rule stats_singlem_pipe_one:
             --reverse {input.reverse_} \
             --otu_table {output.otu_table} \
             --threads {threads} \
+            --assignment_method diamond \
         2> {log} 1>&2 || true
         """
 
