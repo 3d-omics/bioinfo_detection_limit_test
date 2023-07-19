@@ -46,9 +46,18 @@ rule report_step_fastp:
         """
 
 
+def get_report_step_kraken2_reports(wildcards):
+    """Get all reports for the kraken2 step"""
+    kraken2_db = wildcards.kraken2_db
+    return [
+        KRAKEN2 / f"{kraken2_db}/{sample}.{library}.report"
+        for sample, library in SAMPLE_LIB
+    ]
+
+
 rule report_step_kraken2_one:
     input:
-        rules.kraken2_report_all.input,
+        get_report_step_kraken2_reports,
     output:
         html=REPORT_STEP / "kraken2_{kraken2_db}.html",
     log:
