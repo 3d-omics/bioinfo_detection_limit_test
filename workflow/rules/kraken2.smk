@@ -22,7 +22,7 @@ rule kraken2_assign_one:
             --threads {threads} \
             --paired \
             --gzip-compressed \
-            --output >(pigz -11 > {output.out_gz}) \
+            --output >(pigz > {output.out_gz}) \
             --report {output.report} \
             {input.forward_} \
             {input.reverse_} \
