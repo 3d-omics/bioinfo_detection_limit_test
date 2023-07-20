@@ -67,6 +67,26 @@ rule stats_nonpareil:
         """
 
 
+rule singlem_data:
+    """Download the singlem data
+
+    For reasons unknown, you have to specify the filename, that may change in
+    the future.
+    """
+    output:
+        directory(STATS_SINGLEM / "data/S3.2.0.GTDB_r214.metapackage_20230428.smpkg.zb"),
+    log:
+        STATS_SINGLEM / "data.log",
+    conda:
+        "../envs/stats.yml"
+    params:
+        output_prefix=STATS_SINGLEM / "data",
+    shell:
+        """
+        singlem data --output-directory {params.output_prefix} 2> {log} 1>&2
+        """
+
+
 rule stats_singlem_pipe_one:
     """Run singlem over one sample
 
@@ -76,8 +96,11 @@ rule stats_singlem_pipe_one:
     input:
         forward_=BOWTIE2_NONCHICKEN / "{sample}.{library}_1.fq.gz",
         reverse_=BOWTIE2_NONCHICKEN / "{sample}.{library}_2.fq.gz",
+        data=rules.singlem_data.output,
     output:
-        otu_table=touch(STATS_SINGLEM / "{sample}.{library}.otu_table.tsv"),
+        archive_otu_table=STATS_SINGLEM / "{sample}.{library}.archive.json",
+        otu_table=STATS_SINGLEM / "{sample}.{library}.otu_table.tsv",
+        condense=STATS_SINGLEM / "{sample}.{library}.condense.tsv",
     log:
         STATS_SINGLEM / "{sample}.{library}.log",
     conda:
@@ -90,10 +113,13 @@ rule stats_singlem_pipe_one:
         singlem pipe \
             --forward {input.forward_} \
             --reverse {input.reverse_} \
-            --otu_table {output.otu_table} \
+            --otu-table {output.otu_table} \
+            --archive-otu-table {output.archive_otu_table} \
+            --taxonomic-profile {output.condense} \
+            --metapackage {input.data} \
             --threads {threads} \
-            --assignment_method diamond \
-        2> {log} 1>&2 || true
+            --assignment-threads {threads} \
+        2> {log} 1>&2
         """
 
 
@@ -106,12 +132,16 @@ rule stats_singlem_pipe_all:
         ],
 
 
-rule stats_singlem_summarize:
+rule stats_singlem_condense:
     """Aggregate all the singlem results into a single table"""
     input:
-        rules.stats_singlem_pipe_all.input,
+        archive_otu_tables=[
+            STATS_SINGLEM / f"{sample}.{library}.archive.json"
+            for sample, library in SAMPLE_LIB
+        ],
+        data=rules.singlem_data.output,
     output:
-        STATS / "singlem.tsv",
+        condense=STATS / "singlem.tsv",
     log:
         STATS / "singlem.log",
     conda:
@@ -120,9 +150,10 @@ rule stats_singlem_summarize:
         input_dir=STATS_SINGLEM,
     shell:
         """
-        singlem summarise \
-            --input_otu_tables {input} \
-            --output_otu_table {output} \
+        singlem condense \
+            --input-archive-otu-tables {input.archive_otu_tables} \
+            --taxonomic-profile {output.condense} \
+            --metapackage {input.data} \
         2> {log} 1>&2
         """
 
