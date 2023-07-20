@@ -119,7 +119,7 @@ rule stats_singlem_pipe_one:
             --metapackage {input.data} \
             --threads {threads} \
             --assignment-threads {threads} \
-        2> {log} 1>&2
+        2> {log} 1>&2 || true
         """
 
 
