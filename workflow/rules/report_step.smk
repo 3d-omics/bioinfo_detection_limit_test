@@ -74,6 +74,7 @@ rule report_step_kraken2_one:
             --force \
             --filename {params.title} \
             --outdir {params.dir} \
+            --modile kraken \
             {input} \
         2> {log} 1>&2
         """
