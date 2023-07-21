@@ -23,9 +23,10 @@ Rscript --no-init-file workflow/scripts/aggregate_nonpareil.R \
 
 
 # Get singlem
-Rscript --no-init-file workflow/scripts/aggregate_singlem.R \
-    --input-folder results/stats/singlem/ \
-    --output-file results/stats/singlem.tsv \
+singlem condense \
+    --input-archive-otu-tables results/stats/singlem/*.archive.json \
+    --taxonomic-profile results/stats/singlem.tsv \
+    --metapackage results/stats/singlem/data/S3.2.0.GTDB_r214.metapackage_20230428.smpkg.zb \
 2> results/stats/singlem.log 1>&2
 
 
