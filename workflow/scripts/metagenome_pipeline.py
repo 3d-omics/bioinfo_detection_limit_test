@@ -36,7 +36,6 @@ $./metagenome.pipeline.sh input_folder name_of_the_dataset
 """
 
 import sys
-from datetime import date
 
 import pandas as pd
 
@@ -87,14 +86,14 @@ if __name__ == "__main__":
 
     # Save output tables
     reads_counts_sum.to_csv(
-        str(date.today()) + "." + DATASET_NAME + ".reads.counts.by.organism.table",
+        DATASET_NAME + ".reads.counts.by.organism.table",
         sep="\t",
     )
     reads_counts_percent.to_csv(
-        str(date.today()) + "." + DATASET_NAME + ".reads.percent.by.organism.table",
+        DATASET_NAME + ".reads.percent.by.organism.table",
         sep="\t",
     )
     coverage_counts_sum.to_csv(
-        str(date.today()) + "." + DATASET_NAME + ".coverage.counts.by.organism.table",
+        DATASET_NAME + ".coverage.counts.by.organism.table",
         sep="\t",
     )
