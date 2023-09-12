@@ -41,8 +41,8 @@ from datetime import date
 import pandas as pd
 
 
-def remove_path_from_columns_names(df):
-    list_of_columns = df.columns.tolist()
+def remove_path_from_columns_names(data_frame):
+    list_of_columns = data_frame.columns.tolist()
     simplified_columns = []
     for file_name in list_of_columns:
         if file_name.find("/") != -1:  # Remove path from the file name is present
@@ -55,7 +55,7 @@ def remove_path_from_columns_names(df):
         if file_name.find("-") != -1:  # Replace '-' to '_' if present
             file_name = file_name.replace("-", "_")
         simplified_columns.append(file_name)
-    return_df = df.copy()
+    return_df = data_frame.copy()
     return_df.columns = simplified_columns
     return return_df
 
