@@ -67,12 +67,13 @@ rule bowtie2_hosts_map_human_one:
             --rg '{params.rg_extra}' \
             {params.extra} \
         | samtools sort \
-            -l 9 \
-            -M \
-            -m {params.samtools_mem} \
-            -o {output.cram} \
-            --reference {input.reference} \
             --threads {threads} \
+            -m {params.samtools_mem} \
+        | samtools rmdup - - \
+        | samtools view \
+            --reference {input.reference} \
+            --output {output.cram} \
+            --output-fmt cram,level=9 \
         ) 2> {log} 1>&2
         """
 
@@ -105,10 +106,6 @@ rule bowtie2_hosts_extract_nonhuman_one:
             -o /dev/stdout \
             -f 12 \
             {input.cram} \
-        | samtools sort \
-            -n \
-            -u \
-            --threads {threads} \
         | samtools fastq \
             -1 {output.forward_} \
             -2 {output.reverse_} \
@@ -167,12 +164,13 @@ rule bowtie2_hosts_map_chicken_one:
             --rg '{params.rg_extra}' \
             {params.extra} \
         | samtools sort \
-            -l 9 \
-            -M \
-            -m {params.samtools_mem} \
-            -o {output.cram} \
-            --reference {input.reference} \
             --threads {threads} \
+            -m {params.samtools_mem} \
+        | samtools rmdup - - \
+        | samtools view \
+            --reference {input.reference} \
+            --output {output.cram} \
+            --output-fmt cram,level=9 \
         ) 2> {log} 1>&2
         """
 
@@ -205,10 +203,6 @@ rule bowtie2_hosts_extract_nonchicken_one:
             -o /dev/stdout \
             -f 12 \
             {input.cram} \
-        | samtools sort \
-            -n \
-            -u \
-            --threads {threads} \
         | samtools fastq \
             -1 {output.forward_} \
             -2 {output.reverse_} \
