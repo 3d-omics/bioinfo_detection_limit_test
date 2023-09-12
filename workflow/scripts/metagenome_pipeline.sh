@@ -39,25 +39,21 @@ NAME=$2
 # Mapping section
 
 FASTQ_FILES="${FOLDER}*.fastq.gz"
-for fastq_file in $FASTQ_FILES
-do
+for fastq_file in $FASTQ_FILES ; do
 	bowtie2 \
 		-p 12 \
 		-x $BOWTIE_INDEX \
 		"$fastq_file" \
-		-S "$fastq_file.sam"
-
-	# keep multimappers, remove only unmapped
-	samtools view -F 4 -bS "$fastq_file.sam" > "$fastq_file.bam"
-
-	samtools sort "$fastq_file.bam" -o "$fastq_file.sorted.bam"
-
-	samtools index "$fastq_file.sorted.bam"
-
-	samtools rmdup -s "$fastq_file.sorted.bam" "$fastq_file.rmdup.bam"
-
-	samtools index "$fastq_file.rmdup.bam"
-
+	| samtools view \
+		-F 4 \
+	| samtools sort \
+		-@ 12 \
+	| samtools rmdup \
+		-s \
+	| samtools view \
+		--output "$fastq_file.rmdup.bam" \
+		--output-fmt bam,level=9,nthreads=12 \
+		--write-index
 done
 
 
@@ -101,7 +97,9 @@ for rmdup_file in $RMDUP_FILES ; do
 
 done
 
+
 echo -e "chrom\tstart\tstop" "$RMDUP_FILES" > "$NAME".list_of_files.txt
+
 tr " " "\t" \
 	< "$NAME".list_of_files.txt \
 	> "$NAME".list_of_files.tab.txt
