@@ -30,6 +30,9 @@ jobs:
         with:
           lfs: 'true'
 
+      - name: Install libtiff5
+        run: sudo apt-get install -y libtiff5
+
       - name: Cache
         uses: actions/cache@v3
         with:

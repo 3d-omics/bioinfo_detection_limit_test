@@ -46,30 +46,43 @@ rule report_step_fastp:
         """
 
 
-rule report_step_bowtie2:
-    """Collect all reports for the bowtie2 step"""
+def get_report_step_kraken2_reports(wildcards):
+    """Get all reports for the kraken2 step"""
+    kraken2_db = wildcards.kraken2_db
+    return [
+        KRAKEN2 / f"{kraken2_db}/{sample}.{library}.report"
+        for sample, library in SAMPLE_LIB
+    ]
+
+
+rule report_step_kraken2_one:
     input:
-        rules.bowtie2_report_all.input,
+        get_report_step_kraken2_reports,
     output:
-        html=REPORT_STEP / "bowtie2.html",
+        html=REPORT_STEP / "kraken2_{kraken2_db}.html",
     log:
-        REPORT_STEP / "bowtie2.log",
+        REPORT_STEP / "kraken2_{kraken2_db}.log",
     conda:
         "../envs/report.yml"
     params:
         dir=REPORT_STEP,
+        title="kraken2_{kraken2_db}",
     shell:
         """
         multiqc \
-            --title bowtie2 \
+            --title {params.title} \
             --force \
-            --filename bowtie2 \
+            --filename {params.title} \
             --outdir {params.dir} \
-            --dirs \
-            --dirs-depth 1 \
+            --module kraken \
             {input} \
         2> {log} 1>&2
         """
+
+
+rule report_step_kraken2_all:
+    input:
+        [REPORT_STEP / f"kraken2_{kraken2_db}.html" for kraken2_db in KRAKEN2_DBS],
 
 
 rule report_step_bowtie2_human:
@@ -167,16 +180,17 @@ rule report_step:
     input:
         rules.report_step_reads.output,
         rules.report_step_fastp.output,
-        rules.report_step_bowtie2.output,
+        rules.report_step_kraken2_all.input,  # input!
         rules.report_step_bowtie2_human.output,
         rules.report_step_bowtie2_chicken.output,
-        rules.report_step_bowtie2_mags.output,
+        # rules.report_step_bowtie2_mags.output,
 
 
 localrules:
     report_step_reads,
     report_step_fastp,
-    report_step_bowtie2,
+    report_step_kraken2_one,
+    report_step_kraken2_all,
     report_step_bowtie2_human,
     report_step_bowtie2_chicken,
     report_step_bowtie2_mags,

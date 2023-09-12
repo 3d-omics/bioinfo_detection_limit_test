@@ -1,4 +1,4 @@
-rule bowtie2_build:
+rule bowtie2_hosts_build:
     """Build bowtie2 index for the human reference
 
     Let the script decide to use a small or a large index based on the size of
@@ -7,18 +7,16 @@ rule bowtie2_build:
     input:
         reference=REFERENCE / "{genome}.fa.gz",
     output:
-        mock=touch(BOWTIE2_INDEX / "{genome}"),
+        mock=touch(BOWTIE2_HOSTS / "{genome}_index"),
     log:
-        BOWTIE2_INDEX / "build_{genome}.log",
-    benchmark:
-        BOWTIE2_INDEX / "build_{genome}.bmk"
+        BOWTIE2_HOSTS / "{genome}_index.log",
     conda:
         "../envs/bowtie2.yml"
     params:
         extra=params["bowtie2"]["extra"],
     threads: 8
     resources:
-        mem_gb=32,
+        mem_mb=32 * 1024,
         runtime=24 * 60,
     shell:
         """
@@ -31,7 +29,7 @@ rule bowtie2_build:
         """
 
 
-rule bowtie2_map_human_one:
+rule bowtie2_hosts_map_human_one:
     """Map one library to reference genome using bowtie2
 
     Output SAM file is piped to samtools sort to generate a CRAM file.
@@ -39,7 +37,7 @@ rule bowtie2_map_human_one:
     input:
         forward_=FASTP / "{sample}.{library}_1.fq.gz",
         reverse_=FASTP / "{sample}.{library}_2.fq.gz",
-        mock=BOWTIE2_INDEX / "human",
+        mock=BOWTIE2_HOSTS / "human_index",
         reference=REFERENCE / "human.fa.gz",
     output:
         cram=BOWTIE2_HUMAN / "{sample}.{library}.cram",
@@ -56,7 +54,7 @@ rule bowtie2_map_human_one:
     conda:
         "../envs/bowtie2.yml"
     resources:
-        mem_gb=64,
+        mem_mb=32 * 1024,
         runtime=24 * 60,
     shell:
         """
@@ -79,13 +77,7 @@ rule bowtie2_map_human_one:
         """
 
 
-rule bowtie2_map_human_all:
-    """Run bowtie2_map_human_one for all libraries"""
-    input:
-        [BOWTIE2_HUMAN / f"{sample}.{library}.cram" for sample, library in SAMPLE_LIB],
-
-
-rule bowtie2_extract_nonhuman_one:
+rule bowtie2_hosts_extract_nonhuman_one:
     """
     Keep only pairs unmapped to the human reference genome, sort by name rather
     than by coordinate, and convert to FASTQ.
@@ -100,10 +92,10 @@ rule bowtie2_extract_nonhuman_one:
         BOWTIE2_NONHUMAN / "{sample}.{library}.log",
     conda:
         "../envs/bowtie2.yml"
-    threads: 8
+    threads: 24
     resources:
-        runtime=6 * 60,
-        mem_gb=16,
+        runtime=1 * 60,
+        mem_mb=32 * 1024,
     shell:
         """
         (samtools view \
@@ -127,7 +119,7 @@ rule bowtie2_extract_nonhuman_one:
         """
 
 
-rule bowtie2_extract_nonhuman_all:
+rule bowtie2_hosts_extract_nonhuman_all:
     """Run bowtie2_extract_nonhuman_one for all libraries"""
     input:
         [
@@ -137,7 +129,7 @@ rule bowtie2_extract_nonhuman_all:
         ],
 
 
-rule bowtie2_map_chicken_one:
+rule bowtie2_hosts_map_chicken_one:
     """Map one library to reference genome using bowtie2
 
     Output SAM file is piped to samtools sort to generate a CRAM file.
@@ -145,7 +137,7 @@ rule bowtie2_map_chicken_one:
     input:
         forward_=BOWTIE2_NONHUMAN / "{sample}.{library}_1.fq.gz",
         reverse_=BOWTIE2_NONHUMAN / "{sample}.{library}_2.fq.gz",
-        mock=BOWTIE2_INDEX / "chicken",
+        mock=BOWTIE2_HOSTS / "chicken_index",
         reference=REFERENCE / "chicken.fa.gz",
     output:
         cram=BOWTIE2_CHICKEN / "{sample}.{library}.cram",
@@ -162,8 +154,8 @@ rule bowtie2_map_chicken_one:
     conda:
         "../envs/bowtie2.yml"
     resources:
-        mem_gb=64,
-        runtime=24 * 60,
+        mem_mb=32 * 1024,
+        runtime=6 * 60,
     shell:
         """
         (bowtie2 \
@@ -185,13 +177,7 @@ rule bowtie2_map_chicken_one:
         """
 
 
-rule bowtie2_map_chicken_all:
-    """Run bowtie2_map_chicken_one for all libraries"""
-    input:
-        [BOWTIE2_CHICKEN / f"{sample}.{library}.cram" for sample, library in SAMPLE_LIB],
-
-
-rule bowtie2_extract_nonchicken_one:
+rule bowtie2_hosts_extract_nonchicken_one:
     """
     Keep only pairs unmapped to the human reference genome, sort by name rather
     than by coordinate, and convert to FASTQ.
@@ -206,10 +192,10 @@ rule bowtie2_extract_nonchicken_one:
         BOWTIE2_NONCHICKEN / "{sample}.{library}.log",
     conda:
         "../envs/bowtie2.yml"
-    threads: 8
+    threads: 24
     resources:
-        runtime=6 * 60,
-        mem_gb=16,
+        runtime=1 * 60,
+        mem_mb=32 * 1024,
     shell:
         """
         (samtools view \
@@ -233,7 +219,7 @@ rule bowtie2_extract_nonchicken_one:
         """
 
 
-rule bowtie2_extract_nonchicken_all:
+rule bowtie2_hosts_extract_nonchicken_all:
     """Run bowtie2_extract_nonchicken_one for all libraries"""
     input:
         [
@@ -243,59 +229,7 @@ rule bowtie2_extract_nonchicken_all:
         ],
 
 
-rule bowtie2_map_mags_one:
-    """Map one library to reference genome using bowtie2
-
-    Output SAM file is piped to samtools sort to generate a CRAM file.
-    """
-    input:
-        forward_=BOWTIE2_NONCHICKEN / "{sample}.{library}_1.fq.gz",
-        reverse_=BOWTIE2_NONCHICKEN / "{sample}.{library}_2.fq.gz",
-        mock=BOWTIE2_INDEX / "mags",
-        reference=REFERENCE / "mags.fa.gz",
-    output:
-        cram=BOWTIE2_MAGS / "{sample}.{library}.cram",
-    log:
-        BOWTIE2_MAGS / "{sample}.{library}.log",
-    params:
-        extra=params["bowtie2"]["extra"],
-        samtools_mem=params["bowtie2"]["samtools"]["mem_per_thread"],
-        rg_id=compose_rg_id,
-        rg_extra=compose_rg_extra,
-    threads: 24
-    conda:
-        "../envs/bowtie2.yml"
-    resources:
-        mem_gb=64,
-        runtime=24 * 60,
-    shell:
-        """
-        (bowtie2 \
-            -x {input.mock} \
-            -1 {input.forward_} \
-            -2 {input.reverse_} \
-            --threads {threads} \
-            --rg-id '{params.rg_id}' \
-            --rg '{params.rg_extra}' \
-            {params.extra} \
-        | samtools sort \
-            -l 9 \
-            -M \
-            -m {params.samtools_mem} \
-            -o {output.cram} \
-            --reference {input.reference} \
-            --threads {threads} \
-        ) 2> {log} 1>&2
-        """
-
-
-rule bowtie2_map_mags_all:
-    """Run bowtie2_map_mags_one for all libraries"""
-    input:
-        [BOWTIE2_MAGS / f"{sample}.{library}.cram" for sample, library in SAMPLE_LIB],
-
-
-rule bowtie2_report_all:
+rule bowtie2_hosts_report_all:
     """Generate bowtie2 reports for all libraries:
     - samtools stats
     - samtools flagstats
@@ -306,12 +240,12 @@ rule bowtie2_report_all:
             f"{folder}/{sample}.{library}.{report}"
             for sample, library in SAMPLE_LIB
             for report in BAM_REPORTS
-            for folder in [BOWTIE2_HUMAN, BOWTIE2_CHICKEN, BOWTIE2_MAGS]
+            for folder in [BOWTIE2_HUMAN, BOWTIE2_CHICKEN]
         ],
 
 
-rule bowtie2:
+rule bowtie2_host:
     """Run bowtie2 on all libraries and generate reports"""
     input:
-        rules.bowtie2_report_all.input,
-        rules.bowtie2_map_mags_all.input,
+        rules.bowtie2_hosts_report_all.input,
+        rules.bowtie2_hosts_extract_nonchicken_all.input,

@@ -15,7 +15,9 @@ samples = pd.read_table("config/samples.tsv", comment="#", dtype="str")
 SAMPLES = samples["sample"].drop_duplicates().values.tolist()
 SAMPLE_LIB = samples[["sample", "library"]].values.tolist()
 BAM_REPORTS = ["stats.tsv", "flagstats.txt", "idxstats.tsv"]
-GENOMES = ["human", "chicken", "mags"]
+GENOMES = ["human", "chicken"]
+MAG_CATALOGUES = features["mag_catalogues"].keys()
+KRAKEN2_DBS = features["kraken2_dbs"].keys()
 
 
 # Import subworkflows
@@ -25,8 +27,11 @@ include: "rules/reads_functions.smk"
 include: "rules/reads.smk"
 include: "rules/fastp_functions.smk"
 include: "rules/fastp.smk"
+include: "rules/kraken2_functions.smk"
+include: "rules/kraken2.smk"
 include: "rules/bowtie2_functions.smk"
-include: "rules/bowtie2.smk"
+include: "rules/bowtie2_hosts.smk"
+include: "rules/bowtie2_mags.smk"
 include: "rules/stats_functions.smk"
 include: "rules/stats.smk"
 include: "rules/samtools.smk"

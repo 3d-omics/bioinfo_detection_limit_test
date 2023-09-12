@@ -1,13 +1,16 @@
 READS = Path("results/reads/")
 REFERENCE = Path("results/reference/")
 FASTP = Path("results/fastp/")
-BOWTIE2 = Path("results/bowtie2/")
-BOWTIE2_INDEX = BOWTIE2 / "index"
-BOWTIE2_HUMAN = BOWTIE2 / "human"
-BOWTIE2_NONHUMAN = BOWTIE2 / "nonhuman"
-BOWTIE2_CHICKEN = BOWTIE2 / "chicken"
-BOWTIE2_NONCHICKEN = BOWTIE2 / "nonchicken"
-BOWTIE2_MAGS = BOWTIE2 / "mags"
+KRAKEN2 = Path("results/kraken2/")
+
+# BOWTIE2 = Path("results/bowtie2/")
+BOWTIE2_HOSTS = Path("results/bowtie2_host")
+BOWTIE2_HUMAN = BOWTIE2_HOSTS / "human"
+BOWTIE2_NONHUMAN = BOWTIE2_HOSTS / "nonhuman"
+BOWTIE2_CHICKEN = BOWTIE2_HOSTS / "chicken"
+BOWTIE2_NONCHICKEN = BOWTIE2_HOSTS / "nonchicken"
+
+BOWTIE2_MAGS = Path("results/bowtie2_mags")
 
 STATS = Path("results/stats/")
 STATS_NONPAREIL = STATS / "nonpareil"

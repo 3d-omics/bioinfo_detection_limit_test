@@ -50,14 +50,15 @@ rule reference_recompress_chicken:
         """
 
 
-rule reference_recompress_mags:
+rule reference_recompress_mag_catalogue_one:
     """Extract the fasta.gz on config.yaml into genome.fa,gz with bgzip"""
     input:
-        fa_gz=features["reference"]["mags"],
+        # fa_gz=features["mag_catalogues"]["{catalogue}"],
+        fa_gz=lambda wildcards: features["mag_catalogues"][wildcards.catalogue],
     output:
-        fa_gz=REFERENCE / "mags.fa.gz",
+        fa_gz=REFERENCE / "mags/{catalogue}.fa.gz",
     log:
-        REFERENCE / "mags.log",
+        REFERENCE / "mags/{catalogue}.log",
     conda:
         "../envs/reference.yml"
     threads: 8
@@ -76,9 +77,14 @@ rule reference_recompress_mags:
         """
 
 
+rule reference_recompress_mag_catalogue_all:
+    input:
+        [REFERENCE / f"mags/{catalogue}.fa.gz" for catalogue in MAG_CATALOGUES],
+
+
 rule reference:
     """Re-bgzip the reference genome and known variants"""
     input:
         rules.reference_recompress_human.output,
         rules.reference_recompress_chicken.output,
-        rules.reference_recompress_mags.output,
+        rules.reference_recompress_mag_catalogue_all.input,

@@ -19,7 +19,7 @@ rule fastp_trim_one:
         length_required=params["fastp"]["length_required"],
     threads: 16
     resources:
-        mem_gb=4,
+        mem_mb=4 * 1024,
         runtime=240,
     conda:
         "../envs/fastp.yml"

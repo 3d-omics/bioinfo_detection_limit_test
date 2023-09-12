@@ -6,7 +6,9 @@ rule report_library_one:
         FASTP / "{sample}.{library}_fastp.json",
         FASTP / "{sample}.{library}_1_fastqc.zip",
         FASTP / "{sample}.{library}_2_fastqc.zip",
-        get_bowtie2_for_library_reports,
+        get_kraken2_for_library_reports,
+        get_bowtie2_host_for_library_reports,
+        get_bowtie2_mags_for_library_reports,
     output:
         REPORT_LIBRARY / "{sample}.{library}.html",
     log:

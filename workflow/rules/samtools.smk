@@ -1,11 +1,11 @@
 rule crai:
     """Generate a cram index"""
     input:
-        cram="{prefix}/{sample}.{library}.cram",
+        cram="{prefix}.cram",
     output:
-        crai="{prefix}/{sample}.{library}.cram.crai",
+        crai="{prefix}.cram.crai",
     log:
-        "{prefix}/{sample}.{library}.cram.crai.log",
+        "{prefix}.cram.crai.log",
     conda:
         "../envs/samtools.yml"
     shell:
@@ -15,12 +15,12 @@ rule crai:
 rule samtools_flagstats_cram:
     """Compute flagstats for a cram"""
     input:
-        cram="{prefix}/{sample}.{library}.cram",
-        crai="{prefix}/{sample}.{library}.cram.crai",
+        cram="{prefix}.cram",
+        crai="{prefix}.cram.crai",
     output:
-        txt="{prefix}/{sample}.{library}.flagstats.txt",
+        txt="{prefix}.flagstats.txt",
     log:
-        "{prefix}/{sample}.{library}.flagstats.log",
+        "{prefix}.flagstats.log",
     conda:
         "../envs/samtools.yml"
     shell:
@@ -30,28 +30,49 @@ rule samtools_flagstats_cram:
 rule samtools_idxstats_cram:
     """Compute idxstats for a cram"""
     input:
-        cram="{prefix}/{sample}.{library}.cram",
-        crai="{prefix}/{sample}.{library}.cram.crai",
+        cram="{prefix}.cram",
+        crai="{prefix}.cram.crai",
     output:
-        tsv="{prefix}/{sample}.{library}.idxstats.tsv",
+        tsv="{prefix}.idxstats.tsv",
     log:
-        "{prefix}/{sample}.{library}.idxstats.log",
+        "{prefix}.idxstats.log",
     conda:
         "../envs/samtools.yml"
     shell:
         "samtools idxstats {input.cram} > {output.tsv} 2> {log}"
 
 
-rule samtools_stats_cram_human:
+rule samtools_stats_cram_host:
     """Compute stats for a cram"""
     input:
-        cram=BOWTIE2 / "{genome}/{sample}.{library}.cram",
-        crai=BOWTIE2 / "{genome}/{sample}.{library}.cram.crai",
+        cram=BOWTIE2_HOSTS / "{genome}/{sample}.{library}.cram",
+        crai=BOWTIE2_HOSTS / "{genome}/{sample}.{library}.cram.crai",
         reference=REFERENCE / "{genome}.fa.gz",
     output:
-        tsv=BOWTIE2 / "{genome}/{sample}.{library}.stats.tsv",
+        tsv=BOWTIE2_HOSTS / "{genome}/{sample}.{library}.stats.tsv",
     log:
-        BOWTIE2 / "{genome}/{sample}.{library}.stats.log",
+        BOWTIE2_HOSTS / "{genome}/{sample}.{library}.stats.log",
+    conda:
+        "../envs/samtools.yml"
+    shell:
+        """
+        samtools stats \
+            --reference {input.reference} \
+            {input.cram} \
+        > {output.tsv} \
+        2> {log}
+        """
+
+
+rule samtools_stats_cram_mag_catalogue:
+    input:
+        cram=BOWTIE2_MAGS / "{mag_catalogue}/{sample}.{library}.cram",
+        crai=BOWTIE2_MAGS / "{mag_catalogue}/{sample}.{library}.cram.crai",
+        reference=REFERENCE / "mags/{mag_catalogue}.fa.gz",
+    output:
+        tsv=BOWTIE2_MAGS / "{mag_catalogue}/{sample}.{library}.stats.tsv",
+    log:
+        BOWTIE2_MAGS / "{mag_catalogue}/{sample}.{library}.stats.log",
     conda:
         "../envs/samtools.yml"
     shell:

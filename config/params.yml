@@ -4,6 +4,10 @@ fastp:
   length_required: 25  # nonpareil requires at least 25bp
   extra: "--trim_poly_g --trim_poly_x"
 
+kraken2:
+  mem_mb: 1024
+  extra: ""
+
 bowtie2:
   extra: ""
   samtools:
@@ -11,7 +15,7 @@ bowtie2:
 
 coverm:
   genome:
-    methods: "relative_abundance"
+    methods: "count"
     min_covered_fraction: 0.0
     separator: "^"
   contig:
