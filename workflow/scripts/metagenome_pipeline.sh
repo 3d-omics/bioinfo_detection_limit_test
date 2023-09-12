@@ -15,11 +15,10 @@ set -euo pipefail
 # quality of DNA extraction and quality metrics.
 
 # It requires the following software package to be installed: bedtools, samtools,
-# bowtie2, python, python pandas and python numpy libraries.
+# bowtie2 and pandas
 # This can be done with the following conda command:
 
-# conda create -n 3domics_pombo -c bioconda bedtools samtools bowtie2
-# python pandas numpy
+# conda create -n 3domics_pombo -c bioconda bedtools samtools bowtie2 pandas
 
 # Usage example:
 # $./metagenome.pipeline.sh input_folder name_of_the_dataset
