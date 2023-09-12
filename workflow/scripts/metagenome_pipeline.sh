@@ -51,7 +51,7 @@ for fastq_file in $FASTQ_FILES ; do
 	| samtools rmdup \
 		-s \
 	| samtools view \
-		--output "$fastq_file.rmdup.bam" \
+		--output "$fastq_file.bam" \
 		--output-fmt bam,level=9,nthreads=12 \
 		--write-index
 done
@@ -66,7 +66,7 @@ cut -f 1,6,7 "$NAME".chrom.sizes > "$NAME".chromosomes.bed
 cp "$NAME".chromosomes.bed "$NAME".reads.chromosomes.bed
 cp "$NAME".chromosomes.bed "$NAME".coverage.chromosomes.bed
 
-RMDUP_FILES="${FOLDER}*.rmdup.bam"
+RMDUP_FILES="${FOLDER}*.bam"
 
 for rmdup_file in $RMDUP_FILES ; do
 
