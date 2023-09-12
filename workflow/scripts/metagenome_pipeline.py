@@ -35,10 +35,10 @@ $./metagenome.pipeline.sh input_folder name_of_the_dataset
 ===============================================================================
 """
 
-import pandas as pd
-import numpy as np
 import sys
 from datetime import date
+
+import pandas as pd
 
 
 def remove_path_from_columns_names(df):
