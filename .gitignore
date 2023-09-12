@@ -3,4 +3,10 @@ logs/**
 .snakemake
 .snakemake/**
 reports/**
+
+# R stuff
 .Rproj.user
+.Rprofile
+detection_limit_test.Rproj
+renv.lock
+renv/**
