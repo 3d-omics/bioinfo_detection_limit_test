@@ -1,24 +1,38 @@
-#!~/.guix-profile/bin/python3
+#!/usr/bin/env python
 
 """
-====================================================================================================================
-Python script name metagenome.pipeline.py It's essential part of the pipeline and executed from metagenome.pipeline.sh bash script
+===============================================================================
+Python script name metagenome.pipeline.py It's essential part of the pipeline
+and executed from metagenome.pipeline.sh bash script
 Script written by Alexander Kukalev
 Ana Pombo lab, Berlin Institute of Medical systems Biology,
 Max-Delbrueck Center for Molecular Medizine, Berlin, Germany
 Date: August 25, 2023
 
-This pipeline was developed as part of 3DOmics project. It takes any number of fastq raw sequencing files and compute the reads and coverage for different bacterial species, as well as human and chicken contaminations to determine quality of DNA extraction and quality metrics.
+This pipeline was developed as part of 3DOmics project. It takes any number of
+fastq raw sequencing files and compute the reads and coverage for different
+bacterial species, as well as human and chicken contaminations to determine
+quality of DNA extraction and quality metrics.
 
-It requires the following software package to be installed: bedtools, samtools, bowtie2, python, python pandas and python numpy libraries.
+It requires the following software package to be installed:
+- bedtools
+- samtools
+- bowtie2
+- python
+- pandas
+- numpy
+
 This can be done with the following conda command:
 
-conda create -n 3domics_pombo -c bioconda bedtools samtools bowtie2 python pandas numpy
+conda create \
+    -n 3domics_pombo \
+    -c bioconda \
+    bedtools samtools bowtie2 python pandas numpy
 
 Usage example:
 $./metagenome.pipeline.sh input_folder name_of_the_dataset
 
-=====================================================================================================================
+===============================================================================
 """
 
 import pandas as pd
