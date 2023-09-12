@@ -18,16 +18,14 @@ It requires the following software package to be installed:
 - bedtools
 - samtools
 - bowtie2
-- python
 - pandas
-- numpy
 
 This can be done with the following conda command:
 
 conda create \
     -n 3domics_pombo \
     -c bioconda \
-    bedtools samtools bowtie2 python pandas numpy
+    bedtools samtools bowtie2 pandas
 
 Usage example:
 $./metagenome.pipeline.sh input_folder name_of_the_dataset
