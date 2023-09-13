@@ -48,9 +48,9 @@ rule fastp_pe_trim_one:
 rule fastp_se_trim_one:
     """Run fastp on one SE library"""
     input:
-        forward_=READS / "{sample}.{library}_se.fq.gz",
+        single=READS / "{sample}.{library}_se.fq.gz",
     output:
-        forward_=temp(FASTP / "{sample}.{library}_se.fq.gz"),
+        single=temp(FASTP / "{sample}.{library}_se.fq.gz"),
         html=FASTP / "{sample}.{library}_se_fastp.html",
         json=FASTP / "{sample}.{library}_se_fastp.json",
     log:
@@ -68,8 +68,8 @@ rule fastp_se_trim_one:
     shell:
         """
         fastp \
-            --in1 {input.forward_} \
-            --out1 >(bgzip -l 1 -@ {threads} > {output.forward_}) \
+            --in1 {input.single} \
+            --out1 >(bgzip -l 1 -@ {threads} > {output.single}) \
             --html {output.html} \
             --json {output.json} \
             --compression 1 \
