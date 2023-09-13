@@ -1,18 +1,30 @@
-rule reads_link:
+rule reads_link_forward:
     """Make a link to the original file, with a prettier name than default"""
     input:
         forward_=get_forward,
-        reverse_=get_reverse,
     output:
         forward_=temp(READS / "{sample}.{library}_1.fq.gz"),
-        reverse_=temp(READS / "{sample}.{library}_2.fq.gz"),
     log:
-        READS / "{sample}.{library}.log",
+        READS / "{sample}.{library}_1.log",
     conda:
         "../envs/reads.yml"
     shell:
         """
         ln --symbolic $(readlink --canonicalize {input.forward_}) {output.forward_}
+        """
+
+
+rule reads_link_reverse:
+    input:
+        reverse_=get_reverse,
+    output:
+        reverse_=temp(READS / "{sample}.{library}_2.fq.gz"),
+    log:
+        READS / "{sample}.{library}_1.log",
+    conda:
+        "../envs/reads.yml"
+    shell:
+        """
         ln --symbolic $(readlink --canonicalize {input.reverse_}) {output.reverse_}
         """
 
@@ -46,7 +58,5 @@ rule reads:
 
 
 localrules:
-    reads_link_all,
-    reads_fastqc_all,
-    reads_link,
-    reads,
+    reads_link_forward,
+    reads_link_reverse,
