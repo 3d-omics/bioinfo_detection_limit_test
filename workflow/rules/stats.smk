@@ -110,7 +110,7 @@ rule stats_nonpareil:
         """
 
 
-rule stats_singlem_pipe_one:
+rule stats_singlem_pipe_pe_one:
     """Run singlem over one sample
 
     Note: SingleM asks in the documentation for the raw reads. Here we are
@@ -121,11 +121,11 @@ rule stats_singlem_pipe_one:
         reverse_=get_input_reverse_for_stats,
         data=features["singlem_database"],
     output:
-        archive_otu_table=STATS_SINGLEM / "{sample}.{library}.archive.json",
-        otu_table=STATS_SINGLEM / "{sample}.{library}.otu_table.tsv",
-        condense=STATS_SINGLEM / "{sample}.{library}.condense.tsv",
+        archive_otu_table=STATS_SINGLEM / "{sample}.{library}_pe.archive.json",
+        otu_table=STATS_SINGLEM / "{sample}.{library}_pe.otu_table.tsv",
+        condense=STATS_SINGLEM / "{sample}.{library}_pe.condense.tsv",
     log:
-        STATS_SINGLEM / "{sample}.{library}.log",
+        STATS_SINGLEM / "{sample}.{library}_pe.log",
     conda:
         "../envs/stats.yml"
     threads: 4
@@ -146,12 +146,50 @@ rule stats_singlem_pipe_one:
         """
 
 
+rule stats_singlem_pipe_se_one:
+    """Run singlem over one sample
+
+    Note: SingleM asks in the documentation for the raw reads. Here we are
+    passing it the non-host and trimmed ones.
+    """
+    input:
+        single=get_input_single_for_stats,
+        data=features["singlem_database"],
+    output:
+        archive_otu_table=STATS_SINGLEM / "{sample}.{library}_se.archive.json",
+        otu_table=STATS_SINGLEM / "{sample}.{library}_se.otu_table.tsv",
+        condense=STATS_SINGLEM / "{sample}.{library}_se.condense.tsv",
+    log:
+        STATS_SINGLEM / "{sample}.{library}_se.log",
+    conda:
+        "../envs/stats.yml"
+    threads: 4
+    resources:
+        runtime=4 * 60,
+    shell:
+        """
+        singlem pipe \
+            --forward {input.single} \
+            --otu-table {output.otu_table} \
+            --archive-otu-table {output.archive_otu_table} \
+            --taxonomic-profile {output.condense} \
+            --metapackage {input.data} \
+            --threads {threads} \
+            --assignment-threads {threads} \
+        2> {log} 1>&2 || true
+        """
+
+
 rule stats_singlem_pipe_all:
     """Run stats_singlem_one for all the samples"""
     input:
         [
-            STATS_SINGLEM / f"{sample}.{library}.otu_table.tsv"
-            for sample, library in SAMPLE_LIB
+            STATS_SINGLEM / f"{sample}.{library}_pe.otu_table.tsv"
+            for sample, library in SAMPLE_LIB_PE
+        ],
+        [
+            STATS_SINGLEM / f"{sample}.{library}_se.otu_table.tsv"
+            for sample, library in SAMPLE_LIB_SE
         ],
 
 
@@ -159,8 +197,12 @@ rule stats_singlem_condense:
     """Aggregate all the singlem results into a single table"""
     input:
         archive_otu_tables=[
-            STATS_SINGLEM / f"{sample}.{library}.archive.json"
-            for sample, library in SAMPLE_LIB
+            STATS_SINGLEM / f"{sample}.{library}_pe.archive.json"
+            for sample, library in SAMPLE_LIB_PE
+        ]
+        + [
+            STATS_SINGLEM / f"{sample}.{library}_se.archive.json"
+            for sample, library in SAMPLE_LIB_SE
         ],
         data=features["singlem_database"],
     output:
