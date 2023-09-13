@@ -21,7 +21,7 @@ rule reads_link_reverse:
     output:
         reverse_=temp(READS / "{sample}.{library}_2.fq.gz"),
     log:
-        READS / "{sample}.{library}_1.log",
+        READS / "{sample}.{library}_2.log",
     conda:
         "../envs/reads.yml"
     shell:
