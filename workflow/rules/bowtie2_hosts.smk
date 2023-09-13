@@ -188,12 +188,10 @@ rule bowtie2_hosts_extract_se_one:
             --threads {threads} \
             -u \
             -o /dev/stdout \
-            -f 12 \
+            -f 4 \
             {input.cram} \
         | samtools fastq \
-            -1 {output.single} \
-            -2 /dev/null \
-            -0 /dev/null \
+            -0 {output.single} \
             -c 9 \
             --threads {threads} \
         ) 2> {log} 1>&2
