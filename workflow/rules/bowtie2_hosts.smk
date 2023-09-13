@@ -37,7 +37,6 @@ rule bowtie2_hosts_map_pe_one:
     input:
         forward_=get_input_forward_for_host_mapping,
         reverse_=get_input_reverse_for_host_mapping,
-        unpaired=get_input_single_for_host_mapping,
         mock=BOWTIE2_HOSTS / "{genome}_index",
         reference=REFERENCE / "{genome}.fa.gz",
     output:
@@ -62,7 +61,6 @@ rule bowtie2_hosts_map_pe_one:
             -x {input.mock} \
             -1 {input.forward_} \
             -2 {input.reverse_} \
-            -U {input.unpaired} \
             --threads {threads} \
             --rg-id '{params.rg_id}' \
             --rg '{params.rg_extra}' \
@@ -174,7 +172,7 @@ rule bowtie2_hosts_extract_se_one:
         cram=BOWTIE2_HOSTS / "{genome}/{sample}.{library}_se.cram",
         reference=REFERENCE / "{genome}.fa.gz",
     output:
-        forward_=BOWTIE2_HOSTS / "non{genome}/{sample}.{library}_se.fq.gz",
+        single=BOWTIE2_HOSTS / "non{genome}/{sample}.{library}_se.fq.gz",
     log:
         BOWTIE2_HOSTS / "non{genome}/{sample}.{library}.log",
     conda:
@@ -193,7 +191,7 @@ rule bowtie2_hosts_extract_se_one:
             -f 12 \
             {input.cram} \
         | samtools fastq \
-            -1 {output.forward_} \
+            -1 {output.single} \
             -2 /dev/null \
             -0 /dev/null \
             -c 9 \
@@ -202,8 +200,8 @@ rule bowtie2_hosts_extract_se_one:
         """
 
 
-rule bowtie2_hosts_extract:
-    """Run bowtie2_extract_nonchicken_one for all libraries"""
+rule bowtie2_hosts_extract_pe:
+    """Run bowtie2_extract_nonchicken_one for all PE libraries"""
     input:
         [
             BOWTIE2_HOSTS / f"non{genome}/{sample}.{library}_{end}.fq.gz"
@@ -211,6 +209,11 @@ rule bowtie2_hosts_extract:
             for sample, library in SAMPLE_LIB_PE
             for end in ["1", "2"]
         ],
+
+
+rule bowtie2_hosts_extract_se:
+    """Run bowtie2_extract_nonchicken_one for all SE libraries"""
+    input:
         [
             BOWTIE2_HOSTS / f"non{genome}/{sample}.{library}_{end}.fq.gz"
             for genome in [LAST_HOST]
@@ -239,4 +242,5 @@ rule bowtie2_host:
     """Run bowtie2 on all libraries and generate reports"""
     input:
         rules.bowtie2_hosts_report_all.input,
-        rules.bowtie2_hosts_extract.input,
+        rules.bowtie2_hosts_extract_pe.input,
+        rules.bowtie2_hosts_extract_se.input,
