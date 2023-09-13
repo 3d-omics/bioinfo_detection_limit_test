@@ -3,8 +3,8 @@ def get_bowtie2_host_for_library_reports(wildcards):
     sample = wildcards.sample
     library = wildcards.library
     return [
-        BOWTIE2_HOSTS / f"{host}/{sample}.{library}.{report}"
-        for host in ["human", "chicken"]
+        BOWTIE2_HOSTS / f"{host_name}/{sample}.{library}.{report}"
+        for host_name in HOST_NAMES
         for report in BAM_REPORTS
     ]
 

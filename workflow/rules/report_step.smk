@@ -76,28 +76,30 @@ rule report_step_kraken2_all:
         [REPORT_STEP / f"kraken2_{kraken2_db}.html" for kraken2_db in KRAKEN2_DBS],
 
 
-rule report_step_bowtie2_human:
-    """Collect all reports for the bowtie2 step"""
+rule report_step_bowtie2_host_one:
+    """Collect all reports for the bowtie2 step and ONE host"""
     input:
         reports=[
-            BOWTIE2_HUMAN / f"{sample}.{library}.{report}"
+            BOWTIE2_HOSTS / f"{genome}/{sample}.{library}.{report}"
+            for genome in ["{genome}"]
             for sample, library in SAMPLE_LIB
             for report in BAM_REPORTS
         ],
     output:
-        html=REPORT_STEP / "bowtie2_human.html",
+        html=REPORT_STEP / "bowtie2_{genome}.html",
     log:
-        REPORT_STEP / "bowtie2_human.log",
+        REPORT_STEP / "bowtie2_{genome}.log",
     conda:
         "../envs/report.yml"
     params:
         dir=REPORT_STEP,
+        title="bowtie2_{genome}",
     shell:
         """
         multiqc \
-            --title bowtie2_human \
+            --title {params.title} \
             --force \
-            --filename bowtie2_human \
+            --filename {params.title} \
             --outdir {params.dir} \
             --dirs \
             --dirs-depth 1 \
@@ -106,41 +108,18 @@ rule report_step_bowtie2_human:
         """
 
 
-rule report_step_bowtie2_chicken:
-    """Collect all reports for the bowtie2 step"""
+rule report_step_bowtie2_host_all:
+    """Collect all reports for the bowtie2 step and ALL hosts"""
     input:
-        reports=[
-            BOWTIE2_CHICKEN / f"{sample}.{library}.{report}"
-            for sample, library in SAMPLE_LIB
-            for report in BAM_REPORTS
-        ],
-    output:
-        html=REPORT_STEP / "bowtie2_chicken.html",
-    log:
-        REPORT_STEP / "bowtie2_chicken.log",
-    conda:
-        "../envs/report.yml"
-    params:
-        dir=REPORT_STEP,
-    shell:
-        """
-        multiqc \
-            --title bowtie2_chicken \
-            --force \
-            --filename bowtie2_chicken \
-            --outdir {params.dir} \
-            --dirs \
-            --dirs-depth 1 \
-            {input.reports} \
-        2> {log} 1>&2
-        """
+        [REPORT_STEP / f"bowtie2_{genome}.html" for genome in HOST_NAMES],
 
 
-rule report_step_bowtie2_mags:
-    """Collect all reports for the bowtie2 step"""
+rule report_step_bowtie2_mags_one:
+    """Collect all reports for the bowtie2 when mapping to a mag catalogue"""
     input:
         reports=[
-            BOWTIE2_MAGS / f"{sample}.{library}.{report}"
+            BOWTIE2_MAGS / f"{mag_catalogue}/{sample}.{library}.{report}"
+            for mag_catalogue in ["{mag_catalogue}"]
             for sample, library in SAMPLE_LIB
             for report in BAM_REPORTS
         ],
@@ -152,12 +131,13 @@ rule report_step_bowtie2_mags:
         "../envs/report.yml"
     params:
         dir=REPORT_STEP,
+        title="bowtie2_{mag_catalogue}",
     shell:
         """
         multiqc \
-            --title bowtie2_mags \
+            --title {params.title} \
             --force \
-            --filename bowtie2_mags \
+            --filename {params.title} \
             --outdir {params.dir} \
             --dirs \
             --dirs-depth 1 \
@@ -166,22 +146,27 @@ rule report_step_bowtie2_mags:
         """
 
 
+rule report_step_bowtie2_mags_all:
+    input:
+        [
+            REPORT_STEP / f"bowtie2_{mag_catalogue}.html"
+            for mag_catalogue in MAG_CATALOGUES
+        ],
+
+
 rule report_step:
     """Collect all per step reports for the pipeline"""
     input:
         rules.report_step_reads.output,
         rules.report_step_fastp.output,
         rules.report_step_kraken2_all.input,  # input!
-        rules.report_step_bowtie2_human.output,
-        rules.report_step_bowtie2_chicken.output,
-        # rules.report_step_bowtie2_mags.output,
+        rules.report_step_bowtie2_host_all.input,
+        rules.report_step_bowtie2_mags_all.output,
 
 
 localrules:
     report_step_reads,
     report_step_fastp,
     report_step_kraken2_one,
-    report_step_kraken2_all,
-    report_step_bowtie2_human,
-    report_step_bowtie2_chicken,
-    report_step_bowtie2_mags,
+    report_step_bowtie2_host_one,
+    report_step_bowtie2_mags_one,

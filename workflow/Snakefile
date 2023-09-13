@@ -14,10 +14,11 @@ samples = pd.read_table("config/samples.tsv", comment="#", dtype="str")
 # Generate useful variables
 SAMPLES = samples["sample"].drop_duplicates().values.tolist()
 SAMPLE_LIB = samples[["sample", "library"]].values.tolist()
+HOST_NAMES = [] if features["reference"] is None else list(features["reference"].keys())
+MAG_CATALOGUES = list(features["mag_catalogues"].keys())
+KRAKEN2_DBS = list(features["kraken2_dbs"].keys())
 BAM_REPORTS = ["stats.tsv", "flagstats.txt", "idxstats.tsv"]
-GENOMES = ["human", "chicken"]
-MAG_CATALOGUES = features["mag_catalogues"].keys()
-KRAKEN2_DBS = features["kraken2_dbs"].keys()
+LAST_HOST = HOST_NAMES[-1] if len(HOST_NAMES) > 0 else None
 
 
 # Import subworkflows

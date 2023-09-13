@@ -7,7 +7,7 @@ rule stats_nonpareil_one:
     empty files
     """
     input:
-        forward_=BOWTIE2_NONCHICKEN / "{sample}.{library}_1.fq.gz",
+        forward_=get_input_forward_for_stats,
     output:
         forward_fq=temp(STATS_NONPAREIL / "{sample}.{library}_1.fq"),
         npa=touch(STATS_NONPAREIL / "{sample}.{library}.npa"),
@@ -74,8 +74,8 @@ rule stats_singlem_pipe_one:
     passing it the non-host and trimmed ones.
     """
     input:
-        forward_=BOWTIE2_NONCHICKEN / "{sample}.{library}_1.fq.gz",
-        reverse_=BOWTIE2_NONCHICKEN / "{sample}.{library}_2.fq.gz",
+        forward_=get_input_forward_for_stats,
+        reverse_=get_input_reverse_for_stats,
         data=features["singlem_database"],
     output:
         archive_otu_table=STATS_SINGLEM / "{sample}.{library}.archive.json",

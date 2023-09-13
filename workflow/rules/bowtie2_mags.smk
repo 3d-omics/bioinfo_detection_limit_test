@@ -35,8 +35,8 @@ rule bowtie2_mags_map_one_library_to_one_catalogue:
     Output SAM file is piped to samtools sort to generate a CRAM file.
     """
     input:
-        forward_=BOWTIE2_NONCHICKEN / "{sample}.{library}_1.fq.gz",
-        reverse_=BOWTIE2_NONCHICKEN / "{sample}.{library}_2.fq.gz",
+        forward_=get_input_forward_for_mag_mapping,
+        reverse_=get_input_reverse_for_mag_mapping,
         mock=BOWTIE2_MAGS / "{mag_catalogue}_index",
         reference=REFERENCE / "mags/{mag_catalogue}.fa.gz",
     output:

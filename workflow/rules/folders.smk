@@ -5,10 +5,6 @@ KRAKEN2 = Path("results/kraken2/")
 
 # BOWTIE2 = Path("results/bowtie2/")
 BOWTIE2_HOSTS = Path("results/bowtie2_host")
-BOWTIE2_HUMAN = BOWTIE2_HOSTS / "human"
-BOWTIE2_NONHUMAN = BOWTIE2_HOSTS / "nonhuman"
-BOWTIE2_CHICKEN = BOWTIE2_HOSTS / "chicken"
-BOWTIE2_NONCHICKEN = BOWTIE2_HOSTS / "nonchicken"
 
 BOWTIE2_MAGS = Path("results/bowtie2_mags")
 
