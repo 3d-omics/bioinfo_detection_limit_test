@@ -36,9 +36,8 @@ include: "rules/stats_functions.smk"
 include: "rules/stats.smk"
 include: "rules/samtools.smk"
 include: "rules/fastqc.smk"
-include: "rules/report_step_functions.smk"
+include: "rules/report_functions.smk"
 include: "rules/report_step.smk"
-include: "rules/report_library_functions.smk"
 include: "rules/report_library.smk"
 
 
