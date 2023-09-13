@@ -37,7 +37,7 @@ def get_input_forward_for_mag_mapping(wildcards):
     if len(HOST_NAMES) == 0:
         return FASTP / f"{wildcards.sample}.{wildcards.library}_1.fq.gz"
     genome = HOST_NAMES[-1]
-    return BOWTIE2_HOSTS / f"non{genome}/{wildcrads.sample}_{wildcards.library}_1.fq.gz"
+    return BOWTIE2_HOSTS / f"non{genome}/{wildcards.sample}.{wildcards.library}_1.fq.gz"
 
 
 def get_input_reverse_for_mag_mapping(wildcards):
@@ -45,4 +45,4 @@ def get_input_reverse_for_mag_mapping(wildcards):
     if len(HOST_NAMES) == 0:
         return FASTP / f"{wildcards.sample}.{wildcards.library}_2.fq.gz"
     genome = HOST_NAMES[-1]
-    return BOWTIE2_HOSTS / f"non{genome}/{wildcards.sample}_{wildcards.library}_2.fq.gz"
+    return BOWTIE2_HOSTS / f"non{genome}/{wildcards.sample}.{wildcards.library}_2.fq.gz"
