@@ -1,15 +1,15 @@
-rule crai:
-    """Generate a cram index"""
-    input:
-        cram="{prefix}.cram",
-    output:
-        crai="{prefix}.cram.crai",
-    log:
-        "{prefix}.cram.crai.log",
-    conda:
-        "../envs/samtools.yml"
-    shell:
-        "samtools index {input} 2> {log} 1>&2"
+# rule crai:
+#     """Generate a cram index"""
+#     input:
+#         cram="{prefix}.cram",
+#     output:
+#         crai="{prefix}.cram.crai",
+#     log:
+#         "{prefix}.cram.crai.log",
+#     conda:
+#         "../envs/samtools.yml"
+#     shell:
+#         "samtools index {input} 2> {log} 1>&2"
 
 
 rule samtools_flagstats_cram:
