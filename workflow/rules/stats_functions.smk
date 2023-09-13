@@ -33,8 +33,11 @@ def get_coverm_genome_tsv_files_for_aggregation(wildcards):
     """Get all coverm genome tsv files for aggregation"""
     mag_catalogue = wildcards.mag_catalogue
     return [
-        STATS_COVERM / f"{mag_catalogue}/genome/{sample}.{library}.tsv"
-        for sample, library in SAMPLE_LIB
+        STATS_COVERM / f"{mag_catalogue}/genome/{sample}.{library}_pe.tsv"
+        for sample, library in SAMPLE_LIB_PE
+    ] + [
+        STATS_COVERM / f"{mag_catalogue}/genome/{sample}.{library}_se.tsv"
+        for sample, library in SAMPLE_LIB_SE
     ]
 
 
@@ -42,6 +45,9 @@ def get_coverm_contig_tsv_files_for_aggregation(wildcards):
     """Get all coverm genome tsv files for aggregation"""
     mag_catalogue = wildcards.mag_catalogue
     return [
-        STATS_COVERM / f"{mag_catalogue}/contig/{sample}.{library}.tsv"
-        for sample, library in SAMPLE_LIB
+        STATS_COVERM / f"{mag_catalogue}/contig/{sample}.{library}_pe.tsv"
+        for sample, library in SAMPLE_LIB_PE
+    ] + [
+        STATS_COVERM / f"{mag_catalogue}/contig/{sample}.{library}_se.tsv"
+        for sample, library in SAMPLE_LIB_SE
     ]

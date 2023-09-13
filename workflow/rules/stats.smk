@@ -237,12 +237,14 @@ rule stats_cram_to_mapped_bam:
     it works.
     """
     input:
-        cram=BOWTIE2_MAGS / "{mag_catalogue}/{sample}.{library}.cram",
+        cram=BOWTIE2_MAGS / "{mag_catalogue}/{sample}.{library}_{library_type}.cram",
         reference=REFERENCE / "mags/{mag_catalogue}.fa.gz",
     output:
-        bam=temp(STATS_COVERM / "{mag_catalogue}/bams/{sample}.{library}.bam"),
+        bam=temp(
+            STATS_COVERM / "{mag_catalogue}/bams/{sample}.{library}_{library_type}.bam"
+        ),
     log:
-        STATS_COVERM / "{mag_catalogue}/bams/{sample}.{library}.log",
+        STATS_COVERM / "{mag_catalogue}/bams/{sample}.{library}_{library_type}.log",
     conda:
         "../envs/samtools.yml"
     threads: 24
@@ -265,13 +267,16 @@ rule stats_cram_to_mapped_bam:
 rule stats_coverm_genome_one_library_one_mag_catalogue:
     """Run coverm genome for one library and one mag catalogue"""
     input:
-        bam=STATS_COVERM / "{mag_catalogue}/bams/{sample}.{library}.bam",
+        bam=STATS_COVERM / "{mag_catalogue}/bams/{sample}.{library}_{library_type}.bam",
     output:
-        tsv=touch(STATS_COVERM / "{mag_catalogue}/genome/{sample}.{library}.tsv"),
+        tsv=touch(
+            STATS_COVERM
+            / "{mag_catalogue}/genome/{sample}.{library}_{library_type}.tsv"
+        ),
     conda:
         "../envs/stats.yml"
     log:
-        STATS_COVERM / "{mag_catalogue}/genome/{sample}.{library}.log",
+        STATS_COVERM / "{mag_catalogue}/genome/{sample}.{library}_{library_type}.log",
     params:
         methods=params["coverm"]["genome"]["methods"],
         min_covered_fraction=params["coverm"]["genome"]["min_covered_fraction"],
