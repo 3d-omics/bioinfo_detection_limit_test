@@ -11,3 +11,5 @@ mag_catalogues:
 kraken2_dbs:
   mock_db1: resources/kraken2_mock
   mock_db2: resources/kraken2_mock
+
+singlem_database: "resources/singlem_mock"

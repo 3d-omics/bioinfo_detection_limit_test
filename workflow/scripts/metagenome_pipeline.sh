@@ -39,7 +39,9 @@ NAME=$2
 # Mapping section
 
 FASTQ_FILES="${FOLDER}*.fastq.gz"
+
 for fastq_file in $FASTQ_FILES ; do
+
 	bowtie2 \
 		-p 12 \
 		-x $BOWTIE_INDEX \
@@ -54,6 +56,7 @@ for fastq_file in $FASTQ_FILES ; do
 		--output "$fastq_file.bam" \
 		--output-fmt bam,level=9,nthreads=12 \
 		--write-index
+
 done
 
 

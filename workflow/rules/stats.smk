@@ -67,26 +67,6 @@ rule stats_nonpareil:
         """
 
 
-rule singlem_data:
-    """Download the singlem data
-
-    For reasons unknown, you have to specify the filename, that may change in
-    the future.
-    """
-    output:
-        directory(STATS_SINGLEM / "data/S3.2.0.GTDB_r214.metapackage_20230428.smpkg.zb"),
-    log:
-        STATS_SINGLEM / "data.log",
-    conda:
-        "../envs/stats.yml"
-    params:
-        output_prefix=STATS_SINGLEM / "data",
-    shell:
-        """
-        singlem data --output-directory {params.output_prefix} 2> {log} 1>&2
-        """
-
-
 rule stats_singlem_pipe_one:
     """Run singlem over one sample
 
@@ -96,7 +76,7 @@ rule stats_singlem_pipe_one:
     input:
         forward_=BOWTIE2_NONCHICKEN / "{sample}.{library}_1.fq.gz",
         reverse_=BOWTIE2_NONCHICKEN / "{sample}.{library}_2.fq.gz",
-        data=rules.singlem_data.output,
+        data=features["singlem_database"],
     output:
         archive_otu_table=STATS_SINGLEM / "{sample}.{library}.archive.json",
         otu_table=STATS_SINGLEM / "{sample}.{library}.otu_table.tsv",
@@ -139,7 +119,7 @@ rule stats_singlem_condense:
             STATS_SINGLEM / f"{sample}.{library}.archive.json"
             for sample, library in SAMPLE_LIB
         ],
-        data=rules.singlem_data.output,
+        data=features["singlem_database"],
     output:
         condense=STATS / "singlem.tsv",
     log:
@@ -312,11 +292,18 @@ rule stats_coverm:
 
 
 rule stats:
-    """Run all the stats rules: nonpareil, singlem, and coverm"""
+    """Run the stats analyses: nonpareil and coverm"""
     input:
         rules.stats_nonpareil.output,
-        rules.stats_singlem.input,
+        # rules.stats_singlem.input,
         rules.stats_coverm.input,
+
+
+rule stats_with_singlem:
+    """Run the nonpareil, coverm and singlem"""
+    input:
+        rules.stats.input,
+        rules.stats_singlem.input,
 
 
 localrules:
