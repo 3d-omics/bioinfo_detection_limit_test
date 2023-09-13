@@ -1,5 +1,5 @@
-rule stats_nonpareil_one:
-    """Run nonpareil over one sample
+rule stats_nonpareil_pe_one:
+    """Run nonpareil over one PE sample
 
     Note: Nonpareil only ask for one of the pair-end reads
     Note2: it has to be fastq. The process substitution trick does not work
@@ -10,12 +10,50 @@ rule stats_nonpareil_one:
         forward_=get_input_forward_for_stats,
     output:
         forward_fq=temp(STATS_NONPAREIL / "{sample}.{library}_1.fq"),
-        npa=touch(STATS_NONPAREIL / "{sample}.{library}.npa"),
-        npc=touch(STATS_NONPAREIL / "{sample}.{library}.npc"),
-        npl=touch(STATS_NONPAREIL / "{sample}.{library}.npl"),
-        npo=touch(STATS_NONPAREIL / "{sample}.{library}.npo"),
+        npa=touch(STATS_NONPAREIL / "{sample}.{library}_pe.npa"),
+        npc=touch(STATS_NONPAREIL / "{sample}.{library}_pe.npc"),
+        npl=touch(STATS_NONPAREIL / "{sample}.{library}_pe.npl"),
+        npo=touch(STATS_NONPAREIL / "{sample}.{library}_pe.npo"),
     log:
-        STATS_NONPAREIL / "{sample}.{library}.log",
+        STATS_NONPAREIL / "{sample}.{library}_pe.log",
+    conda:
+        "../envs/stats.yml"
+    params:
+        prefix=compose_prefix_for_nonpareil,
+    resources:
+        runtime=24 * 60,
+    shell:
+        """
+        gzip -dc {input.forward_} > {output.forward_fq} 2> {log}
+
+        nonpareil \
+            -s {output.forward_fq} \
+            -T kmer \
+            -b {params.prefix} \
+            -f fastq \
+            -t {threads} \
+        2>> {log} 1>&2 || true
+        """
+
+
+rule stats_nonpareil_se_one:
+    """Run nonpareil over one SE sample
+
+    Note: Nonpareil only ask for one of the pair-end reads
+    Note2: it has to be fastq. The process substitution trick does not work
+    Note3: in case that nonpareil fails for low coverage samples, it creates
+    empty files
+    """
+    input:
+        forward_=get_input_single_for_stats,
+    output:
+        forward_fq=temp(STATS_NONPAREIL / "{sample}.{library}_se.fq"),
+        npa=touch(STATS_NONPAREIL / "{sample}.{library}_se.npa"),
+        npc=touch(STATS_NONPAREIL / "{sample}.{library}_se.npc"),
+        npl=touch(STATS_NONPAREIL / "{sample}.{library}_se.npl"),
+        npo=touch(STATS_NONPAREIL / "{sample}.{library}_se.npo"),
+    log:
+        STATS_NONPAREIL / "{sample}.{library}_se.log",
     conda:
         "../envs/stats.yml"
     params:
@@ -40,9 +78,14 @@ rule stats_nonpareil_all:
     """Run stats_nonpareil_one for all the samples"""
     input:
         [
-            STATS_NONPAREIL / f"{sample}.{library}.{extension}"
+            STATS_NONPAREIL / f"{sample}.{library}_pe.{extension}"
             for extension in ["npa", "npc", "npl", "npo"]
-            for sample, library in SAMPLE_LIB
+            for sample, library in SAMPLE_LIB_PE
+        ],
+        [
+            STATS_NONPAREIL / f"{sample}.{library}_se.{extension}"
+            for extension in ["npa", "npc", "npl", "npo"]
+            for sample, library in SAMPLE_LIB_SE
         ],
 
 
