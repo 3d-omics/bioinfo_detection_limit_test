@@ -1,5 +1,5 @@
 rule reads_link_forward:
-    """Make a link to the original file, with a prettier name than default"""
+    """Make a link to the original forward file, with a prettier name than default"""
     input:
         forward_=get_forward,
     output:
@@ -15,6 +15,7 @@ rule reads_link_forward:
 
 
 rule reads_link_reverse:
+    """Make a link to the original reverse file, with a prettier name than default"""
     input:
         reverse_=get_reverse,
     output:
