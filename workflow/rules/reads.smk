@@ -30,22 +30,6 @@ rule reads_link_reverse:
         """
 
 
-rule reads_link_se:
-    """Make a link to the original single end file, with a prettier name than default"""
-    input:
-        reverse_=get_forward,
-    output:
-        reverse_=temp(READS / "{sample}.{library}_se.fq.gz"),
-    log:
-        READS / "{sample}.{library}_se.log",
-    conda:
-        "../envs/reads.yml"
-    shell:
-        """
-        ln --symbolic $(readlink --canonicalize {input.reverse_}) {output.reverse_}
-        """
-
-
 rule reads_link_all:
     """Link all reads in the samples.tsv"""
     input:
@@ -54,7 +38,7 @@ rule reads_link_all:
             for sample, library in SAMPLE_LIB_PE
             for end in ["1", "2"]
         ],
-        [READS / f"{sample}.{library}_se.fq.gz" for sample, library in SAMPLE_LIB_SE],
+        [READS / f"{sample}.{library}_1.fq.gz" for sample, library in SAMPLE_LIB_SE],
 
 
 rule reads_fastqc_all:
@@ -67,7 +51,7 @@ rule reads_fastqc_all:
             for extension in ["html", "zip"]
         ],
         [
-            READS / f"{sample}.{library}_se_fastqc.{extension}"
+            READS / f"{sample}.{library}_1_fastqc.{extension}"
             for sample, library in SAMPLE_LIB_SE
             for extension in ["html", "zip"]
         ],
