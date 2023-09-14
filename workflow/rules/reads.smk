@@ -1,32 +1,19 @@
-rule reads_link_forward:
+rule reads_link:
     """Make a link to the original forward file, with a prettier name than default"""
     input:
         forward_=get_forward,
-    output:
-        forward_=temp(READS / "{sample}.{library}_1.fq.gz"),
-    log:
-        READS / "{sample}.{library}_1.log",
-    conda:
-        "../envs/reads.yml"
-    shell:
-        """
-        ln --symbolic $(readlink --canonicalize {input.forward_}) {output.forward_}
-        """
-
-
-rule reads_link_reverse:
-    """Make a link to the original reverse file, with a prettier name than default"""
-    input:
         reverse_=get_reverse,
     output:
+        forward_=temp(READS / "{sample}.{library}_1.fq.gz"),
         reverse_=temp(READS / "{sample}.{library}_2.fq.gz"),
     log:
-        READS / "{sample}.{library}_2.log",
+        READS / "{sample}.{library}.log",
     conda:
         "../envs/reads.yml"
     shell:
         """
-        ln --symbolic $(readlink --canonicalize {input.reverse_}) {output.reverse_}
+        ln --symbolic $(readlink --canonicalize {input.forward_}) {output.forward_} 2> {log}
+        ln --symbolic $(readlink --canonicalize {input.reverse_}) {output.reverse_} 2> {log}
         """
 
 
@@ -35,10 +22,9 @@ rule reads_link_all:
     input:
         [
             READS / f"{sample}.{library}_{end}.fq.gz"
-            for sample, library in SAMPLE_LIB_PE
+            for sample, library in SAMPLE_LIB_PE + SAMPLE_LIB_SE
             for end in ["1", "2"]
         ],
-        [READS / f"{sample}.{library}_1.fq.gz" for sample, library in SAMPLE_LIB_SE],
 
 
 rule reads_fastqc_all:

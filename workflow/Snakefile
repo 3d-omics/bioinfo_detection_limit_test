@@ -28,6 +28,7 @@ LAST_HOST = HOST_NAMES[-1] if len(HOST_NAMES) > 0 else None
 
 
 # Import subworkflows
+include: "rules/helpers.smk"
 include: "rules/folders.smk"
 include: "rules/reference.smk"
 include: "rules/reads_functions.smk"
