@@ -29,7 +29,7 @@ rule bowtie2_hosts_build:
         """
 
 
-rule bowtie2_hosts_map_pe_one:
+rule bowtie2_hosts_map_one:
     """Map one library to reference genome using bowtie2
 
     Output SAM file is piped to samtools sort to generate a CRAM file.
@@ -40,11 +40,12 @@ rule bowtie2_hosts_map_pe_one:
         mock=BOWTIE2_HOSTS / "{genome}_index",
         reference=REFERENCE / "{genome}.fa.gz",
     output:
-        cram=BOWTIE2_HOSTS / "{genome}/{sample}.{library}_pe.cram",
-        crai=BOWTIE2_HOSTS / "{genome}/{sample}.{library}_pe.cram.crai",
+        cram=BOWTIE2_HOSTS / "{genome}/{sample}.{library}.cram",
+        crai=BOWTIE2_HOSTS / "{genome}/{sample}.{library}.cram.crai",
     log:
         BOWTIE2_HOSTS / "{genome}/{sample}.{library}_pe.log",
     params:
+        is_paired=is_paired,
         extra=params["bowtie2"]["extra"],
         samtools_mem=params["bowtie2"]["samtools"]["mem_per_thread"],
         rg_id=compose_rg_id,
@@ -57,85 +58,58 @@ rule bowtie2_hosts_map_pe_one:
         runtime=24 * 60,
     shell:
         """
-        (bowtie2 \
-            -x {input.mock} \
-            -1 {input.forward_} \
-            -2 {input.reverse_} \
-            --threads {threads} \
-            --rg-id '{params.rg_id}' \
-            --rg '{params.rg_extra}' \
-            {params.extra} \
-        | samtools sort \
-            --threads {threads} \
-            -m {params.samtools_mem} \
-        | samtools rmdup - - \
-        | samtools view \
-            --reference {input.reference} \
-            --output {output.cram} \
-            --output-fmt cram,level=9,nthreads={threads} \
-            --write-index \
-        ) 2> {log} 1>&2
+        if [[ {params.is_paired} = "True" ]] ; then
+            (bowtie2 \
+                -x {input.mock} \
+                -1 {input.forward_} \
+                -2 {input.reverse_} \
+                --threads {threads} \
+                --rg-id '{params.rg_id}' \
+                --rg '{params.rg_extra}' \
+                {params.extra} \
+            | samtools sort \
+                --threads {threads} \
+                -m {params.samtools_mem} \
+            | samtools rmdup - - \
+            | samtools view \
+                --reference {input.reference} \
+                --output {output.cram} \
+                --output-fmt cram,level=9,nthreads={threads} \
+                --write-index \
+            ) 2> {log} 1>&2
+        else
+            (bowtie2 \
+                -x {input.mock} \
+                -U {input.forward_} \
+                --threads {threads} \
+                --rg-id '{params.rg_id}' \
+                --rg '{params.rg_extra}' \
+                {params.extra} \
+            | samtools sort \
+                --threads {threads} \
+                -m {params.samtools_mem} \
+            | samtools rmdup -s - - \
+            | samtools view \
+                --reference {input.reference} \
+                --output {output.cram} \
+                --output-fmt cram,level=9,nthreads={threads} \
+                --write-index \
+            ) 2> {log} 1>&2
+        fi
         """
 
 
-rule bowtie2_hosts_map_se_one:
-    """Map one library to reference genome using bowtie2
-
-    Output SAM file is piped to samtools sort to generate a CRAM file.
-    """
-    input:
-        single=get_input_single_for_host_mapping,
-        mock=BOWTIE2_HOSTS / "{genome}_index",
-        reference=REFERENCE / "{genome}.fa.gz",
-    output:
-        cram=BOWTIE2_HOSTS / "{genome}/{sample}.{library}_se.cram",
-        crai=BOWTIE2_HOSTS / "{genome}/{sample}.{library}_se.cram.crai",
-    log:
-        BOWTIE2_HOSTS / "{genome}/{sample}.{library}_se.log",
-    params:
-        extra=params["bowtie2"]["extra"],
-        samtools_mem=params["bowtie2"]["samtools"]["mem_per_thread"],
-        rg_id=compose_rg_id,
-        rg_extra=compose_rg_extra,
-    threads: 24
-    conda:
-        "../envs/bowtie2.yml"
-    resources:
-        mem_mb=32 * 1024,
-        runtime=24 * 60,
-    shell:
-        """
-        (bowtie2 \
-            -x {input.mock} \
-            -U {input.single} \
-            --threads {threads} \
-            --rg-id '{params.rg_id}' \
-            --rg '{params.rg_extra}' \
-            {params.extra} \
-        | samtools sort \
-            --threads {threads} \
-            -m {params.samtools_mem} \
-        | samtools rmdup - - \
-        | samtools view \
-            --reference {input.reference} \
-            --output {output.cram} \
-            --output-fmt cram,level=9,nthreads={threads} \
-            --write-index \
-        ) 2> {log} 1>&2
-        """
-
-
-rule bowtie2_hosts_extract_pe_one:
+rule bowtie2_hosts_extract_one:
     """
     Keep only pairs unmapped to the human reference genome, sort by name rather
     than by coordinate, and convert to FASTQ.
     """
     input:
-        cram=BOWTIE2_HOSTS / "{genome}/{sample}.{library}_pe.cram",
+        cram=BOWTIE2_HOSTS / "{genome}/{sample}.{library}.cram",
         reference=REFERENCE / "{genome}.fa.gz",
     output:
         forward_=BOWTIE2_HOSTS / "non{genome}/{sample}.{library}_1.fq.gz",
-        reverse_=BOWTIE2_HOSTS / "non{genome}/{sample}.{library}_2.fq.gz",
+        reverse_=touch(BOWTIE2_HOSTS / "non{genome}/{sample}.{library}_2.fq.gz"),
     log:
         BOWTIE2_HOSTS / "non{genome}/{sample}.{library}.log",
     conda:
@@ -144,61 +118,43 @@ rule bowtie2_hosts_extract_pe_one:
     resources:
         runtime=1 * 60,
         mem_mb=32 * 1024,
+    params:
+        is_paired=is_paired,
     shell:
         """
-        (samtools view \
-            --reference {input.reference} \
-            --threads {threads} \
-            -u \
-            -o /dev/stdout \
-            -f 12 \
-            {input.cram} \
-        | samtools fastq \
-            -1 {output.forward_} \
-            -2 {output.reverse_} \
-            -0 /dev/null \
-            -c 9 \
-            --threads {threads} \
-        ) 2> {log} 1>&2
+        if [[ {params.is_paired} = "True" ]] ; then
+            (samtools view \
+                --reference {input.reference} \
+                --threads {threads} \
+                -u \
+                -o /dev/stdout \
+                -f 12 \
+                {input.cram} \
+            | samtools fastq \
+                -1 {output.forward_} \
+                -2 {output.reverse_} \
+                -0 /dev/null \
+                -c 9 \
+                --threads {threads} \
+            ) 2> {log} 1>&2
+        else
+            (samtools view \
+                --reference {input.reference} \
+                --threads {threads} \
+                -u \
+                -o /dev/stdout \
+                -f 4 \
+                {input.cram} \
+            | samtools fastq \
+                -0 {output.forward_} \
+                -c 9 \
+                --threads {threads} \
+            ) 2> {log} 1>&2
+        fi
         """
 
 
-rule bowtie2_hosts_extract_se_one:
-    """
-    Keep only pairs unmapped to the human reference genome, sort by name rather
-    than by coordinate, and convert to FASTQ.
-    """
-    input:
-        cram=BOWTIE2_HOSTS / "{genome}/{sample}.{library}_se.cram",
-        reference=REFERENCE / "{genome}.fa.gz",
-    output:
-        single=BOWTIE2_HOSTS / "non{genome}/{sample}.{library}_se.fq.gz",
-    log:
-        BOWTIE2_HOSTS / "non{genome}/{sample}.{library}.log",
-    conda:
-        "../envs/bowtie2.yml"
-    threads: 24
-    resources:
-        runtime=1 * 60,
-        mem_mb=32 * 1024,
-    shell:
-        """
-        (samtools view \
-            --reference {input.reference} \
-            --threads {threads} \
-            -u \
-            -o /dev/stdout \
-            -f 4 \
-            {input.cram} \
-        | samtools fastq \
-            -0 {output.single} \
-            -c 9 \
-            --threads {threads} \
-        ) 2> {log} 1>&2
-        """
-
-
-rule bowtie2_hosts_extract_pe:
+rule bowtie2_hosts_extract:
     """Run bowtie2_extract_nonchicken_one for all PE libraries"""
     input:
         [
@@ -207,20 +163,15 @@ rule bowtie2_hosts_extract_pe:
             for sample, library in SAMPLE_LIB_PE
             for end in ["1", "2"]
         ],
-
-
-rule bowtie2_hosts_extract_se:
-    """Run bowtie2_extract_nonchicken_one for all SE libraries"""
-    input:
         [
             BOWTIE2_HOSTS / f"non{genome}/{sample}.{library}_{end}.fq.gz"
             for genome in [LAST_HOST]
             for sample, library in SAMPLE_LIB_SE
-            for end in ["se"]
+            for end in ["1"]
         ],
 
 
-rule bowtie2_hosts_report_all:
+rule bowtie2_hosts_report:
     """Generate bowtie2 reports for all libraries:
     - samtools stats
     - samtools flagstats
@@ -228,17 +179,15 @@ rule bowtie2_hosts_report_all:
     """
     input:
         [
-            BOWTIE2_HOSTS / f"{genome}/{sample}.{library}_{library_type}.{report}"
+            BOWTIE2_HOSTS / f"{genome}/{sample}.{library}.{report}"
             for genome in HOST_NAMES
-            for sample, library in SAMPLE_LIB_PE
-            for library_type in ["pe", "se"]
+            for sample, library in SAMPLE_LIB
             for report in BAM_REPORTS
         ],
 
 
-rule bowtie2_host:
+rule bowtie2_hosts:
     """Run bowtie2 on all libraries and generate reports"""
     input:
-        rules.bowtie2_hosts_report_all.input,
-        rules.bowtie2_hosts_extract_pe.input,
-        rules.bowtie2_hosts_extract_se.input,
+        rules.bowtie2_hosts_report.input,
+        rules.bowtie2_hosts_extract.input,
