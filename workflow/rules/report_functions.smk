@@ -14,16 +14,16 @@ def get_fastp_reports_for_library_reports(wildcards):
     sample = wildcards.sample
     library = wildcards.library
     library_type = "pe" if [sample, library] in SAMPLE_LIB_PE else "se"
-    if library_type == "pe":
+    if is_paired(wildcards):
         return [
-            FASTP / f"{sample}.{library}_pe_fastp.json",
+            FASTP / f"{sample}.{library}_fastp.json",
             FASTP / f"{sample}.{library}_1_fastqc.zip",
             FASTP / f"{sample}.{library}_2_fastqc.zip",
         ]
     else:
         return [
-            FASTP / f"{sample}.{library}_se_fastp.json",
-            FASTP / f"{sample}.{library}_se_fastqc.zip",
+            FASTP / f"{sample}.{library}_fastp.json",
+            FASTP / f"{sample}.{library}_1_fastqc.zip",
         ]
 
 
@@ -66,9 +66,6 @@ def get_report_step_kraken2_reports(wildcards):
     """Get all reports for the kraken2 step"""
     kraken2_db = wildcards.kraken2_db
     return [
-        KRAKEN2 / f"{kraken2_db}/{sample}.{library}_pe.report"
-        for sample, library in SAMPLE_LIB_PE
-    ] + [
-        KRAKEN2 / f"{kraken2_db}/{sample}.{library}_se.report"
-        for sample, library in SAMPLE_LIB_SE
+        KRAKEN2 / f"{kraken2_db}/{sample}.{library}.report"
+        for sample, library in SAMPLE_LIB
     ]
