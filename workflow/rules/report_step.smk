@@ -80,20 +80,26 @@ rule report_step_bowtie2_host_one:
     """Collect all reports for the bowtie2 step and ONE host"""
     input:
         reports=[
-            BOWTIE2_HOSTS / f"{genome}/{sample}.{library}.{report}"
+            BOWTIE2_HOSTS / f"{genome}/{sample}.{library}_pe.{report}"
             for genome in ["{genome}"]
-            for sample, library in SAMPLE_LIB
+            for sample, library in SAMPLE_LIB_PE
+            for report in BAM_REPORTS
+        ]
+        + [
+            BOWTIE2_HOSTS / f"{genome}/{sample}.{library}_se.{report}"
+            for genome in ["{genome}"]
+            for sample, library in SAMPLE_LIB_SE
             for report in BAM_REPORTS
         ],
     output:
-        html=REPORT_STEP / "bowtie2_{genome}.html",
+        html=REPORT_STEP / "bowtie2_host_{genome}.html",
     log:
-        REPORT_STEP / "bowtie2_{genome}.log",
+        REPORT_STEP / "bowtie2_host_{genome}.log",
     conda:
         "../envs/report.yml"
     params:
         dir=REPORT_STEP,
-        title="bowtie2_{genome}",
+        title="bowtie2_host_{genome}",
     shell:
         """
         multiqc \
@@ -111,27 +117,33 @@ rule report_step_bowtie2_host_one:
 rule report_step_bowtie2_host_all:
     """Collect all reports for the bowtie2 step and ALL hosts"""
     input:
-        [REPORT_STEP / f"bowtie2_{genome}.html" for genome in HOST_NAMES],
+        [REPORT_STEP / f"bowtie2_host_{genome}.html" for genome in HOST_NAMES],
 
 
 rule report_step_bowtie2_mags_one:
     """Collect all reports for the bowtie2 when mapping to a mag catalogue"""
     input:
         reports=[
-            BOWTIE2_MAGS / f"{mag_catalogue}/{sample}.{library}.{report}"
+            BOWTIE2_MAGS / f"{mag_catalogue}/{sample}.{library}_pe.{report}"
             for mag_catalogue in ["{mag_catalogue}"]
-            for sample, library in SAMPLE_LIB
+            for sample, library in SAMPLE_LIB_PE
+            for report in BAM_REPORTS
+        ]
+        + [
+            BOWTIE2_MAGS / f"{mag_catalogue}/{sample}.{library}_se.{report}"
+            for mag_catalogue in ["{mag_catalogue}"]
+            for sample, library in SAMPLE_LIB_SE
             for report in BAM_REPORTS
         ],
     output:
-        html=REPORT_STEP / "bowtie2_mags.html",
+        html=REPORT_STEP / "bowtie2_mags_{mag_catalogue}.html",
     log:
-        REPORT_STEP / "bowtie2_mags.log",
+        REPORT_STEP / "bowtie2_mags_{mag_catalogue}.log",
     conda:
         "../envs/report.yml"
     params:
         dir=REPORT_STEP,
-        title="bowtie2_{mag_catalogue}",
+        title="bowtie2_mags_{mag_catalogue}",
     shell:
         """
         multiqc \
@@ -149,7 +161,7 @@ rule report_step_bowtie2_mags_one:
 rule report_step_bowtie2_mags_all:
     input:
         [
-            REPORT_STEP / f"bowtie2_{mag_catalogue}.html"
+            REPORT_STEP / f"bowtie2_mags_{mag_catalogue}.html"
             for mag_catalogue in MAG_CATALOGUES
         ],
 
