@@ -7,13 +7,13 @@ rule report_library_one:
         get_bowtie2_host_for_library_reports,
         get_bowtie2_mags_for_library_reports,
     output:
-        REPORT_LIBRARY / "{sample}.{library}_{library_type}.html",
+        REPORT_LIBRARY / "{sample}.{library}.html",
     log:
-        REPORT_LIBRARY / "{sample}.{library}_{library_type}.log",
+        REPORT_LIBRARY / "{sample}.{library}.log",
     conda:
         "../envs/report.yml"
     params:
-        library="{sample}.{library}_{library_type}",
+        library="{sample}.{library}",
         out_dir=REPORT_LIBRARY,
     shell:
         """
@@ -33,12 +33,8 @@ rule report_library_all:
     """Make a MultiQC report for every library"""
     input:
         [
-            REPORT_LIBRARY / f"{sample}.{library}_pe.html"
+            REPORT_LIBRARY / f"{sample}.{library}.html"
             for sample, library in SAMPLE_LIB_PE
-        ]
-        + [
-            REPORT_LIBRARY / f"{sample}.{library}_se.html"
-            for sample, library in SAMPLE_LIB_SE
         ],
 
 
