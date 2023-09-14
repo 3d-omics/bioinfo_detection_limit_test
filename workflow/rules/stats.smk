@@ -1,5 +1,5 @@
-rule stats_nonpareil_pe_one:
-    """Run nonpareil over one PE sample
+rule stats_nonpareil_one:
+    """Run nonpareil over one sample
 
     Note: Nonpareil only ask for one of the pair-end reads
     Note2: it has to be fastq. The process substitution trick does not work
@@ -10,50 +10,12 @@ rule stats_nonpareil_pe_one:
         forward_=get_input_forward_for_stats,
     output:
         forward_fq=temp(STATS_NONPAREIL / "{sample}.{library}_1.fq"),
-        npa=touch(STATS_NONPAREIL / "{sample}.{library}_pe.npa"),
-        npc=touch(STATS_NONPAREIL / "{sample}.{library}_pe.npc"),
-        npl=touch(STATS_NONPAREIL / "{sample}.{library}_pe.npl"),
-        npo=touch(STATS_NONPAREIL / "{sample}.{library}_pe.npo"),
+        npa=touch(STATS_NONPAREIL / "{sample}.{library}.npa"),
+        npc=touch(STATS_NONPAREIL / "{sample}.{library}.npc"),
+        npl=touch(STATS_NONPAREIL / "{sample}.{library}.npl"),
+        npo=touch(STATS_NONPAREIL / "{sample}.{library}.npo"),
     log:
-        STATS_NONPAREIL / "{sample}.{library}_pe.log",
-    conda:
-        "../envs/stats.yml"
-    params:
-        prefix=compose_prefix_for_nonpareil,
-    resources:
-        runtime=24 * 60,
-    shell:
-        """
-        gzip -dc {input.forward_} > {output.forward_fq} 2> {log}
-
-        nonpareil \
-            -s {output.forward_fq} \
-            -T kmer \
-            -b {params.prefix} \
-            -f fastq \
-            -t {threads} \
-        2>> {log} 1>&2 || true
-        """
-
-
-rule stats_nonpareil_se_one:
-    """Run nonpareil over one SE sample
-
-    Note: Nonpareil only ask for one of the pair-end reads
-    Note2: it has to be fastq. The process substitution trick does not work
-    Note3: in case that nonpareil fails for low coverage samples, it creates
-    empty files
-    """
-    input:
-        forward_=get_input_single_for_stats,
-    output:
-        forward_fq=temp(STATS_NONPAREIL / "{sample}.{library}_se.fq"),
-        npa=touch(STATS_NONPAREIL / "{sample}.{library}_se.npa"),
-        npc=touch(STATS_NONPAREIL / "{sample}.{library}_se.npc"),
-        npl=touch(STATS_NONPAREIL / "{sample}.{library}_se.npl"),
-        npo=touch(STATS_NONPAREIL / "{sample}.{library}_se.npo"),
-    log:
-        STATS_NONPAREIL / "{sample}.{library}_se.log",
+        STATS_NONPAREIL / "{sample}.{library}.log",
     conda:
         "../envs/stats.yml"
     params:
@@ -78,14 +40,9 @@ rule stats_nonpareil_all:
     """Run stats_nonpareil_one for all the samples"""
     input:
         [
-            STATS_NONPAREIL / f"{sample}.{library}_pe.{extension}"
+            STATS_NONPAREIL / f"{sample}.{library}.{extension}"
             for extension in ["npa", "npc", "npl", "npo"]
-            for sample, library in SAMPLE_LIB_PE
-        ],
-        [
-            STATS_NONPAREIL / f"{sample}.{library}_se.{extension}"
-            for extension in ["npa", "npc", "npl", "npo"]
-            for sample, library in SAMPLE_LIB_SE
+            for sample, library in SAMPLE_LIB
         ],
 
 
@@ -110,7 +67,7 @@ rule stats_nonpareil:
         """
 
 
-rule stats_singlem_pipe_pe_one:
+rule stats_singlem_pipe_one:
     """Run singlem over one sample
 
     Note: SingleM asks in the documentation for the raw reads. Here we are
@@ -121,62 +78,42 @@ rule stats_singlem_pipe_pe_one:
         reverse_=get_input_reverse_for_stats,
         data=features["singlem_database"],
     output:
-        archive_otu_table=STATS_SINGLEM / "{sample}.{library}_pe.archive.json",
-        otu_table=STATS_SINGLEM / "{sample}.{library}_pe.otu_table.tsv",
-        condense=STATS_SINGLEM / "{sample}.{library}_pe.condense.tsv",
+        archive_otu_table=STATS_SINGLEM / "{sample}.{library}.archive.json",
+        otu_table=STATS_SINGLEM / "{sample}.{library}.otu_table.tsv",
+        condense=STATS_SINGLEM / "{sample}.{library}.condense.tsv",
     log:
-        STATS_SINGLEM / "{sample}.{library}_pe.log",
+        STATS_SINGLEM / "{sample}.{library}.log",
     conda:
         "../envs/stats.yml"
     threads: 4
     resources:
         runtime=4 * 60,
+    params:
+        is_paired=is_paired,
     shell:
         """
-        singlem pipe \
-            --forward {input.forward_} \
-            --reverse {input.reverse_} \
-            --otu-table {output.otu_table} \
-            --archive-otu-table {output.archive_otu_table} \
-            --taxonomic-profile {output.condense} \
-            --metapackage {input.data} \
-            --threads {threads} \
-            --assignment-threads {threads} \
-        2> {log} 1>&2 || true
-        """
-
-
-rule stats_singlem_pipe_se_one:
-    """Run singlem over one sample
-
-    Note: SingleM asks in the documentation for the raw reads. Here we are
-    passing it the non-host and trimmed ones.
-    """
-    input:
-        single=get_input_single_for_stats,
-        data=features["singlem_database"],
-    output:
-        archive_otu_table=STATS_SINGLEM / "{sample}.{library}_se.archive.json",
-        otu_table=STATS_SINGLEM / "{sample}.{library}_se.otu_table.tsv",
-        condense=STATS_SINGLEM / "{sample}.{library}_se.condense.tsv",
-    log:
-        STATS_SINGLEM / "{sample}.{library}_se.log",
-    conda:
-        "../envs/stats.yml"
-    threads: 4
-    resources:
-        runtime=4 * 60,
-    shell:
-        """
-        singlem pipe \
-            --forward {input.single} \
-            --otu-table {output.otu_table} \
-            --archive-otu-table {output.archive_otu_table} \
-            --taxonomic-profile {output.condense} \
-            --metapackage {input.data} \
-            --threads {threads} \
-            --assignment-threads {threads} \
-        2> {log} 1>&2 || true
+        if [[ {params.is_paired} = "True" ]] ; then
+            singlem pipe \
+                --forward {input.forward_} \
+                --reverse {input.reverse_} \
+                --otu-table {output.otu_table} \
+                --archive-otu-table {output.archive_otu_table} \
+                --taxonomic-profile {output.condense} \
+                --metapackage {input.data} \
+                --threads {threads} \
+                --assignment-threads {threads} \
+            2> {log} 1>&2 || true
+        else
+            singlem pipe \
+                --forward {input.forward_} \
+                --otu-table {output.otu_table} \
+                --archive-otu-table {output.archive_otu_table} \
+                --taxonomic-profile {output.condense} \
+                --metapackage {input.data} \
+                --threads {threads} \
+                --assignment-threads {threads} \
+            2> {log} 1>&2 || true
+        fi
         """
 
 
@@ -184,12 +121,8 @@ rule stats_singlem_pipe_all:
     """Run stats_singlem_one for all the samples"""
     input:
         [
-            STATS_SINGLEM / f"{sample}.{library}_pe.otu_table.tsv"
-            for sample, library in SAMPLE_LIB_PE
-        ],
-        [
-            STATS_SINGLEM / f"{sample}.{library}_se.otu_table.tsv"
-            for sample, library in SAMPLE_LIB_SE
+            STATS_SINGLEM / f"{sample}.{library}.otu_table.tsv"
+            for sample, library in SAMPLE_LIB
         ],
 
 
@@ -197,12 +130,8 @@ rule stats_singlem_condense:
     """Aggregate all the singlem results into a single table"""
     input:
         archive_otu_tables=[
-            STATS_SINGLEM / f"{sample}.{library}_pe.archive.json"
-            for sample, library in SAMPLE_LIB_PE
-        ]
-        + [
-            STATS_SINGLEM / f"{sample}.{library}_se.archive.json"
-            for sample, library in SAMPLE_LIB_SE
+            STATS_SINGLEM / f"{sample}.{library}.archive.json"
+            for sample, library in SAMPLE_LIB
         ],
         data=features["singlem_database"],
     output:
@@ -237,14 +166,12 @@ rule stats_cram_to_mapped_bam:
     it works.
     """
     input:
-        cram=BOWTIE2_MAGS / "{mag_catalogue}/{sample}.{library}_{library_type}.cram",
+        cram=BOWTIE2_MAGS / "{mag_catalogue}/{sample}.{library}.cram",
         reference=REFERENCE / "mags/{mag_catalogue}.fa.gz",
     output:
-        bam=temp(
-            STATS_COVERM / "{mag_catalogue}/bams/{sample}.{library}_{library_type}.bam"
-        ),
+        bam=temp(STATS_COVERM / "{mag_catalogue}/bams/{sample}.{library}.bam"),
     log:
-        STATS_COVERM / "{mag_catalogue}/bams/{sample}.{library}_{library_type}.log",
+        STATS_COVERM / "{mag_catalogue}/bams/{sample}.{library}.log",
     conda:
         "../envs/samtools.yml"
     threads: 24
@@ -267,16 +194,13 @@ rule stats_cram_to_mapped_bam:
 rule stats_coverm_genome_one_library_one_mag_catalogue:
     """Run coverm genome for one library and one mag catalogue"""
     input:
-        bam=STATS_COVERM / "{mag_catalogue}/bams/{sample}.{library}_{library_type}.bam",
+        bam=STATS_COVERM / "{mag_catalogue}/bams/{sample}.{library}.bam",
     output:
-        tsv=touch(
-            STATS_COVERM
-            / "{mag_catalogue}/genome/{sample}.{library}_{library_type}.tsv"
-        ),
+        tsv=touch(STATS_COVERM / "{mag_catalogue}/genome/{sample}.{library}.tsv"),
     conda:
         "../envs/stats.yml"
     log:
-        STATS_COVERM / "{mag_catalogue}/genome/{sample}.{library}_{library_type}.log",
+        STATS_COVERM / "{mag_catalogue}/genome/{sample}.{library}.log",
     params:
         methods=params["coverm"]["genome"]["methods"],
         min_covered_fraction=params["coverm"]["genome"]["min_covered_fraction"],
