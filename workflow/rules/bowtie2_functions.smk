@@ -50,13 +50,3 @@ def get_input_reverse_for_mag_mapping(wildcards):
         return FASTP / f"{sample}.{library}_2.fq.gz"
     genome = HOST_NAMES[-1]
     return BOWTIE2_HOSTS / f"non{genome}/{sample}.{library}_2.fq.gz"
-
-
-def get_input_single_for_mag_mapping(wildcards):
-    """Get the forward input file for mapping to MAGs"""
-    sample = wildcards.sample
-    library = wildcards.library
-    if len(HOST_NAMES) == 0:
-        return FASTP / f"{sample}.{library}_se.fq.gz"
-    genome = HOST_NAMES[-1]
-    return BOWTIE2_HOSTS / f"non{genome}/{sample}.{library}_se.fq.gz"
