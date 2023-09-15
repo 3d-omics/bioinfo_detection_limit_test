@@ -10,7 +10,7 @@ rule fastp_trim_one:
         html=FASTP / "{sample}.{library}_fastp.html",
         json=FASTP / "{sample}.{library}_fastp.json",
     log:
-        FASTP / "{sample}.{library}_pe.log",
+        FASTP / "{sample}.{library}.log",
     params:
         is_paired=is_paired,
         adapter_forward=get_forward_adapter,
