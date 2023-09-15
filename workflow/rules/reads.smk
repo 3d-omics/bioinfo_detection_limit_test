@@ -51,5 +51,4 @@ rule reads:
 
 
 localrules:
-    reads_link_forward,
-    reads_link_reverse,
+    reads_link,
