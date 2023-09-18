@@ -3,7 +3,7 @@ def get_forward(wildcards):
     forward_filename = samples.loc[
         (samples["sample"] == wildcards.sample)
         & (samples["library"] == wildcards.library)
-    ]["forward"].values
+    ]["forward"].values[0]
     return forward_filename
 
 
@@ -12,5 +12,5 @@ def get_reverse(wildcards):
     reverse_filename = samples.loc[
         (samples["sample"] == wildcards.sample)
         & (samples["library"] == wildcards.library)
-    ]["reverse"].values
+    ]["reverse"].values[0]
     return reverse_filename if not pd.isna(reverse_filename) else "/dev/null"
