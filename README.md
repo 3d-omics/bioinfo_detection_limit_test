@@ -9,9 +9,8 @@ A Snakemake workflow for assessing detection limit from laser-microdissected sam
 ## Usage
 
 0. Requirements
-   1.  [`git-lfs`](https://git-lfs.com/)
-   2.  [`miniconda`](https://docs.conda.io/en/latest/miniconda.html) / [`mamba`](https://mamba.readthedocs.io)
-   3.  [`snakemake`](snakemake.readthedocs.io/)
+   1.  [`miniconda`](https://docs.conda.io/en/latest/miniconda.html) / [`mamba`](https://mamba.readthedocs.io)
+   2.  [`snakemake`](snakemake.readthedocs.io/)
 
 1. Clone the repository
 Clone the repository, and set it as the working directory.
@@ -21,7 +20,7 @@ git clone --recursive https://github.com/3d-omics/detection_limit_test.git
 cd detection_limit_test
 ```
 
-2. Run the pipeline with the test data (takes 5 minutes)
+2. Run the pipeline with the test data (takes 5 minutes to download the required software)
 ```
 snakemake \
     --use-conda \
@@ -34,10 +33,11 @@ snakemake \
    2. `config/features.tsv`: the references against which to map the libraries: human, chicken / pig, MAG catalogue.
    3. `config/params.tsv`: parameters for every program. The defaults are reasonable.
 
-4. Run the pipeline on a cluster with slurm and go for a walk:
+4. Run the pipeline and go for a walk:
 
 ```
-./run_slurm
+./run  # locally
+./run_slurm  # in a cluster environment with slurm
 ```
 
 ## Brief description
@@ -72,6 +72,8 @@ snakemake \
       --input-folder results/stats/singlem \
       --output-file results/stats/singlem.tsv
    ```
+
+- Or comment with a `#` the `samples.tsv` file.
 
 
 ## References

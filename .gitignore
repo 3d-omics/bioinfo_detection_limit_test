@@ -3,4 +3,13 @@ logs/**
 .snakemake
 .snakemake/**
 reports/**
+
+# R stuff
 .Rproj.user
+.Rprofile
+detection_limit_test.Rproj
+renv.lock
+renv/**
+
+# singlem stuff
+resources/S3.2.0.GTDB_r214.metapackage_20230428.smpkg.zb/

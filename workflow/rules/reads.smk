@@ -1,5 +1,5 @@
 rule reads_link:
-    """Make a link to the original file, with a prettier name than default"""
+    """Make a link to the original forward file, with a prettier name than default"""
     input:
         forward_=get_forward,
         reverse_=get_reverse,
@@ -12,8 +12,8 @@ rule reads_link:
         "../envs/reads.yml"
     shell:
         """
-        ln --symbolic $(readlink --canonicalize {input.forward_}) {output.forward_}
-        ln --symbolic $(readlink --canonicalize {input.reverse_}) {output.reverse_}
+        ln --symbolic $(readlink --canonicalize {input.forward_}) {output.forward_} 2> {log}
+        ln --symbolic $(readlink --canonicalize {input.reverse_}) {output.reverse_} 2> {log}
         """
 
 
@@ -22,7 +22,7 @@ rule reads_link_all:
     input:
         [
             READS / f"{sample}.{library}_{end}.fq.gz"
-            for sample, library in SAMPLE_LIB
+            for sample, library in SAMPLE_LIB_PE + SAMPLE_LIB_SE
             for end in ["1", "2"]
         ],
 
@@ -32,8 +32,13 @@ rule reads_fastqc_all:
     input:
         [
             READS / f"{sample}.{library}_{end}_fastqc.{extension}"
-            for sample, library in SAMPLE_LIB
+            for sample, library in SAMPLE_LIB_PE
             for end in ["1", "2"]
+            for extension in ["html", "zip"]
+        ],
+        [
+            READS / f"{sample}.{library}_1_fastqc.{extension}"
+            for sample, library in SAMPLE_LIB_SE
             for extension in ["html", "zip"]
         ],
 
@@ -46,7 +51,4 @@ rule reads:
 
 
 localrules:
-    reads_link_all,
-    reads_fastqc_all,
     reads_link,
-    reads,

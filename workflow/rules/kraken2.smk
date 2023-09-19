@@ -15,18 +15,31 @@ rule kraken2_assign_one:
     resources:
         mem_mb=params["kraken2"]["mem_mb"],
         runtime=60,
+    params:
+        is_paired=is_paired,
     shell:
         """
-        kraken2 \
-            --db {input.database} \
-            --threads {threads} \
-            --paired \
-            --gzip-compressed \
-            --output >(pigz > {output.out_gz}) \
-            --report {output.report} \
-            {input.forward_} \
-            {input.reverse_} \
-        > {log} 2>&1
+        if [[ {params.is_paired} = "True" ]] ; then
+            kraken2 \
+                --db {input.database} \
+                --threads {threads} \
+                --paired \
+                --gzip-compressed \
+                --output >(pigz > {output.out_gz}) \
+                --report {output.report} \
+                {input.forward_} \
+                {input.reverse_} \
+            > {log} 2>&1
+        else
+            kraken2 \
+                --db {input.database} \
+                --threads {threads} \
+                --gzip-compressed \
+                --output >(pigz > {output.out_gz}) \
+                --report {output.report} \
+                {input.forward_} \
+            > {log} 2>&1
+        fi
         """
 
 
@@ -34,23 +47,14 @@ rule kraken2_assign_all:
     input:
         [
             KRAKEN2 / f"{kraken2_db}/{sample}.{library}.report"
-            for sample, library in SAMPLE_LIB
+            for sample, library in SAMPLE_LIB_PE
             for kraken2_db in KRAKEN2_DBS
         ],
-
-
-rule kraken2_report_one:
-    input:
-        KRAKEN2 / "{kraken2_db}/{sample}.{library}.report",
 
 
 rule kraken2_report_all:
     input:
-        [
-            KRAKEN2 / f"{kraken2_db}/{sample}.{library}.report"
-            for sample, library in SAMPLE_LIB
-            for kraken2_db in KRAKEN2_DBS
-        ],
+        rules.kraken2_assign_all.input,
 
 
 rule kraken2:

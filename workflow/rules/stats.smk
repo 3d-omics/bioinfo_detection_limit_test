@@ -1,3 +1,6 @@
+# nonpareil
+
+
 rule stats_nonpareil_one:
     """Run nonpareil over one sample
 
@@ -7,7 +10,7 @@ rule stats_nonpareil_one:
     empty files
     """
     input:
-        forward_=BOWTIE2_NONCHICKEN / "{sample}.{library}_1.fq.gz",
+        forward_=get_input_forward_for_stats,
     output:
         forward_fq=temp(STATS_NONPAREIL / "{sample}.{library}_1.fq"),
         npa=touch(STATS_NONPAREIL / "{sample}.{library}.npa"),
@@ -67,24 +70,7 @@ rule stats_nonpareil:
         """
 
 
-rule singlem_data:
-    """Download the singlem data
-
-    For reasons unknown, you have to specify the filename, that may change in
-    the future.
-    """
-    output:
-        directory(STATS_SINGLEM / "data/S3.2.0.GTDB_r214.metapackage_20230428.smpkg.zb"),
-    log:
-        STATS_SINGLEM / "data.log",
-    conda:
-        "../envs/stats.yml"
-    params:
-        output_prefix=STATS_SINGLEM / "data",
-    shell:
-        """
-        singlem data --output-directory {params.output_prefix} 2> {log} 1>&2
-        """
+# singlem
 
 
 rule stats_singlem_pipe_one:
@@ -94,9 +80,9 @@ rule stats_singlem_pipe_one:
     passing it the non-host and trimmed ones.
     """
     input:
-        forward_=BOWTIE2_NONCHICKEN / "{sample}.{library}_1.fq.gz",
-        reverse_=BOWTIE2_NONCHICKEN / "{sample}.{library}_2.fq.gz",
-        data=rules.singlem_data.output,
+        forward_=get_input_forward_for_stats,
+        reverse_=get_input_reverse_for_stats,
+        data=features["singlem_database"],
     output:
         archive_otu_table=STATS_SINGLEM / "{sample}.{library}.archive.json",
         otu_table=STATS_SINGLEM / "{sample}.{library}.otu_table.tsv",
@@ -108,18 +94,32 @@ rule stats_singlem_pipe_one:
     threads: 4
     resources:
         runtime=4 * 60,
+    params:
+        is_paired=is_paired,
     shell:
         """
-        singlem pipe \
-            --forward {input.forward_} \
-            --reverse {input.reverse_} \
-            --otu-table {output.otu_table} \
-            --archive-otu-table {output.archive_otu_table} \
-            --taxonomic-profile {output.condense} \
-            --metapackage {input.data} \
-            --threads {threads} \
-            --assignment-threads {threads} \
-        2> {log} 1>&2 || true
+        if [[ {params.is_paired} = "True" ]] ; then
+            singlem pipe \
+                --forward {input.forward_} \
+                --reverse {input.reverse_} \
+                --otu-table {output.otu_table} \
+                --archive-otu-table {output.archive_otu_table} \
+                --taxonomic-profile {output.condense} \
+                --metapackage {input.data} \
+                --threads {threads} \
+                --assignment-threads {threads} \
+            2> {log} 1>&2 || true
+        else
+            singlem pipe \
+                --forward {input.forward_} \
+                --otu-table {output.otu_table} \
+                --archive-otu-table {output.archive_otu_table} \
+                --taxonomic-profile {output.condense} \
+                --metapackage {input.data} \
+                --threads {threads} \
+                --assignment-threads {threads} \
+            2> {log} 1>&2 || true
+        fi
         """
 
 
@@ -139,7 +139,7 @@ rule stats_singlem_condense:
             STATS_SINGLEM / f"{sample}.{library}.archive.json"
             for sample, library in SAMPLE_LIB
         ],
-        data=rules.singlem_data.output,
+        data=features["singlem_database"],
     output:
         condense=STATS / "singlem.tsv",
     log:
@@ -162,6 +162,9 @@ rule stats_singlem:
     """Run all stats singlem rules"""
     input:
         STATS / "singlem.tsv",
+
+
+# Coverm
 
 
 rule stats_cram_to_mapped_bam:
@@ -202,20 +205,22 @@ rule stats_coverm_genome_one_library_one_mag_catalogue:
     input:
         bam=STATS_COVERM / "{mag_catalogue}/bams/{sample}.{library}.bam",
     output:
-        tsv=touch(STATS_COVERM / "{mag_catalogue}/genome/{sample}.{library}.tsv"),
+        tsv=touch(
+            STATS_COVERM / "{mag_catalogue}/genome/{method}/{sample}.{library}.tsv"
+        ),
     conda:
         "../envs/stats.yml"
     log:
-        STATS_COVERM / "{mag_catalogue}/genome/{sample}.{library}.log",
+        STATS_COVERM / "{mag_catalogue}/genome/{method}/{sample}.{library}.log",
     params:
-        methods=params["coverm"]["genome"]["methods"],
+        method="{method}",
         min_covered_fraction=params["coverm"]["genome"]["min_covered_fraction"],
         separator=params["coverm"]["genome"]["separator"],
     shell:
         """
         coverm genome \
             --bam-files {input.bam} \
-            --methods {params.methods} \
+            --methods {params.method} \
             --separator {params.separator} \
             --min-covered-fraction {params.min_covered_fraction} \
         > {output} 2> {log} || true \
@@ -227,13 +232,16 @@ rule stats_coverm_genome_aggregate_one_mag_catalogue:
     input:
         get_coverm_genome_tsv_files_for_aggregation,
     output:
-        STATS / "coverm_genome_{mag_catalogue}.tsv",
+        STATS / "coverm_genome_{mag_catalogue}.{method}.tsv",
     log:
-        STATS / "coverm_genome_{mag_catalogue}.log",
+        STATS / "coverm_genome_{mag_catalogue}.{method}.log",
     conda:
         "../envs/stats_r.yml"
     params:
-        input_dir=lambda wildcards: STATS_COVERM / wildcards.mag_catalogue / "genome",
+        input_dir=lambda wildcards: STATS_COVERM
+        / wildcards.mag_catalogue
+        / "genome"
+        / wildcards.method,
     shell:
         """
         Rscript --no-init-file workflow/scripts/aggregate_coverm.R \
@@ -247,8 +255,9 @@ rule stats_coverm_genome:
     """Run all rules to run coverm genome over all MAG catalogues"""
     input:
         [
-            STATS / f"coverm_genome_{mag_catalogue}.tsv"
+            STATS / f"coverm_genome_{mag_catalogue}.{method}.tsv"
             for mag_catalogue in MAG_CATALOGUES
+            for method in params["coverm"]["genome"]["methods"]
         ],
 
 
@@ -257,18 +266,18 @@ rule stats_coverm_contig_one_library_one_mag_catalogue:
     input:
         bam=STATS_COVERM / "{mag_catalogue}/bams/{sample}.{library}.bam",
     output:
-        tsv=STATS_COVERM / "{mag_catalogue}/contig/{sample}.{library}.tsv",
+        tsv=STATS_COVERM / "{mag_catalogue}/contig/{method}/{sample}.{library}.tsv",
     conda:
         "../envs/stats.yml"
     log:
-        STATS_COVERM / "{mag_catalogue}/contig/{sample}.{library}.log",
+        STATS_COVERM / "{mag_catalogue}/contig/{method}/{sample}.{library}.log",
     params:
-        methods=params["coverm"]["contig"]["methods"],
+        method=lambda wildcards: wildcards.method,
     shell:
         """
         coverm contig \
             --bam-files {input.bam} \
-            --methods {params.methods} \
+            --methods {params.method} \
             --proper-pairs-only \
         > {output} 2> {log} || true
         """
@@ -279,13 +288,16 @@ rule stats_coverm_contig_aggregate_mag_catalogue:
     input:
         get_coverm_contig_tsv_files_for_aggregation,
     output:
-        STATS / "coverm_contig_{mag_catalogue}.tsv",
+        STATS / "coverm_contig_{mag_catalogue}.{method}.tsv",
     log:
-        STATS / "coverm_contig_{mag_catalogue}.log",
+        STATS / "coverm_contig_{mag_catalogue}.{method}.log",
     conda:
         "../envs/stats_r.yml"
     params:
-        input_dir=lambda wildcards: STATS_COVERM / wildcards.mag_catalogue / "contig",
+        input_dir=lambda wildcards: STATS_COVERM
+        / wildcards.mag_catalogue
+        / "contig"
+        / wildcards.method,
     shell:
         """
         Rscript --no-init-file workflow/scripts/aggregate_coverm.R \
@@ -299,8 +311,9 @@ rule stats_coverm_contig:
     """Run all rules to run coverm contig over all MAG catalogues"""
     input:
         [
-            STATS / f"coverm_contig_{mag_catalogue}.tsv"
+            STATS / f"coverm_contig_{mag_catalogue}.{method}.tsv"
             for mag_catalogue in MAG_CATALOGUES
+            for method in params["coverm"]["contig"]["methods"]
         ],
 
 
@@ -312,11 +325,18 @@ rule stats_coverm:
 
 
 rule stats:
-    """Run all the stats rules: nonpareil, singlem, and coverm"""
+    """Run the stats analyses: nonpareil and coverm"""
     input:
         rules.stats_nonpareil.output,
-        rules.stats_singlem.input,
+        # rules.stats_singlem.input,
         rules.stats_coverm.input,
+
+
+rule stats_with_singlem:
+    """Run the nonpareil, coverm and singlem"""
+    input:
+        rules.stats.input,
+        rules.stats_singlem.input,
 
 
 localrules:

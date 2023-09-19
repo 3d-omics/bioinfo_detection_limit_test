@@ -1,8 +1,16 @@
 def get_forward(wildcards):
     """Get the forward read for a given sample and library"""
-    return samples[(samples["sample"] == wildcards.sample)]["forward"].tolist()[0]
+    forward_filename = samples.loc[
+        (samples["sample"] == wildcards.sample)
+        & (samples["library"] == wildcards.library)
+    ]["forward"].values[0]
+    return forward_filename
 
 
 def get_reverse(wildcards):
     """Get the reverse read for a given sample and library"""
-    return samples[(samples["sample"] == wildcards.sample)]["reverse"].tolist()[0]
+    reverse_filename = samples.loc[
+        (samples["sample"] == wildcards.sample)
+        & (samples["library"] == wildcards.library)
+    ]["reverse"].values[0]
+    return reverse_filename if not pd.isna(reverse_filename) else "/dev/null"

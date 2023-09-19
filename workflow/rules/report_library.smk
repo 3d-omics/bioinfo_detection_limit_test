@@ -1,11 +1,8 @@
 rule report_library_one:
     """Make a MultiQC report for a single library"""
     input:
-        READS / "{sample}.{library}_1_fastqc.zip",
-        READS / "{sample}.{library}_2_fastqc.zip",
-        FASTP / "{sample}.{library}_fastp.json",
-        FASTP / "{sample}.{library}_1_fastqc.zip",
-        FASTP / "{sample}.{library}_2_fastqc.zip",
+        get_reads_reports_for_library_reports,
+        get_fastp_reports_for_library_reports,
         get_kraken2_for_library_reports,
         get_bowtie2_host_for_library_reports,
         get_bowtie2_mags_for_library_reports,
@@ -35,7 +32,10 @@ rule report_library_one:
 rule report_library_all:
     """Make a MultiQC report for every library"""
     input:
-        [REPORT_LIBRARY / f"{sample}.{library}.html" for sample, library in SAMPLE_LIB],
+        [
+            REPORT_LIBRARY / f"{sample}.{library}.html"
+            for sample, library in SAMPLE_LIB_PE
+        ],
 
 
 rule report_library:

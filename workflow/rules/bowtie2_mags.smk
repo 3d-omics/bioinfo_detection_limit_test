@@ -35,48 +35,70 @@ rule bowtie2_mags_map_one_library_to_one_catalogue:
     Output SAM file is piped to samtools sort to generate a CRAM file.
     """
     input:
-        forward_=BOWTIE2_NONCHICKEN / "{sample}.{library}_1.fq.gz",
-        reverse_=BOWTIE2_NONCHICKEN / "{sample}.{library}_2.fq.gz",
+        forward_=get_input_forward_for_mag_mapping,
+        reverse_=get_input_reverse_for_mag_mapping,
         mock=BOWTIE2_MAGS / "{mag_catalogue}_index",
         reference=REFERENCE / "mags/{mag_catalogue}.fa.gz",
     output:
         cram=BOWTIE2_MAGS / "{mag_catalogue}/{sample}.{library}.cram",
+        crai=BOWTIE2_MAGS / "{mag_catalogue}/{sample}.{library}.cram.crai",
     log:
         BOWTIE2_MAGS / "{mag_catalogue}/{sample}.{library}.log",
+    conda:
+        "../envs/bowtie2.yml"
+    threads: 4
+    resources:
+        mem_mb=32 * 1024,
+        runtime=24 * 60,
     params:
+        is_paired=is_paired,
         extra=params["bowtie2"]["extra"],
         samtools_mem=params["bowtie2"]["samtools"]["mem_per_thread"],
         rg_id=compose_rg_id,
         rg_extra=compose_rg_extra,
-    threads: 4
-    conda:
-        "../envs/bowtie2.yml"
-    resources:
-        mem_mb=32 * 1024,
-        runtime=24 * 60,
     shell:
         """
-        (bowtie2 \
-            -x {input.mock} \
-            -1 {input.forward_} \
-            -2 {input.reverse_} \
-            --threads {threads} \
-            --rg-id '{params.rg_id}' \
-            --rg '{params.rg_extra}' \
-            {params.extra} \
-        | samtools sort \
-            -l 9 \
-            -M \
-            -m {params.samtools_mem} \
-            -o {output.cram} \
-            --reference {input.reference} \
-            --threads {threads} \
-        ) 2> {log} 1>&2
+        if [[ {params.is_paired} == "True" ]] ; then
+            (bowtie2 \
+                -x {input.mock} \
+                -1 {input.forward_} \
+                -2 {input.reverse_} \
+                --threads {threads} \
+                --rg-id '{params.rg_id}' \
+                --rg '{params.rg_extra}' \
+                {params.extra} \
+            | samtools sort \
+                -l 9 \
+                -M \
+                -m {params.samtools_mem} \
+                -o {output.cram} \
+                --reference {input.reference} \
+                --threads {threads} \
+                --write-index \
+            ) 2> {log} 1>&2
+        else
+            (bowtie2 \
+                -x {input.mock} \
+                -U {input.forward_} \
+                --threads {threads} \
+                --rg-id '{params.rg_id}' \
+                --rg '{params.rg_extra}' \
+                {params.extra} \
+            | samtools sort \
+                -l 9 \
+                -M \
+                -m {params.samtools_mem} \
+                -o {output.cram} \
+                --reference {input.reference} \
+                --threads {threads} \
+                --write-index \
+            ) 2> {log} 1>&2
+        fi
         """
 
 
 rule bowtie2_mags_map_all_libraries_to_all_mags:
-    """Run bowtie2_map_mags_one for all libraries"""
+    """Run bowtie2_map_mags_one for all PE libraries"""
     input:
         [
             BOWTIE2_MAGS / f"{mag_catalogue}/{sample}.{library}.cram"
@@ -86,7 +108,7 @@ rule bowtie2_mags_map_all_libraries_to_all_mags:
 
 
 rule bowtie2_mags_report_all:
-    """Generate bowtie2 reports for all libraries:
+    """Generate bowtie2 reports for all PE libraries:
     - samtools stats
     - samtools flagstats
     - samtools idxstats
