@@ -1,3 +1,6 @@
+# nonpareil
+
+
 rule stats_nonpareil_one:
     """Run nonpareil over one sample
 
@@ -65,6 +68,9 @@ rule stats_nonpareil:
             --output-file {output} \
         2> {log} 1>&2
         """
+
+
+# singlem
 
 
 rule stats_singlem_pipe_one:
@@ -158,6 +164,9 @@ rule stats_singlem:
         STATS / "singlem.tsv",
 
 
+# Coverm
+
+
 rule stats_cram_to_mapped_bam:
     """Convert cram to bam
 
@@ -196,20 +205,22 @@ rule stats_coverm_genome_one_library_one_mag_catalogue:
     input:
         bam=STATS_COVERM / "{mag_catalogue}/bams/{sample}.{library}.bam",
     output:
-        tsv=touch(STATS_COVERM / "{mag_catalogue}/genome/{sample}.{library}.tsv"),
+        tsv=touch(
+            STATS_COVERM / "{mag_catalogue}/genome/{method}/{sample}.{library}.tsv"
+        ),
     conda:
         "../envs/stats.yml"
     log:
-        STATS_COVERM / "{mag_catalogue}/genome/{sample}.{library}.log",
+        STATS_COVERM / "{mag_catalogue}/genome/{method}/{sample}.{library}.log",
     params:
-        methods=params["coverm"]["genome"]["methods"],
+        method="{method}",
         min_covered_fraction=params["coverm"]["genome"]["min_covered_fraction"],
         separator=params["coverm"]["genome"]["separator"],
     shell:
         """
         coverm genome \
             --bam-files {input.bam} \
-            --methods {params.methods} \
+            --methods {params.method} \
             --separator {params.separator} \
             --min-covered-fraction {params.min_covered_fraction} \
         > {output} 2> {log} || true \
@@ -221,13 +232,16 @@ rule stats_coverm_genome_aggregate_one_mag_catalogue:
     input:
         get_coverm_genome_tsv_files_for_aggregation,
     output:
-        STATS / "coverm_genome_{mag_catalogue}.tsv",
+        STATS / "coverm_genome_{mag_catalogue}.{method}.tsv",
     log:
-        STATS / "coverm_genome_{mag_catalogue}.log",
+        STATS / "coverm_genome_{mag_catalogue}.{method}.log",
     conda:
         "../envs/stats_r.yml"
     params:
-        input_dir=lambda wildcards: STATS_COVERM / wildcards.mag_catalogue / "genome",
+        input_dir=lambda wildcards: STATS_COVERM
+        / wildcards.mag_catalogue
+        / "genome"
+        / wildcards.method,
     shell:
         """
         Rscript --no-init-file workflow/scripts/aggregate_coverm.R \
@@ -241,8 +255,9 @@ rule stats_coverm_genome:
     """Run all rules to run coverm genome over all MAG catalogues"""
     input:
         [
-            STATS / f"coverm_genome_{mag_catalogue}.tsv"
+            STATS / f"coverm_genome_{mag_catalogue}.{method}.tsv"
             for mag_catalogue in MAG_CATALOGUES
+            for method in params["coverm"]["genome"]["methods"]
         ],
 
 
@@ -251,18 +266,18 @@ rule stats_coverm_contig_one_library_one_mag_catalogue:
     input:
         bam=STATS_COVERM / "{mag_catalogue}/bams/{sample}.{library}.bam",
     output:
-        tsv=STATS_COVERM / "{mag_catalogue}/contig/{sample}.{library}.tsv",
+        tsv=STATS_COVERM / "{mag_catalogue}/contig/{method}/{sample}.{library}.tsv",
     conda:
         "../envs/stats.yml"
     log:
-        STATS_COVERM / "{mag_catalogue}/contig/{sample}.{library}.log",
+        STATS_COVERM / "{mag_catalogue}/contig/{method}/{sample}.{library}.log",
     params:
-        methods=params["coverm"]["contig"]["methods"],
+        method=lambda wildcards: wildcards.method,
     shell:
         """
         coverm contig \
             --bam-files {input.bam} \
-            --methods {params.methods} \
+            --methods {params.method} \
             --proper-pairs-only \
         > {output} 2> {log} || true
         """
@@ -273,13 +288,16 @@ rule stats_coverm_contig_aggregate_mag_catalogue:
     input:
         get_coverm_contig_tsv_files_for_aggregation,
     output:
-        STATS / "coverm_contig_{mag_catalogue}.tsv",
+        STATS / "coverm_contig_{mag_catalogue}.{method}.tsv",
     log:
-        STATS / "coverm_contig_{mag_catalogue}.log",
+        STATS / "coverm_contig_{mag_catalogue}.{method}.log",
     conda:
         "../envs/stats_r.yml"
     params:
-        input_dir=lambda wildcards: STATS_COVERM / wildcards.mag_catalogue / "contig",
+        input_dir=lambda wildcards: STATS_COVERM
+        / wildcards.mag_catalogue
+        / "contig"
+        / wildcards.method,
     shell:
         """
         Rscript --no-init-file workflow/scripts/aggregate_coverm.R \
@@ -293,8 +311,9 @@ rule stats_coverm_contig:
     """Run all rules to run coverm contig over all MAG catalogues"""
     input:
         [
-            STATS / f"coverm_contig_{mag_catalogue}.tsv"
+            STATS / f"coverm_contig_{mag_catalogue}.{method}.tsv"
             for mag_catalogue in MAG_CATALOGUES
+            for method in params["coverm"]["contig"]["methods"]
         ],
 
 

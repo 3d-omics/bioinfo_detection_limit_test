@@ -28,8 +28,9 @@ def compose_prefix_for_nonpareil(wildcards):
 def get_coverm_genome_tsv_files_for_aggregation(wildcards):
     """Get all coverm genome tsv files for aggregation"""
     mag_catalogue = wildcards.mag_catalogue
+    method = wildcards.method
     return [
-        STATS_COVERM / f"{mag_catalogue}/genome/{sample}.{library}.tsv"
+        STATS_COVERM / f"{mag_catalogue}/genome/{method}/{sample}.{library}.tsv"
         for sample, library in SAMPLE_LIB
     ]
 
@@ -37,7 +38,8 @@ def get_coverm_genome_tsv_files_for_aggregation(wildcards):
 def get_coverm_contig_tsv_files_for_aggregation(wildcards):
     """Get all coverm genome tsv files for aggregation"""
     mag_catalogue = wildcards.mag_catalogue
+    method = wildcards.method
     return [
-        STATS_COVERM / f"{mag_catalogue}/contig/{sample}.{library}.tsv"
+        STATS_COVERM / f"{mag_catalogue}/contig/{method}/{sample}.{library}.tsv"
         for sample, library in SAMPLE_LIB
     ]
