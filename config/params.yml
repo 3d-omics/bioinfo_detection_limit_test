@@ -1,7 +1,7 @@
 # Execution parameters
 ---
 fastp:
-  length_required: 25  # nonpareil requires at least 25bp
+  length_required: 75  # nonpareil requires at least 25bp
   extra: "--trim_poly_g --trim_poly_x"
 
 kraken2:
@@ -15,11 +15,11 @@ bowtie2:
 
 coverm:
   genome:
-    methods: "count"
+    methods: ["count", "covered_bases", "length"]  # https://github.com/wwood/CoverM#calculation-methods
     min_covered_fraction: 0.0
     separator: "^"
   contig:
-    methods: "count"
+    methods: ["count", "covered_bases", "length"]  # https://github.com/wwood/CoverM#calculation-methods
 
 singlem:
   threads: 1  # raise it at your own . on the tests one is enough
