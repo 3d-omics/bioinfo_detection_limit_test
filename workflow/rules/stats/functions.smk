@@ -43,3 +43,7 @@ def get_coverm_contig_tsv_files_for_aggregation(wildcards):
         STATS_COVERM / f"{mag_catalogue}/contig/{method}/{sample}.{library}.tsv"
         for sample, library in SAMPLE_LIB
     ]
+
+
+def get_kraken2_database(wildcards):
+    return features["kraken2_dbs"][wildcards.kraken2_db]

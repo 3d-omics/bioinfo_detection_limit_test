@@ -1,4 +1,4 @@
-rule kraken2_assign_one:
+rule stats_kraken2_assign_one:
     """Run kraken2 over one library and using one database."""
     input:
         forward_=FASTP / "{sample}.{library}_1.fq.gz",
@@ -10,7 +10,7 @@ rule kraken2_assign_one:
     log:
         log=KRAKEN2 / "{kraken2_db}/{sample}.{library}.log",
     conda:
-        "../envs/kraken2.yml"
+        "stats.yml"
     threads: 24
     resources:
         mem_mb=params["kraken2"]["mem_mb"],
@@ -43,7 +43,7 @@ rule kraken2_assign_one:
         """
 
 
-rule kraken2_assign_all:
+rule stats_kraken2_assign_all:
     input:
         [
             KRAKEN2 / f"{kraken2_db}/{sample}.{library}.report"
@@ -52,12 +52,12 @@ rule kraken2_assign_all:
         ],
 
 
-rule kraken2_report_all:
+rule stats_kraken2_report_all:
     input:
-        rules.kraken2_assign_all.input,
+        rules.stats_kraken2_assign_all.input,
 
 
-rule kraken2:
+rule stats_kraken2:
     input:
-        rules.kraken2_assign_all.input,
-        rules.kraken2_report_all.input,
+        rules.stats_kraken2_assign_all.input,
+        rules.stats_kraken2_report_all.input,
