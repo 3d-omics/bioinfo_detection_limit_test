@@ -11,7 +11,7 @@ rule bowtie2_hosts_build:
     log:
         BOWTIE2_HOSTS / "{genome}_index.log",
     conda:
-        "../envs/bowtie2.yml"
+        "pre.yml"
     params:
         extra=params["bowtie2"]["extra"],
     threads: 8
@@ -52,14 +52,14 @@ rule bowtie2_hosts_map_one:
         rg_extra=compose_rg_extra,
     threads: 24
     conda:
-        "../envs/bowtie2.yml"
+        "pre.yml"
     resources:
         mem_mb=32 * 1024,
         runtime=24 * 60,
     shell:
         """
         if [[ {params.is_paired} = "True" ]] ; then
-            (bowtie2 \
+            ( bowtie2 \
                 -x {input.mock} \
                 -1 {input.forward_} \
                 -2 {input.reverse_} \
@@ -78,7 +78,7 @@ rule bowtie2_hosts_map_one:
                 --write-index \
             ) 2> {log} 1>&2
         else
-            (bowtie2 \
+            ( bowtie2 \
                 -x {input.mock} \
                 -U {input.forward_} \
                 --threads {threads} \
@@ -113,7 +113,7 @@ rule bowtie2_hosts_extract_one:
     log:
         BOWTIE2_HOSTS / "non{genome}/{sample}.{library}.log",
     conda:
-        "../envs/bowtie2.yml"
+        "pre.yml"
     threads: 24
     resources:
         runtime=1 * 60,
@@ -123,13 +123,20 @@ rule bowtie2_hosts_extract_one:
     shell:
         """
         if [[ {params.is_paired} = "True" ]] ; then
-            (samtools view \
+            ( samtools view \
                 --reference {input.reference} \
                 --threads {threads} \
                 -u \
                 -o /dev/stdout \
                 -f 12 \
                 {input.cram} \
+            | samtools collate \
+                -O \
+                -u \
+                -f \
+                --reference {input.reference} \
+                -@ {threads} \
+                - \
             | samtools fastq \
                 -1 {output.forward_} \
                 -2 {output.reverse_} \
@@ -138,13 +145,20 @@ rule bowtie2_hosts_extract_one:
                 --threads {threads} \
             ) 2> {log} 1>&2
         else
-            (samtools view \
+            ( samtools view \
                 --reference {input.reference} \
                 --threads {threads} \
                 -u \
                 -o /dev/stdout \
                 -f 4 \
                 {input.cram} \
+            | samtools collate \
+                -O \
+                -u \
+                -f \
+                --reference {input.reference} \
+                -@ {threads} \
+                - \
             | samtools fastq \
                 -0 {output.forward_} \
                 -c 9 \

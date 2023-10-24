@@ -11,7 +11,7 @@ rule bowtie2_mags_build:
     log:
         BOWTIE2_MAGS / "{mag_catalogue}_index.log",
     conda:
-        "../envs/bowtie2.yml"
+        "pre.yml"
     params:
         extra=params["bowtie2"]["extra"],
     threads: 8
@@ -45,7 +45,7 @@ rule bowtie2_mags_map_one_library_to_one_catalogue:
     log:
         BOWTIE2_MAGS / "{mag_catalogue}/{sample}.{library}.log",
     conda:
-        "../envs/bowtie2.yml"
+        "pre.yml"
     threads: 4
     resources:
         mem_mb=32 * 1024,

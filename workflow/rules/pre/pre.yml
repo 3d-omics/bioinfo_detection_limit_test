@@ -6,4 +6,6 @@ channels:
   - defaults
 dependencies:
   - bowtie2=2.5.1
-  - samtools=1.17
+  - samtools=1.18
+  - fastp=0.23.2
+  - pigz=2.6
