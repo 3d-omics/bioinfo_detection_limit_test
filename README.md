@@ -30,8 +30,32 @@ snakemake \
 
 3. Edit the following files:
    1. `config/samples.tsv`: the control file with the sequencing libraries and their location.
+      ```
+      sample	library	library_type	forward	reverse	forward_adapter	reverse_adapter
+      sample1	lib1	PE	resources/reads/sample1_1.fq.gz	resources/reads/sample1_2.fq.gz	AGATCGGAAGAGCACACGTCTGAACTCCAGTCA	AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT
+      #sample2	lib1	PE	resources/reads/sample2_1.fq.gz	resources/reads/sample2_2.fq.gz	AGATCGGAAGAGCACACGTCTGAACTCCAGTCA	AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT
+      sample2	lib1	SE	resources/reads/sample2_1.fq.gz		AGATCGGAAGAGCACACGTCTGAACTCCAGTCA
+
+      ```
    2. `config/features.tsv`: the references against which to map the libraries: human, chicken / pig, MAG catalogue.
+      ```
+      reference:  # Multiple references. Will be mapped in this order. Leave empty for no host.
+         human: resources/reference/human_22_sub.fa.gz
+         chicken: resources/reference/chicken_39_sub.fa.gz
+
+      mag_catalogues:  # Multiple MAG catalogues
+         mag1: resources/reference/mags_sub.fa.gz
+         mag2: resources/reference/mags_sub.fa.gz
+
+      kraken2_dbs:  # Multiple dbs can be used, one per line. Leave this line alone if no analysis
+         mock_db1: resources/kraken2_mock
+         mock_db2: resources/kraken2_mock
+
+      singlem_database: "resources/singlem_mock"  # Point to downloaded db
+      ```
+
    3. `config/params.tsv`: parameters for every program. The defaults are reasonable.
+
 
 4. Run the pipeline and go for a walk:
 
@@ -40,6 +64,10 @@ snakemake \
 ./run_slurm  # in a cluster environment with slurm
 ```
 
+## Rulegraph
+
+![rulegraph](rulegraph_simple.svg)
+
 ## Brief description
 
 1. Trim reads and remove adaptors with `fastp`
@@ -47,15 +75,10 @@ snakemake \
    1. Map to the reference with `bowtie2`
    2. Extract the reads that have one of both ends unmapped with `samtools`
    3. Map those unmapped reads to the next reference
-3. Generate MAG statistics with
-   1. `coverm`
-   2. `singlem`
-   3. `nonpareil`
-4. Generate lots of reports in the `reports/` folder
-
-## Rulegraph
-
-![rulegraph](rulegraph.svg)
+3. Generate MAG-based statistics with  `coverm`
+4. Generate MAG-independent statistics with `singlem` and `nonpareil`
+5. Assign taxonomically reads with `kraken2`
+6. Generate lots of reports in the `reports/` folder
 
 
 ## Possible problems
@@ -87,3 +110,4 @@ snakemake \
 - [nonpareil](http://enve-omics.ce.gatech.edu/nonpareil/)
 - [fastqc](https://github.com/s-andrews/FastQC)
 - [multiqc](https://multiqc.info/)
+- [kraken2](https://github.com/DerrickWood/kraken2)
