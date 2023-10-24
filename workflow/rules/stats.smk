@@ -182,7 +182,7 @@ rule stats_cram_to_mapped_bam:
     log:
         STATS_COVERM / "{mag_catalogue}/bams/{sample}.{library}.log",
     conda:
-        "../envs/samtools.yml"
+        "../envs/stats.yml"
     threads: 24
     resources:
         runtime=1 * 60,
