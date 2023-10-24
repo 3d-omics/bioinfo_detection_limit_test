@@ -34,9 +34,7 @@ include: "rules/reference/reference.smk"
 include: "rules/reads/reads.smk"
 include: "rules/pre/pre.smk"
 include: "rules/stats/stats.smk"
-include: "rules/report_functions.smk"
-include: "rules/report_step.smk"
-include: "rules/report_library.smk"
+include: "rules/report/report.smk"
 
 
 rule all:
@@ -45,5 +43,4 @@ rule all:
         # rules.fastp.input,
         # rules.bowtie2.input,
         rules.stats.input,
-        rules.report_step.input,
-        rules.report_library.input,
+        rules.report.input,

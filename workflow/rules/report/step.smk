@@ -7,7 +7,7 @@ rule report_step_reads:
     log:
         REPORT_STEP / "reads.log",
     conda:
-        "../envs/report.yml"
+        "report.yml"
     params:
         dir=REPORT_STEP,
     shell:
@@ -31,7 +31,7 @@ rule report_step_fastp:
     log:
         REPORT_STEP / "fastp.log",
     conda:
-        "../envs/report.yml"
+        "report.yml"
     params:
         dir=REPORT_STEP,
     shell:
@@ -54,7 +54,7 @@ rule report_step_kraken2_one:
     log:
         REPORT_STEP / "kraken2_{kraken2_db}.log",
     conda:
-        "../envs/report.yml"
+        "report.yml"
     params:
         dir=REPORT_STEP,
         title="kraken2_{kraken2_db}",
@@ -90,7 +90,7 @@ rule report_step_bowtie2_host_one:
     log:
         REPORT_STEP / "bowtie2_host_{genome}.log",
     conda:
-        "../envs/report.yml"
+        "report.yml"
     params:
         dir=REPORT_STEP,
         title="bowtie2_host_{genome}",
@@ -128,7 +128,7 @@ rule report_step_bowtie2_mags_one:
     log:
         REPORT_STEP / "bowtie2_mags_{mag_catalogue}.log",
     conda:
-        "../envs/report.yml"
+        "report.yml"
     params:
         dir=REPORT_STEP,
         title="bowtie2_mags_{mag_catalogue}",
