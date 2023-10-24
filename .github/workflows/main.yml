@@ -8,6 +8,9 @@ on:  # yamllint disable-line rule:truthy
   pull_request:
     branches: [main, devel]
 
+env:
+  CACHE_NUMBER: 0  # Increment this number to invalidate the cache
+
 jobs:
 
   Pre-Commit:
@@ -26,28 +29,24 @@ jobs:
     needs:
       - Pre-Commit
     steps:
-      - uses: actions/checkout@v3
+
+      - name: Checkout
+        uses: actions/checkout@v3
         with:
           lfs: 'true'
 
-      - name: Cache
+      - name: Set up caches
         uses: actions/cache@v3
         with:
-          path: .snakemake/conda
-          key: snakemake-conda
+          path: |
+            .snakemake/conda
+            ~/.cache/pre-commit/
+          key: snakemake-conda-${{ env.CACHE_NUMBER }}
 
-      - name: Download environments
-        uses: snakemake/snakemake-github-action@v1.24.0
-        with:
-          directory: .
-          snakefile: workflow/Snakefile
-          args: >
-            --use-conda
-            --conda-create-envs-only
-            --conda-frontend mamba
-            --cores 1
+      - name: Clean conda cache
+        run: conda clean --all --yes
 
-      - name: Test workflow
+      - name: Test workflow - Preprocessing
         uses: snakemake/snakemake-github-action@v1.24.0
         with:
           directory: .
@@ -57,4 +56,31 @@ jobs:
             --show-failed-logs
             --cores 3
             --conda-cleanup-pkgs cache
-            --all-temp
+            --latency-wait 5
+            pre
+
+      - name: Test workflow - Stats
+        uses: snakemake/snakemake-github-action@v1.24.0
+        with:
+          directory: .
+          snakefile: workflow/Snakefile
+          args: >
+            --use-conda
+            --show-failed-logs
+            --cores 3
+            --conda-cleanup-pkgs cache
+            --latency-wait 5
+            stats
+
+      - name: Test workflow - Report
+        uses: snakemake/snakemake-github-action@v1.24.0
+        with:
+          directory: .
+          snakefile: workflow/Snakefile
+          args: >
+            --use-conda
+            --show-failed-logs
+            --cores 3
+            --conda-cleanup-pkgs cache
+            --latency-wait 5
+            report
