@@ -10,7 +10,7 @@ parser$add_argument(
   "-i", "--input-folder",
   type = "character",
   dest = "input_folder",
-  help="Folder containing the *.npo files"
+  help = "Folder containing the *.npo files"
 )
 
 parser$add_argument(
@@ -34,10 +34,14 @@ nonempty_files <-
   filter(size > 0) %>%
   pull(file)
 
-nonempty_files %>%
-  Nonpareil.set(plot = F) %>%
-  summary() %>%
-  as.data.frame() %>%
-  rownames_to_column("sample_id") %>%
-  as_tibble() %>%
-  write_tsv(output_file)
+if (length(nonempty_files) > 0) {
+  nonempty_files %>%
+    Nonpareil.set(plot = FALSE) %>%
+    summary() %>%
+    as.data.frame() %>%
+    rownames_to_column("sample_id") %>%
+    as_tibble() %>%
+    write_tsv(output_file)
+} else {
+  write_tsv(data.frame(), output_file)
+}
