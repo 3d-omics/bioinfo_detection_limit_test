@@ -60,8 +60,9 @@ snakemake \
 
 ## Possible problems
 
-- `singlem` and/or `nonpareil` didnot finish some output because of low coverage.
-  Paste this:
+- `singlem` and/or `nonpareil` didnot finish some output because of low coverage: comment with a `#` the `samples.tsv` file.
+
+- Or paste this:
 
    ```
    Rscript workflow/scripts/aggregate_nonpareil.R \
@@ -73,7 +74,7 @@ snakemake \
       --output-file results/stats/singlem.tsv
    ```
 
-- Or comment with a `#` the `samples.tsv` file.
+
 
 
 ## References
