@@ -55,6 +55,44 @@ def get_fastp_outputs(wildcards):
     return fastp_output_dict
 
 
+def compose_input_string_for_fastp_trim_one(wildcards):
+    forward_fn = READS / f"{wildcards.sample}.{wildcards.library}_1.fq.gz"
+    reverse_fn = READS / f"{wildcards.sample}.{wildcards.library}_2.fq.gz"
+    if is_paired(wildcards):
+        return f"--in1 {forward_fn} --in2 {reverse_fn}"
+    else:
+        return f"--in1 {forward_fn}"
+
+
+def compose_output_string_for_fastp_trim_one(wildcards, threads):
+    bgzip_string = lambda filename, threads: f">(bgzip -l 1 -@ {threads} > {filename})"
+    forward_fn = bgzip_string(
+        FASTP / f"{wildcards.sample}.{wildcards.library}_1.fq.gz", threads
+    )
+    reverse_fn = bgzip_string(
+        FASTP / f"{wildcards.sample}.{wildcards.library}_2.fq.gz", threads
+    )
+    unpaired1_fn = bgzip_string(
+        FASTP / f"{wildcards.sample}.{wildcards.library}_u1.fq.gz", threads
+    )
+    unpaired2_fn = bgzip_string(
+        FASTP / f"{wildcards.sample}.{wildcards.library}_u2.fq.gz", threads
+    )
+    if is_paired(wildcards):
+        return f"--out1 {forward_fn} --out2 {reverse_fn} --unpaired1 {unpaired1_fn} --unpaired2 {unpaired2_fn}"
+    else:
+        return f"--out1 {forward_fn}"
+
+
+def compose_adapter_string_for_fastp_trim_one(wildcards):
+    adapter_forward = get_forward_adapter(wildcards)
+    adapter_reverse = get_reverse_adapter(wildcards)
+    if is_paired(wildcards):
+        return f"--adapter_sequence {adapter_forward} --adapter_sequence_r2 {adapter_reverse}"
+    else:
+        return f"--adapter_sequence {adapter_forward}"
+
+
 # bowtie2 ----
 def compose_rg_id(wildcards):
     """Compose the read group ID for bowtie2"""
@@ -110,41 +148,3 @@ def get_input_reverse_for_mag_mapping(wildcards):
         return FASTP / f"{sample}.{library}_2.fq.gz"
     genome = HOST_NAMES[-1]
     return BOWTIE2_HOSTS / f"non{genome}" / f"{sample}.{library}_2.fq.gz"
-
-
-def compose_input_string_for_fastp_trim_one(wildcards):
-    forward_fn = READS / f"{wildcards.sample}.{wildcards.library}_1.fq.gz"
-    reverse_fn = READS / f"{wildcards.sample}.{wildcards.library}_2.fq.gz"
-    if is_paired(wildcards):
-        return f"--in1 {forward_fn} --in2 {reverse_fn}"
-    else:
-        return f"--in1 {forward_fn}"
-
-
-def compose_output_string_for_fastp_trim_one(wildcards, threads):
-    bgzip_string = lambda filename, threads: f">(bgzip -l 1 -@ {threads} > {filename})"
-    forward_fn = bgzip_string(
-        FASTP / f"{wildcards.sample}.{wildcards.library}_1.fq.gz", threads
-    )
-    reverse_fn = bgzip_string(
-        FASTP / f"{wildcards.sample}.{wildcards.library}_2.fq.gz", threads
-    )
-    unpaired1_fn = bgzip_string(
-        FASTP / f"{wildcards.sample}.{wildcards.library}_u1.fq.gz", threads
-    )
-    unpaired2_fn = bgzip_string(
-        FASTP / f"{wildcards.sample}.{wildcards.library}_u2.fq.gz", threads
-    )
-    if is_paired(wildcards):
-        return f"--out1 {forward_fn} --out2 {reverse_fn} --unpaired1 {unpaired1_fn} --unpaired2 {unpaired2_fn}"
-    else:
-        return f"--out1 {forward_fn}"
-
-
-def compose_adapter_string_for_fastp_trim_one(wildcards):
-    adapter_forward = get_forward_adapter(wildcards)
-    adapter_reverse = get_reverse_adapter(wildcards)
-    if is_paired(wildcards):
-        return f"--adapter_sequence {adapter_forward} --adapter_sequence_r2 {adapter_reverse}"
-    else:
-        return f"--adapter_sequence {adapter_forward}"

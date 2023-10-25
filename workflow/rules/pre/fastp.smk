@@ -12,9 +12,6 @@ rule fastp_trim_one:
     log:
         FASTP / "{sample}.{library}.log",
     params:
-        is_paired=is_paired,
-        adapter_forward=get_forward_adapter,
-        adapter_reverse=get_reverse_adapter,
         extra=params["pre"]["fastp"]["extra"],
         length_required=params["pre"]["fastp"]["length_required"],
         input_string=compose_input_string_for_fastp_trim_one,
