@@ -22,7 +22,7 @@ def get_input_reverse_for_stats(wildcards):
 
 def compose_prefix_for_nonpareil(wildcards):
     """Compose prefix for nonpareil output files"""
-    return STATS_NONPAREIL / f"{wildcards.sample}.{wildcards.library}"
+    return NONPAREIL / f"{wildcards.sample}.{wildcards.library}"
 
 
 def get_coverm_genome_tsv_files_for_aggregation(wildcards):
@@ -30,7 +30,7 @@ def get_coverm_genome_tsv_files_for_aggregation(wildcards):
     mag_catalogue = wildcards.mag_catalogue
     method = wildcards.method
     return [
-        STATS_COVERM / f"{mag_catalogue}/genome/{method}/{sample}.{library}.tsv"
+        COVERM / f"{mag_catalogue}/genome/{method}/{sample}.{library}.tsv"
         for sample, library in SAMPLE_LIB
     ]
 
@@ -40,7 +40,7 @@ def get_coverm_contig_tsv_files_for_aggregation(wildcards):
     mag_catalogue = wildcards.mag_catalogue
     method = wildcards.method
     return [
-        STATS_COVERM / f"{mag_catalogue}/contig/{method}/{sample}.{library}.tsv"
+        COVERM / f"{mag_catalogue}/contig/{method}/{sample}.{library}.tsv"
         for sample, library in SAMPLE_LIB
     ]
 

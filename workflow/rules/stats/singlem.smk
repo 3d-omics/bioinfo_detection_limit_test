@@ -9,11 +9,11 @@ rule stats_singlem_pipe_one:
         reverse_=get_input_reverse_for_stats,
         data=features["singlem_database"],
     output:
-        archive_otu_table=STATS_SINGLEM / "{sample}.{library}.archive.json",
-        otu_table=STATS_SINGLEM / "{sample}.{library}.otu_table.tsv",
-        condense=STATS_SINGLEM / "{sample}.{library}.condense.tsv",
+        archive_otu_table=SINGLEM / "{sample}.{library}.archive.json",
+        otu_table=SINGLEM / "{sample}.{library}.otu_table.tsv",
+        condense=SINGLEM / "{sample}.{library}.condense.tsv",
     log:
-        STATS_SINGLEM / "{sample}.{library}.log",
+        SINGLEM / "{sample}.{library}.log",
     conda:
         "stats.yml"
     threads: 4
@@ -52,7 +52,7 @@ rule stats_singlem_condense:
     """Aggregate all the singlem results into a single table"""
     input:
         archive_otu_tables=[
-            STATS_SINGLEM / f"{sample}.{library}.archive.json"
+            SINGLEM / f"{sample}.{library}.archive.json"
             for sample, library in SAMPLE_LIB
         ],
         data=features["singlem_database"],
@@ -63,7 +63,7 @@ rule stats_singlem_condense:
     conda:
         "stats.yml"
     params:
-        input_dir=STATS_SINGLEM,
+        input_dir=SINGLEM,
     shell:
         """
         singlem condense \
