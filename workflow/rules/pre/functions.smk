@@ -170,3 +170,23 @@ def compose_rmdup_string_for_bowtie2_hosts_map_one(wildcards):
     if is_paired(wildcards):
         return ""
     return "-s"
+
+
+def compose_output_string_for_bowtie2_hosts_extract_one(wildcards):
+    forward_fn = (
+        BOWTIE2_HOSTS
+        / f"non{wildcards.genome}"
+        / f"{wildcards.sample}.{wildcards.library}_1.fq.gz"
+    )
+    reverse_fn = (
+        BOWTIE2_HOSTS
+        / f"non{wildcards.genome}"
+        / f"{wildcards.sample}.{wildcards.library}_2.fq.gz"
+    )
+    if is_paired(wildcards):
+        return f"-1 {forward_fn} -2 {reverse_fn} -0 /dev/null"
+    return f"-0 {forward_fn}"
+
+
+def compose_filter_int_for_bowtie2_hosts_extract_one(wildcards):
+    return 12 if is_paired(wildcards) else 4

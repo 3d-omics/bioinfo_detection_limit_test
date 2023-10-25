@@ -104,53 +104,30 @@ rule bowtie2_hosts_extract_one:
         runtime=1 * 60,
         mem_mb=double_ram(32),
     params:
-        is_paired=is_paired,
+        output_string=compose_output_string_for_bowtie2_hosts_extract_one,
+        filter_int=compose_filter_int_for_bowtie2_hosts_extract_one,
     retries: 5
     shell:
         """
-        if [[ {params.is_paired} = "True" ]] ; then
-            ( samtools view \
-                --reference {input.reference} \
-                --threads {threads} \
-                -u \
-                -o /dev/stdout \
-                -f 12 \
-                {input.cram} \
-            | samtools collate \
-                -O \
-                -u \
-                -f \
-                --reference {input.reference} \
-                -@ {threads} \
-                - \
-            | samtools fastq \
-                -1 {output.forward_} \
-                -2 {output.reverse_} \
-                -0 /dev/null \
-                -c 9 \
-                --threads {threads} \
-            ) 2> {log} 1>&2
-        else
-            ( samtools view \
-                --reference {input.reference} \
-                --threads {threads} \
-                -u \
-                -o /dev/stdout \
-                -f 4 \
-                {input.cram} \
-            | samtools collate \
-                -O \
-                -u \
-                -f \
-                --reference {input.reference} \
-                -@ {threads} \
-                - \
-            | samtools fastq \
-                -0 {output.forward_} \
-                -c 9 \
-                --threads {threads} \
-            ) 2> {log} 1>&2
-        fi
+        ( samtools view \
+            --reference {input.reference} \
+            --threads {threads} \
+            -u \
+            -o /dev/stdout \
+            -f {params.filter_int} \
+            {input.cram} \
+        | samtools collate \
+            -O \
+            -u \
+            -f \
+            --reference {input.reference} \
+            -@ {threads} \
+            - \
+        | samtools fastq \
+            {params.output_string} \
+            -c 9 \
+            --threads {threads} \
+        ) 2> {log} 1>&2
         """
 
 
