@@ -48,15 +48,6 @@ rule stats_singlem_pipe_one:
         """
 
 
-rule stats_singlem_pipe_all:
-    """Run stats_singlem_one for all the samples"""
-    input:
-        [
-            STATS_SINGLEM / f"{sample}.{library}.otu_table.tsv"
-            for sample, library in SAMPLE_LIB
-        ],
-
-
 rule stats_singlem_condense:
     """Aggregate all the singlem results into a single table"""
     input:
