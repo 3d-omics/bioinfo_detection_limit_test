@@ -31,13 +31,13 @@ rule samtools_idxstats_cram:
 rule samtools_stats_cram_host:
     """Compute stats for a cram"""
     input:
-        cram=BOWTIE2_HOSTS / "{genome}/{sample}.{library}.cram",
-        crai=BOWTIE2_HOSTS / "{genome}/{sample}.{library}.cram.crai",
+        cram=BOWTIE2_HOSTS / "{genome}" / "{sample}.{library}.cram",
+        crai=BOWTIE2_HOSTS / "{genome}" / "{sample}.{library}.cram.crai",
         reference=REFERENCE / "{genome}.fa.gz",
     output:
-        tsv=BOWTIE2_HOSTS / "{genome}/{sample}.{library}.stats.tsv",
+        tsv=BOWTIE2_HOSTS / "{genome}" / "{sample}.{library}.stats.tsv",
     log:
-        BOWTIE2_HOSTS / "{genome}/{sample}.{library}.stats.log",
+        BOWTIE2_HOSTS / "{genome}" / "{sample}.{library}.stats.log",
     conda:
         "helpers.yml"
     shell:
@@ -52,13 +52,13 @@ rule samtools_stats_cram_host:
 
 rule samtools_stats_cram_mag_catalogue:
     input:
-        cram=BOWTIE2_MAGS / "{mag_catalogue}/{sample}.{library}.cram",
-        crai=BOWTIE2_MAGS / "{mag_catalogue}/{sample}.{library}.cram.crai",
-        reference=REFERENCE / "mags/{mag_catalogue}.fa.gz",
+        cram=BOWTIE2_MAGS / "{mag_catalogue}" / "{sample}.{library}.cram",
+        crai=BOWTIE2_MAGS / "{mag_catalogue}" / "{sample}.{library}.cram.crai",
+        reference=REFERENCE / "mags" / "{mag_catalogue}.fa.gz",
     output:
-        tsv=BOWTIE2_MAGS / "{mag_catalogue}/{sample}.{library}.stats.tsv",
+        tsv=BOWTIE2_MAGS / "{mag_catalogue}" / "{sample}.{library}.stats.tsv",
     log:
-        BOWTIE2_MAGS / "{mag_catalogue}/{sample}.{library}.stats.log",
+        BOWTIE2_MAGS / "{mag_catalogue}" / "{sample}.{library}.stats.log",
     conda:
         "helpers.yml"
     shell:

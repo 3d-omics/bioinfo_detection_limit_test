@@ -8,12 +8,12 @@ rule stats_cram_to_mapped_bam:
     it works.
     """
     input:
-        cram=BOWTIE2_MAGS / "{mag_catalogue}/{sample}.{library}.cram",
-        reference=REFERENCE / "mags/{mag_catalogue}.fa.gz",
+        cram=BOWTIE2_MAGS / "{mag_catalogue}" / "{sample}.{library}.cram",
+        reference=REFERENCE / "mags" / "{mag_catalogue}.fa.gz",
     output:
-        bam=temp(COVERM / "{mag_catalogue}/bams/{sample}.{library}.bam"),
+        bam=temp(COVERM / "{mag_catalogue}" / "bams" / "{sample}.{library}.bam"),
     log:
-        COVERM / "{mag_catalogue}/bams/{sample}.{library}.log",
+        COVERM / "{mag_catalogue}" / "bams" / "{sample}.{library}.log",
     conda:
         "stats.yml"
     threads: 24
@@ -36,13 +36,19 @@ rule stats_cram_to_mapped_bam:
 rule stats_coverm_genome_one_library_one_mag_catalogue:
     """Run coverm genome for one library and one mag catalogue"""
     input:
-        bam=COVERM / "{mag_catalogue}/bams/{sample}.{library}.bam",
+        bam=COVERM / "{mag_catalogue}" / "bams" / "{sample}.{library}.bam",
     output:
-        tsv=touch(COVERM / "{mag_catalogue}/genome/{method}/{sample}.{library}.tsv"),
+        tsv=touch(
+            COVERM
+            / "{mag_catalogue}"
+            / "genome"
+            / "{method}"
+            / "{sample}.{library}.tsv"
+        ),
     conda:
         "stats.yml"
     log:
-        COVERM / "{mag_catalogue}/genome/{method}/{sample}.{library}.log",
+        COVERM / "{mag_catalogue}" / "genome" / "{method}" / "{sample}.{library}.log",
     params:
         method="{method}",
         min_covered_fraction=params["stats"]["coverm"]["genome"]["min_covered_fraction"],
@@ -95,15 +101,19 @@ rule stats_coverm_genome:
 rule stats_coverm_contig_one_library_one_mag_catalogue:
     """Run coverm contig for one library and one mag catalogue"""
     input:
-        bam=COVERM / "{mag_catalogue}/bams/{sample}.{library}.bam",
+        bam=COVERM / "{mag_catalogue}" / "bams" / "{sample}.{library}.bam",
     output:
-        tsv=COVERM / "{mag_catalogue}/contig/{method}/{sample}.{library}.tsv",
+        tsv=COVERM
+        / "{mag_catalogue}"
+        / "contig"
+        / "{method}"
+        / "{sample}.{library}.tsv",
     conda:
         "stats.yml"
     log:
-        COVERM / "{mag_catalogue}/contig/{method}/{sample}.{library}.log",
+        COVERM / "{mag_catalogue}" / "contig" / "{method}" / "{sample}.{library}.log",
     params:
-        method=lambda wildcards: wildcards.method,
+        method="{method}",
     shell:
         """
         coverm contig \

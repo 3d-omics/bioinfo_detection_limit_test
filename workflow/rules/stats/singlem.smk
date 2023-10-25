@@ -20,31 +20,18 @@ rule stats_singlem_pipe_one:
     resources:
         runtime=4 * 60,
     params:
-        is_paired=is_paired,
+        input_string=get_input_string_for_stats_singlem_pipe_one,
     shell:
         """
-        if [[ {params.is_paired} = "True" ]] ; then
-            singlem pipe \
-                --forward {input.forward_} \
-                --reverse {input.reverse_} \
-                --otu-table {output.otu_table} \
-                --archive-otu-table {output.archive_otu_table} \
-                --taxonomic-profile {output.condense} \
-                --metapackage {input.data} \
-                --threads {threads} \
-                --assignment-threads {threads} \
-            2> {log} 1>&2 || true
-        else
-            singlem pipe \
-                --forward {input.forward_} \
-                --otu-table {output.otu_table} \
-                --archive-otu-table {output.archive_otu_table} \
-                --taxonomic-profile {output.condense} \
-                --metapackage {input.data} \
-                --threads {threads} \
-                --assignment-threads {threads} \
-            2> {log} 1>&2 || true
-        fi
+        singlem pipe \
+            {params.input_string} \
+            --otu-table {output.otu_table} \
+            --archive-otu-table {output.archive_otu_table} \
+            --taxonomic-profile {output.condense} \
+            --metapackage {input.data} \
+            --threads {threads} \
+            --assignment-threads {threads} \
+        2> {log} 1>&2
         """
 
 

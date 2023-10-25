@@ -5,7 +5,8 @@ def get_input_forward_for_stats(wildcards):
         return FASTP / f"{wildcards.sample}.{wildcards.library}_1.fq.gz"
     return (
         BOWTIE2_HOSTS
-        / f"non{last_genome}/{wildcards.sample}.{wildcards.library}_1.fq.gz"
+        / f"non{last_genome}"
+        / f"{wildcards.sample}.{wildcards.library}_1.fq.gz"
     )
 
 
@@ -16,7 +17,8 @@ def get_input_reverse_for_stats(wildcards):
         return FASTP / f"{wildcards.sample}.{wildcards.library}_2.fq.gz"
     return (
         BOWTIE2_HOSTS
-        / f"non{last_genome}/{wildcards.sample}.{wildcards.library}_2.fq.gz"
+        / f"non{last_genome}"
+        / f"{wildcards.sample}.{wildcards.library}_2.fq.gz"
     )
 
 
@@ -30,7 +32,7 @@ def get_coverm_genome_tsv_files_for_aggregation(wildcards):
     mag_catalogue = wildcards.mag_catalogue
     method = wildcards.method
     return [
-        COVERM / f"{mag_catalogue}/genome/{method}/{sample}.{library}.tsv"
+        COVERM / mag_catalogue / "genome" / method / f"{sample}.{library}.tsv"
         for sample, library in SAMPLE_LIB
     ]
 
@@ -40,7 +42,7 @@ def get_coverm_contig_tsv_files_for_aggregation(wildcards):
     mag_catalogue = wildcards.mag_catalogue
     method = wildcards.method
     return [
-        COVERM / f"{mag_catalogue}/contig/{method}/{sample}.{library}.tsv"
+        COVERM / mag_catalogue / "contig" / method / f"{sample}.{library}.tsv"
         for sample, library in SAMPLE_LIB
     ]
 
@@ -51,3 +53,12 @@ def get_kraken2_database(wildcards):
 
 def compose_out_folder_for_pre_kraken2_assign_all(wildcards):
     return KRAKEN2 / f"{wildcards.kraken2_db}"
+
+
+def get_input_string_for_stats_singlem_pipe_one(wildcards):
+    forward_fn = get_input_forward_for_stats(wildcards)
+    reverse_fn = get_input_reverse_for_stats(wildcards)
+    if is_paired(wildcards):
+        return f"--forward {forward_fn} --reverse {reverse_fn}"
+    else:
+        return f"--forward {forward_fn}"

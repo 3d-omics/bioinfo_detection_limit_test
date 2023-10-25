@@ -34,9 +34,9 @@ rule reference_recompress_mag_catalogue_one:
     input:
         fa_gz=lambda wildcards: features["mag_catalogues"][wildcards.catalogue],
     output:
-        fa_gz=REFERENCE / "mags/{catalogue}.fa.gz",
+        fa_gz=REFERENCE / "mags" / "{catalogue}.fa.gz",
     log:
-        REFERENCE / "mags/{catalogue}.log",
+        REFERENCE / "mags" / "{catalogue}.log",
     conda:
         "reference.yml"
     threads: 8
@@ -57,7 +57,7 @@ rule reference_recompress_mag_catalogue_one:
 
 rule reference_recompress_mag_catalogue_all:
     input:
-        [REFERENCE / f"mags/{catalogue}.fa.gz" for catalogue in MAG_CATALOGUES],
+        [REFERENCE / "mags" / f"{catalogue}.fa.gz" for catalogue in MAG_CATALOGUES],
 
 
 rule reference:

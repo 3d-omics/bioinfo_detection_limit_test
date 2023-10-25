@@ -32,7 +32,7 @@ def get_bowtie2_host_for_library_reports(wildcards):
     sample = wildcards.sample
     library = wildcards.library
     return [
-        BOWTIE2_HOSTS / f"{host_name}/{sample}.{library}.{report}"
+        BOWTIE2_HOSTS / host_name / f"{sample}.{library}.{report}"
         for host_name in HOST_NAMES
         for report in BAM_REPORTS
     ]
@@ -43,7 +43,7 @@ def get_bowtie2_mags_for_library_reports(wildcards):
     sample = wildcards.sample
     library = wildcards.library
     return [
-        BOWTIE2_MAGS / f"{mag_catalogue}/{sample}.{library}.{report}"
+        BOWTIE2_MAGS / mag_catalogue / f"{sample}.{library}.{report}"
         for mag_catalogue in MAG_CATALOGUES
         for report in BAM_REPORTS
     ]
@@ -54,7 +54,7 @@ def get_kraken2_for_library_reports(wildcards):
     sample = wildcards.sample
     library = wildcards.library
     return [
-        f"{KRAKEN2}/{kraken2_db}/{sample}.{library}.report"
+        KRAKEN2 / kraken2_db / f"{sample}.{library}.report"
         for kraken2_db in KRAKEN2_DBS
     ]
 
@@ -63,6 +63,6 @@ def get_report_step_kraken2_reports(wildcards):
     """Get all reports for the kraken2 step"""
     kraken2_db = wildcards.kraken2_db
     return [
-        KRAKEN2 / f"{kraken2_db}/{sample}.{library}.report"
+        KRAKEN2 / kraken2_db / f"{sample}.{library}.report"
         for sample, library in SAMPLE_LIB
     ]

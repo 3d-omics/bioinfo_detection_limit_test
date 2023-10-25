@@ -5,7 +5,7 @@ rule bowtie2_mags_build:
     the reference genome.
     """
     input:
-        reference=REFERENCE / "mags/{mag_catalogue}.fa.gz",
+        reference=REFERENCE / "mags" / "{mag_catalogue}.fa.gz",
     output:
         mock=touch(BOWTIE2_MAGS / "{mag_catalogue}_index"),
     log:
@@ -39,12 +39,12 @@ rule bowtie2_mags_map_one_library_to_one_catalogue:
         forward_=get_input_forward_for_mag_mapping,
         reverse_=get_input_reverse_for_mag_mapping,
         mock=BOWTIE2_MAGS / "{mag_catalogue}_index",
-        reference=REFERENCE / "mags/{mag_catalogue}.fa.gz",
+        reference=REFERENCE / "mags" / "{mag_catalogue}.fa.gz",
     output:
-        cram=BOWTIE2_MAGS / "{mag_catalogue}/{sample}.{library}.cram",
-        crai=BOWTIE2_MAGS / "{mag_catalogue}/{sample}.{library}.cram.crai",
+        cram=BOWTIE2_MAGS / "{mag_catalogue}" / "{sample}.{library}.cram",
+        crai=BOWTIE2_MAGS / "{mag_catalogue}" / "{sample}.{library}.cram.crai",
     log:
-        BOWTIE2_MAGS / "{mag_catalogue}/{sample}.{library}.log",
+        BOWTIE2_MAGS / "{mag_catalogue}" / "{sample}.{library}.log",
     conda:
         "pre.yml"
     threads: 4
@@ -53,7 +53,6 @@ rule bowtie2_mags_map_one_library_to_one_catalogue:
         runtime=24 * 60,
     retries: 5
     params:
-        is_paired=is_paired,
         extra=params["pre"]["bowtie2"]["extra"],
         samtools_mem=params["pre"]["bowtie2"]["samtools"]["mem_per_thread"],
         rg_id=compose_rg_id,
@@ -84,7 +83,7 @@ rule bowtie2_mags_map_all_libraries_to_all_mags:
     """Run bowtie2_map_mags_one for all PE libraries"""
     input:
         [
-            BOWTIE2_MAGS / f"{mag_catalogue}/{sample}.{library}.cram"
+            BOWTIE2_MAGS / mag_catalogue / f"{sample}.{library}.cram"
             for sample, library in SAMPLE_LIB
             for mag_catalogue in MAG_CATALOGUES
         ],
@@ -98,7 +97,7 @@ rule bowtie2_mags_report_all:
     """
     input:
         [
-            BOWTIE2_MAGS / f"{mag_catalogue}/{sample}.{library}.{report}"
+            BOWTIE2_MAGS / mag_catalogue / f"{sample}.{library}.{report}"
             for sample, library in SAMPLE_LIB
             for report in BAM_REPORTS
             for mag_catalogue in MAG_CATALOGUES

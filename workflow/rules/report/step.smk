@@ -80,7 +80,7 @@ rule report_step_bowtie2_host_one:
     """Collect all reports for the bowtie2 step and ONE host"""
     input:
         reports=[
-            BOWTIE2_HOSTS / f"{genome}/{sample}.{library}.{report}"
+            BOWTIE2_HOSTS / genome / f"{sample}.{library}.{report}"
             for genome in ["{genome}"]
             for sample, library in SAMPLE_LIB
             for report in BAM_REPORTS
@@ -118,7 +118,7 @@ rule report_step_bowtie2_mags_one:
     """Collect all reports for the bowtie2 when mapping to a mag catalogue"""
     input:
         reports=[
-            BOWTIE2_MAGS / f"{mag_catalogue}/{sample}.{library}.{report}"
+            BOWTIE2_MAGS / mag_catalogue / f"{sample}.{library}.{report}"
             for mag_catalogue in ["{mag_catalogue}"]
             for sample, library in SAMPLE_LIB_PE
             for report in BAM_REPORTS

@@ -41,12 +41,11 @@ rule bowtie2_hosts_map_one:
         mock=BOWTIE2_HOSTS / "{genome}_index",
         reference=REFERENCE / "{genome}.fa.gz",
     output:
-        cram=BOWTIE2_HOSTS / "{genome}/{sample}.{library}.cram",
-        crai=BOWTIE2_HOSTS / "{genome}/{sample}.{library}.cram.crai",
+        cram=BOWTIE2_HOSTS / "{genome}" / "{sample}.{library}.cram",
+        crai=BOWTIE2_HOSTS / "{genome}" / "{sample}.{library}.cram.crai",
     log:
-        BOWTIE2_HOSTS / "{genome}/{sample}.{library}_pe.log",
+        BOWTIE2_HOSTS / "{genome}" / "{sample}.{library}_pe.log",
     params:
-        is_paired=is_paired,
         extra=params["pre"]["bowtie2"]["extra"],
         samtools_mem=params["pre"]["bowtie2"]["samtools"]["mem_per_thread"],
         rg_id=compose_rg_id,
@@ -90,13 +89,13 @@ rule bowtie2_hosts_extract_one:
     than by coordinate, and convert to FASTQ.
     """
     input:
-        cram=BOWTIE2_HOSTS / "{genome}/{sample}.{library}.cram",
+        cram=BOWTIE2_HOSTS / "{genome}" / "{sample}.{library}.cram",
         reference=REFERENCE / "{genome}.fa.gz",
     output:
-        forward_=BOWTIE2_HOSTS / "non{genome}/{sample}.{library}_1.fq.gz",
-        reverse_=touch(BOWTIE2_HOSTS / "non{genome}/{sample}.{library}_2.fq.gz"),
+        forward_=BOWTIE2_HOSTS / "non{genome}" / "{sample}.{library}_1.fq.gz",
+        reverse_=touch(BOWTIE2_HOSTS / "non{genome}" / "{sample}.{library}_2.fq.gz"),
     log:
-        BOWTIE2_HOSTS / "non{genome}/{sample}.{library}.log",
+        BOWTIE2_HOSTS / "non{genome}" / "{sample}.{library}.log",
     conda:
         "pre.yml"
     threads: 24
@@ -135,13 +134,13 @@ rule bowtie2_hosts_extract:
     """Run bowtie2_extract_nonchicken_one for all PE libraries"""
     input:
         [
-            BOWTIE2_HOSTS / f"non{genome}/{sample}.{library}_{end}.fq.gz"
+            BOWTIE2_HOSTS / f"non{genome}" / f"{sample}.{library}_{end}.fq.gz"
             for genome in [LAST_HOST]
             for sample, library in SAMPLE_LIB_PE
             for end in ["1", "2"]
         ],
         [
-            BOWTIE2_HOSTS / f"non{genome}/{sample}.{library}_{end}.fq.gz"
+            BOWTIE2_HOSTS / f"non{genome}" / f"{sample}.{library}_{end}.fq.gz"
             for genome in [LAST_HOST]
             for sample, library in SAMPLE_LIB_SE
             for end in ["1"]
@@ -156,7 +155,7 @@ rule bowtie2_hosts_report:
     """
     input:
         [
-            BOWTIE2_HOSTS / f"{genome}/{sample}.{library}.{report}"
+            BOWTIE2_HOSTS / genome / f"{sample}.{library}.{report}"
             for genome in HOST_NAMES
             for sample, library in SAMPLE_LIB
             for report in BAM_REPORTS
