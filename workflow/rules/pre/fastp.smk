@@ -17,6 +17,9 @@ rule fastp_trim_one:
         adapter_reverse=get_reverse_adapter,
         extra=params["pre"]["fastp"]["extra"],
         length_required=params["pre"]["fastp"]["length_required"],
+        input_string=compose_input_string_for_fastp_trim_one,
+        output_string=compose_output_string_for_fastp_trim_one,
+        adapter_string=compose_adapter_string_for_fastp_trim_one,
     threads: 16
     resources:
         mem_mb=4 * 1024,
@@ -25,38 +28,18 @@ rule fastp_trim_one:
         "pre.yml"
     shell:
         """
-        if [[ {params.is_paired} = True ]] ; then
-            fastp \
-                --in1 {input.forward_} \
-                --in2 {input.reverse_} \
-                --out1 >(bgzip -l 1 -@ {threads} > {output.forward_}) \
-                --out2 >(bgzip -l 1 -@ {threads} > {output.reverse_}) \
-                --unpaired1 >(bgzip -l 1 -@ {threads} > {output.unpaired1}) \
-                --unpaired2 >(bgzip -l 1 -@ {threads} > {output.unpaired2}) \
-                --html {output.html} \
-                --json {output.json} \
-                --compression 1 \
-                --verbose \
-                --adapter_sequence {params.adapter_forward} \
-                --adapter_sequence_r2 {params.adapter_reverse} \
-                --length_required {params.length_required} \
-                --thread {threads} \
-                {params.extra} \
-            2> {log} 1>&2
-        else
-            fastp \
-                --in1 {input.forward_} \
-                --out1 >(bgzip -l 1 -@ {threads} > {output.forward_}) \
-                --html {output.html} \
-                --json {output.json} \
-                --compression 1 \
-                --verbose \
-                --adapter_sequence {params.adapter_forward} \
-                --length_required {params.length_required} \
-                --thread {threads} \
-                {params.extra} \
-            2> {log} 1>&2
-        fi
+        fastp \
+            {params.input_string} \
+            {params.output_string} \
+            {params.adapter_string} \
+            --html {output.html} \
+            --json {output.json} \
+            --compression 1 \
+            --verbose \
+            --length_required {params.length_required} \
+            --thread {threads} \
+            {params.extra} \
+        2> {log} 1>&2
         """
 
 
