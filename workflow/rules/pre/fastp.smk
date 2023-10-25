@@ -15,8 +15,8 @@ rule fastp_trim_one:
         is_paired=is_paired,
         adapter_forward=get_forward_adapter,
         adapter_reverse=get_reverse_adapter,
-        extra=params["fastp"]["extra"],
-        length_required=params["fastp"]["length_required"],
+        extra=params["pre"]["fastp"]["extra"],
+        length_required=params["pre"]["fastp"]["length_required"],
     threads: 16
     resources:
         mem_mb=4 * 1024,

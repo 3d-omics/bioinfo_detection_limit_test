@@ -47,8 +47,8 @@ rule stats_coverm_genome_one_library_one_mag_catalogue:
         STATS_COVERM / "{mag_catalogue}/genome/{method}/{sample}.{library}.log",
     params:
         method="{method}",
-        min_covered_fraction=params["coverm"]["genome"]["min_covered_fraction"],
-        separator=params["coverm"]["genome"]["separator"],
+        min_covered_fraction=params["stats"]["coverm"]["genome"]["min_covered_fraction"],
+        separator=params["stats"]["coverm"]["genome"]["separator"],
     shell:
         """
         coverm genome \
@@ -90,7 +90,7 @@ rule stats_coverm_genome:
         [
             STATS / f"coverm_genome_{mag_catalogue}.{method}.tsv"
             for mag_catalogue in MAG_CATALOGUES
-            for method in params["coverm"]["genome"]["methods"]
+            for method in params["stats"]["coverm"]["genome"]["methods"]
         ],
 
 
@@ -146,7 +146,7 @@ rule stats_coverm_contig:
         [
             STATS / f"coverm_contig_{mag_catalogue}.{method}.tsv"
             for mag_catalogue in MAG_CATALOGUES
-            for method in params["coverm"]["contig"]["methods"]
+            for method in params["stats"]["coverm"]["contig"]["methods"]
         ],
 
 

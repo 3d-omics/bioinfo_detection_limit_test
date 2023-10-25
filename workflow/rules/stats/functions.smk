@@ -47,3 +47,7 @@ def get_coverm_contig_tsv_files_for_aggregation(wildcards):
 
 def get_kraken2_database(wildcards):
     return features["kraken2_dbs"][wildcards.kraken2_db]
+
+
+def compose_out_folder_for_pre_kraken2_assign_all(wildcards):
+    return KRAKEN2 / f"{wildcards.kraken2_db}"
