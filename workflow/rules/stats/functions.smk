@@ -48,14 +48,17 @@ def get_coverm_contig_tsv_files_for_aggregation(wildcards):
 
 
 def get_kraken2_database(wildcards):
+    """Get the kraken2 database"""
     return features["kraken2_dbs"][wildcards.kraken2_db]
 
 
 def compose_out_folder_for_pre_kraken2_assign_all(wildcards):
+    """Compose the output folder for pre kraken2 assign all"""
     return KRAKEN2 / f"{wildcards.kraken2_db}"
 
 
 def get_input_string_for_stats_singlem_pipe_one(wildcards):
+    """Get the input string for stats singlem pipe one"""
     forward_fn = get_input_forward_for_stats(wildcards)
     reverse_fn = get_input_reverse_for_stats(wildcards)
     if is_paired(wildcards):

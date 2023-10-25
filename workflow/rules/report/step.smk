@@ -47,6 +47,7 @@ rule report_step_fastp:
 
 
 rule report_step_kraken2_one:
+    """Collect all reports for the kraken2 step and ONE database"""
     input:
         get_report_step_kraken2_reports,
     output:
@@ -72,6 +73,7 @@ rule report_step_kraken2_one:
 
 
 rule report_step_kraken2_all:
+    """Collect all reports for the kraken2 step and ALL databases"""
     input:
         [REPORT_STEP / f"kraken2_{kraken2_db}.html" for kraken2_db in KRAKEN2_DBS],
 
@@ -115,7 +117,7 @@ rule report_step_bowtie2_host_all:
 
 
 rule report_step_bowtie2_mags_one:
-    """Collect all reports for the bowtie2 when mapping to a mag catalogue"""
+    """Collect all reports for the bowtie2 step when mapping to a mag catalogue"""
     input:
         reports=[
             BOWTIE2_MAGS / mag_catalogue / f"{sample}.{library}.{report}"
@@ -147,6 +149,7 @@ rule report_step_bowtie2_mags_one:
 
 
 rule report_step_bowtie2_mags_all:
+    """Collect all reports for the bowtie2 step and ALL mag catalogues"""
     input:
         [
             REPORT_STEP / f"bowtie2_mags_{mag_catalogue}.html"

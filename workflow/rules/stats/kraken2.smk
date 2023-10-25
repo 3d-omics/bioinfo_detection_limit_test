@@ -68,6 +68,7 @@ rule pre_kraken2_assign_all:
 
 
 rule stats_kraken2_assign_all:
+    """Run kraken2 over all samples at once using the /dev/shm/ trick."""
     input:
         [
             KRAKEN2 / kraken2_db / f"{sample}.{library}.report"
@@ -77,11 +78,13 @@ rule stats_kraken2_assign_all:
 
 
 rule stats_kraken2_report_all:
+    """Get all kraken2 .report files"""
     input:
         rules.stats_kraken2_assign_all.input,
 
 
 rule stats_kraken2:
+    """Get all kraken2 files"""
     input:
         rules.stats_kraken2_assign_all.input,
         rules.stats_kraken2_report_all.input,

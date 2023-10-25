@@ -1,4 +1,4 @@
-rule reference_recompress_host:
+rule reference_recompress_host_one:
     """Extract the fasta.gz on config.yaml into genome.fa,gz with bgzip"""
     input:
         fa_gz=lambda wildcards: features["reference"][wildcards.genome],
@@ -11,7 +11,7 @@ rule reference_recompress_host:
     threads: 8
     shell:
         """
-        (gzip \
+        ( gzip \
             --decompres \
             --stdout {input.fa_gz} \
         | bgzip \
@@ -24,7 +24,8 @@ rule reference_recompress_host:
         """
 
 
-rule reference_recompress_host_one:
+rule reference_recompress_host_all:
+    """Recompress all host genomes"""
     input:
         [REFERENCE / f"{genome}.fa.gz" for genome in HOST_NAMES],
 
@@ -42,7 +43,7 @@ rule reference_recompress_mag_catalogue_one:
     threads: 8
     shell:
         """
-        (gzip \
+        ( gzip \
             --decompres \
             --stdout {input.fa_gz} \
         | bgzip \
@@ -56,6 +57,7 @@ rule reference_recompress_mag_catalogue_one:
 
 
 rule reference_recompress_mag_catalogue_all:
+    """Recompress all MAG catalogues"""
     input:
         [REFERENCE / "mags" / f"{catalogue}.fa.gz" for catalogue in MAG_CATALOGUES],
 

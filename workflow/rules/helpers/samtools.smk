@@ -29,7 +29,7 @@ rule samtools_idxstats_cram:
 
 
 rule samtools_stats_cram_host:
-    """Compute stats for a cram"""
+    """Compute stats for a host cram"""
     input:
         cram=BOWTIE2_HOSTS / "{genome}" / "{sample}.{library}.cram",
         crai=BOWTIE2_HOSTS / "{genome}" / "{sample}.{library}.cram.crai",
@@ -51,6 +51,7 @@ rule samtools_stats_cram_host:
 
 
 rule samtools_stats_cram_mag_catalogue:
+    """Compute stats for a MAG cram"""
     input:
         cram=BOWTIE2_MAGS / "{mag_catalogue}" / "{sample}.{library}.cram",
         crai=BOWTIE2_MAGS / "{mag_catalogue}" / "{sample}.{library}.cram.crai",
