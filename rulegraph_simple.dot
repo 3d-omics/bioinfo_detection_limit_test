@@ -17,7 +17,6 @@ digraph snakemake_dag {
 
 	subgraph cluster_1 {
 		label = "Preprocessing";
-		rankdir = TB;
 		shape=box; style=rounded; fontname=sans; fontsize=10; penwidth=2; margin=10;
     	fastp        [label = "fastp", color = "0.64 0.6 0.85", style="rounded"];
     	bowtie2_host [label = "bowtie2\nHosts", color = "0.43 0.6 0.85", style="rounded"];
@@ -35,8 +34,8 @@ digraph snakemake_dag {
 
 	}
 
-	{ rank=same; bowtie2_host; kraken2; nonpareil; singlem}
-	{ rank=same; bowtie2_mags; coverm}
+	{rank=same; bowtie2_host; kraken2; nonpareil; singlem}
+	{rank=same; bowtie2_mags; coverm}
 
 
     reads -> fastp
