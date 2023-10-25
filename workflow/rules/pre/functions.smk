@@ -148,3 +148,11 @@ def get_input_reverse_for_mag_mapping(wildcards):
         return FASTP / f"{sample}.{library}_2.fq.gz"
     genome = HOST_NAMES[-1]
     return BOWTIE2_HOSTS / f"non{genome}" / f"{sample}.{library}_2.fq.gz"
+
+
+def compose_input_string_for_bowtie2_mags_map_one_library_to_one_catalogue(wildcards):
+    forward_fn = get_input_forward_for_mag_mapping(wildcards)
+    reverse_fn = get_input_reverse_for_mag_mapping(wildcards)
+    if is_paired(wildcards):
+        return f"-1 {forward_fn} -2 {reverse_fn}"
+    return f"-U {forward_fn}"

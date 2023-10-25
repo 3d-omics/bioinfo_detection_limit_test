@@ -56,44 +56,25 @@ rule bowtie2_mags_map_one_library_to_one_catalogue:
         samtools_mem=params["pre"]["bowtie2"]["samtools"]["mem_per_thread"],
         rg_id=compose_rg_id,
         rg_extra=compose_rg_extra,
+        input_string=compose_input_string_for_bowtie2_mags_map_one_library_to_one_catalogue,
     shell:
         """
-        if [[ {params.is_paired} == "True" ]] ; then
-            (bowtie2 \
-                -x {input.mock} \
-                -1 {input.forward_} \
-                -2 {input.reverse_} \
-                --threads {threads} \
-                --rg-id '{params.rg_id}' \
-                --rg '{params.rg_extra}' \
-                {params.extra} \
-            | samtools sort \
-                -l 9 \
-                -M \
-                -m {params.samtools_mem} \
-                -o {output.cram} \
-                --reference {input.reference} \
-                --threads {threads} \
-                --write-index \
-            ) 2> {log} 1>&2
-        else
-            (bowtie2 \
-                -x {input.mock} \
-                -U {input.forward_} \
-                --threads {threads} \
-                --rg-id '{params.rg_id}' \
-                --rg '{params.rg_extra}' \
-                {params.extra} \
-            | samtools sort \
-                -l 9 \
-                -M \
-                -m {params.samtools_mem} \
-                -o {output.cram} \
-                --reference {input.reference} \
-                --threads {threads} \
-                --write-index \
-            ) 2> {log} 1>&2
-        fi
+        ( bowtie2 \
+            -x {input.mock} \
+            {params.input_string} \
+            --threads {threads} \
+            --rg-id '{params.rg_id}' \
+            --rg '{params.rg_extra}' \
+            {params.extra} \
+        | samtools sort \
+            -l 9 \
+            -M \
+            -m {params.samtools_mem} \
+            -o {output.cram} \
+            --reference {input.reference} \
+            --threads {threads} \
+            --write-index \
+        ) 2> {log} 1>&2
         """
 
 
