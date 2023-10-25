@@ -55,7 +55,7 @@ rule stats_nonpareil:
     log:
         STATS / "nonpareil.log",
     conda:
-        "stats_r.yml"
+        "stats.yml"
     params:
         input_dir=STATS_NONPAREIL,
     shell:

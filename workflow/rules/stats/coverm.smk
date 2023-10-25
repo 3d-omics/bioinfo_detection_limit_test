@@ -69,7 +69,7 @@ rule stats_coverm_genome_aggregate_one_mag_catalogue:
     log:
         STATS / "coverm_genome_{mag_catalogue}.{method}.log",
     conda:
-        "stats_r.yml"
+        "stats.yml"
     params:
         input_dir=lambda wildcards: STATS_COVERM
         / wildcards.mag_catalogue
@@ -125,7 +125,7 @@ rule stats_coverm_contig_aggregate_mag_catalogue:
     log:
         STATS / "coverm_contig_{mag_catalogue}.{method}.log",
     conda:
-        "stats_r.yml"
+        "stats.yml"
     params:
         input_dir=lambda wildcards: STATS_COVERM
         / wildcards.mag_catalogue

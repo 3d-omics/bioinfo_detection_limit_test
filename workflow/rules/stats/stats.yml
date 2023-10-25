@@ -12,3 +12,6 @@ dependencies:
   - kraken2=2.1.3
   - pigz=2.6
   - singlem=0.15.0
+  - r-nonpareil=3.4.0
+  - r-argparse=2.2.2
+  - r-tidyverse=2.0.0
