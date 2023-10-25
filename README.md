@@ -36,7 +36,6 @@ snakemake \
       sample1	lib1	PE	resources/reads/sample1_1.fq.gz	resources/reads/sample1_2.fq.gz
       #sample2	lib1	PE	resources/reads/sample2_1.fq.gz	resources/reads/sample2_2.fq.gz
       sample2	lib1	SE	resources/reads/sample2_1.fq.gz		AGATCGGAAGAGCACACGTCTGAACTCCAGTCA
-
       ```
    2. `config/features.tsv`: the references against which to map the libraries: human, chicken / pig, MAG catalogue.
       ```
