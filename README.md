@@ -30,7 +30,8 @@ snakemake \
 
 3. Edit the following files:
    1. `config/samples.tsv`: the control file with the sequencing libraries and their location.
-      If the `forward_adapter` and `reverse_adapter` fields are empty, they are assumed to be the current ones: `AGATCGGAAGAGCACACGTCTGAACTCCAGTCA` and `AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT`, respectively.
+      If the `forward_adapter` and `reverse_adapter` fields are empty, they are assumed to be the current Paired-End ones: `AGATCGGAAGAGCACACGTCTGAACTCCAGTCA` and `AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT`, respectively.
+      If your sample is Single-End, specify it in the `library_type` column. Whatever is in the `reverse` will be ignored.
       ```
       sample	library	library_type	forward	reverse	forward_adapter	reverse_adapter
       sample1	lib1	PE	resources/reads/sample1_1.fq.gz	resources/reads/sample1_2.fq.gz
@@ -47,11 +48,11 @@ snakemake \
          mag1: resources/reference/mags_sub.fa.gz
          mag2: resources/reference/mags_sub.fa.gz
 
-      kraken2_dbs:  # Multiple dbs can be used, one per line. Leave this line alone if no analysis
+      kraken2_dbs:  # Multiple dbs can be used, one per line. Leave this line alone if no analysis is needed.
          mock_db1: resources/kraken2_mock
          mock_db2: resources/kraken2_mock
 
-      singlem_database: "resources/singlem_mock"  # Point to downloaded db
+      singlem_database: "resources/singlem_mock"  # Point to downloaded db from `singlem download`
       ```
 
    3. `config/params.tsv`: parameters for every program. The defaults are reasonable.
