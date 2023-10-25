@@ -1,4 +1,5 @@
 digraph snakemake_dag {
+	newrank=true;
     rankdir=LR;
     graph[bgcolor=white, margin=0, compound=true];
     node[shape=box, style=rounded, fontname=sans, fontsize=10, penwidth=2];
@@ -16,10 +17,12 @@ digraph snakemake_dag {
 
 	subgraph cluster_1 {
 		label = "Preprocessing";
+		rankdir = TB;
 		shape=box; style=rounded; fontname=sans; fontsize=10; penwidth=2; margin=10;
     	fastp        [label = "fastp", color = "0.64 0.6 0.85", style="rounded"];
     	bowtie2_host [label = "bowtie2\nHosts", color = "0.43 0.6 0.85", style="rounded"];
 	    bowtie2_mags [label = "bowtie2\nMAGs", color = "0.02 0.6 0.85", style="rounded"];
+		fastp -> bowtie2_host -> bowtie2_mags
 	}
 
 	subgraph cluster_2 {
@@ -32,6 +35,10 @@ digraph snakemake_dag {
 
 	}
 
+	{ rank=same; bowtie2_host; kraken2; nonpareil; singlem}
+	{ rank=same; bowtie2_mags; coverm}
+
+
     reads -> fastp
     reference -> bowtie2_host
     mags -> bowtie2_mags
@@ -39,8 +46,6 @@ digraph snakemake_dag {
     fastp -> kraken2
     fastp -> nonpareil
 	fastp -> singlem
-    fastp -> bowtie2_host
-    bowtie2_host -> bowtie2_mags
     bowtie2_mags -> coverm
 
 }
