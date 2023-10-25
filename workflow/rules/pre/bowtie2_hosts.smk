@@ -50,6 +50,8 @@ rule bowtie2_hosts_map_one:
         samtools_mem=params["pre"]["bowtie2"]["samtools"]["mem_per_thread"],
         rg_id=compose_rg_id,
         rg_extra=compose_rg_extra,
+        input_string=compose_input_string_for_bowtie2_hosts_map_one,
+        rmdup_string=compose_rmdup_string_for_bowtie2_hosts_map_one,
     threads: 24
     conda:
         "pre.yml"
@@ -58,44 +60,25 @@ rule bowtie2_hosts_map_one:
         runtime=24 * 60,
     shell:
         """
-        if [[ {params.is_paired} = "True" ]] ; then
-            ( bowtie2 \
-                -x {input.mock} \
-                -1 {input.forward_} \
-                -2 {input.reverse_} \
-                --threads {threads} \
-                --rg-id '{params.rg_id}' \
-                --rg '{params.rg_extra}' \
-                {params.extra} \
-            | samtools sort \
-                --threads {threads} \
-                -m {params.samtools_mem} \
-            | samtools rmdup - - \
-            | samtools view \
-                --reference {input.reference} \
-                --output {output.cram} \
-                --output-fmt cram,level=9,nthreads={threads} \
-                --write-index \
-            ) 2> {log} 1>&2
-        else
-            ( bowtie2 \
-                -x {input.mock} \
-                -U {input.forward_} \
-                --threads {threads} \
-                --rg-id '{params.rg_id}' \
-                --rg '{params.rg_extra}' \
-                {params.extra} \
-            | samtools sort \
-                --threads {threads} \
-                -m {params.samtools_mem} \
-            | samtools rmdup -s - - \
-            | samtools view \
-                --reference {input.reference} \
-                --output {output.cram} \
-                --output-fmt cram,level=9,nthreads={threads} \
-                --write-index \
-            ) 2> {log} 1>&2
-        fi
+        ( bowtie2 \
+            -x {input.mock} \
+            {params.input_string} \
+            --threads {threads} \
+            --rg-id '{params.rg_id}' \
+            --rg '{params.rg_extra}' \
+            {params.extra} \
+        | samtools sort \
+            --threads {threads} \
+            -m {params.samtools_mem} \
+        | samtools rmdup \
+            {params.rmdup_string} \
+            - - \
+        | samtools view \
+            --reference {input.reference} \
+            --output {output.cram} \
+            --output-fmt cram,level=9,nthreads={threads} \
+            --write-index \
+        ) 2> {log} 1>&2
         """
 
 

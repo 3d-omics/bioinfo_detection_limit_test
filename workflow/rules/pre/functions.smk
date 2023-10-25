@@ -156,3 +156,17 @@ def compose_input_string_for_bowtie2_mags_map_one_library_to_one_catalogue(wildc
     if is_paired(wildcards):
         return f"-1 {forward_fn} -2 {reverse_fn}"
     return f"-U {forward_fn}"
+
+
+def compose_input_string_for_bowtie2_hosts_map_one(wildcards):
+    forward_fn = get_input_forward_for_host_mapping(wildcards)
+    reverse_fn = get_input_reverse_for_host_mapping(wildcards)
+    if is_paired(wildcards):
+        return f"-1 {forward_fn} -2 {reverse_fn}"
+    return f"-U {forward_fn}"
+
+
+def compose_rmdup_string_for_bowtie2_hosts_map_one(wildcards):
+    if is_paired(wildcards):
+        return ""
+    return "-s"
