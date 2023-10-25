@@ -1,18 +1,24 @@
 # fastp ----
 def get_forward_adapter(wildcards):
     """Get forward adapter for a sample and library."""
-    return samples[
+    adapter = samples[
         (samples["sample"] == wildcards.sample)
         & (samples["library"] == wildcards.library)
     ]["forward_adapter"].tolist()[0]
+    if pd.isna(adapter):
+        return "AGATCGGAAGAGCACACGTCTGAACTCCAGTCA"
+    return adapter
 
 
 def get_reverse_adapter(wildcards):
     """Get reverse adapter for a sample and library."""
-    return samples[
+    adapter = samples[
         (samples["sample"] == wildcards.sample)
         & (samples["library"] == wildcards.library)
     ]["reverse_adapter"].tolist()[0]
+    if pd.isna(adapter):
+        return "AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
+    return adapter
 
 
 def get_fastp_inputs(wildcards):
