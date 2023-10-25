@@ -16,8 +16,9 @@ rule bowtie2_mags_build:
         extra=params["pre"]["bowtie2"]["extra"],
     threads: 8
     resources:
-        mem_mb=32 * 1024,
+        mem_mb=double_ram(32),
         runtime=24 * 60,
+    retries: 5
     shell:
         """
         bowtie2-build \
@@ -48,8 +49,9 @@ rule bowtie2_mags_map_one_library_to_one_catalogue:
         "pre.yml"
     threads: 4
     resources:
-        mem_mb=32 * 1024,
+        mem_mb=double_ram(32),
         runtime=24 * 60,
+    retries: 5
     params:
         is_paired=is_paired,
         extra=params["pre"]["bowtie2"]["extra"],

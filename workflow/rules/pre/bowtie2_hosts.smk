@@ -16,8 +16,9 @@ rule bowtie2_hosts_build:
         extra=params["pre"]["bowtie2"]["extra"],
     threads: 8
     resources:
-        mem_mb=32 * 1024,
+        mem_mb=double_ram(32),
         runtime=24 * 60,
+    retries: 5
     shell:
         """
         bowtie2-build \
@@ -56,8 +57,9 @@ rule bowtie2_hosts_map_one:
     conda:
         "pre.yml"
     resources:
-        mem_mb=32 * 1024,
+        mem_mb=double_ram(32),
         runtime=24 * 60,
+    retries: 5
     shell:
         """
         ( bowtie2 \
@@ -100,9 +102,10 @@ rule bowtie2_hosts_extract_one:
     threads: 24
     resources:
         runtime=1 * 60,
-        mem_mb=32 * 1024,
+        mem_mb=double_ram(32),
     params:
         is_paired=is_paired,
+    retries: 5
     shell:
         """
         if [[ {params.is_paired} = "True" ]] ; then
