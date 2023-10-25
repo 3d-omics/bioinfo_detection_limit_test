@@ -54,7 +54,7 @@ rule stats_coverm_genome_one_library_one_mag_catalogue:
             --methods {params.method} \
             --separator {params.separator} \
             --min-covered-fraction {params.min_covered_fraction} \
-        > {output} 2> {log} || true \
+        > {output} 2> {log} || true
         """
 
 
