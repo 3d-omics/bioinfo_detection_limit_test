@@ -34,8 +34,8 @@ digraph snakemake_dag {
 
 	}
 
-	{rank=same; bowtie2_host; kraken2; nonpareil; singlem}
-	{rank=same; bowtie2_mags; coverm}
+	// {rank=same; bowtie2_host; kraken2; nonpareil; singlem}
+	// {rank=same; bowtie2_mags; coverm}
 
 
     reads -> fastp
@@ -43,8 +43,8 @@ digraph snakemake_dag {
     mags -> bowtie2_mags
 
     fastp -> kraken2
-    fastp -> nonpareil
-	fastp -> singlem
+    bowtie2_host -> nonpareil
+	bowtie2_host -> singlem
     bowtie2_mags -> coverm
 
 }
