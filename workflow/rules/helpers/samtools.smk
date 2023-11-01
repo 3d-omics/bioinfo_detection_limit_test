@@ -24,6 +24,8 @@ rule samtools_idxstats_cram:
         "{prefix}.idxstats.log",
     conda:
         "helpers.yml"
+    resources:
+        mem_mb=4 * 1024,
     shell:
         "samtools idxstats {input.cram} > {output.tsv} 2> {log}"
 
