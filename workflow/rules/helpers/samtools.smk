@@ -9,6 +9,8 @@ rule samtools_flagstats_cram:
         "{prefix}.flagstats.log",
     conda:
         "helpers.yml"
+    resources:
+        mem_mb=4 * 1024,
     shell:
         "samtools flagstats {input.cram} > {output.txt} 2> {log}"
 
