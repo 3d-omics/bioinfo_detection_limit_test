@@ -24,7 +24,7 @@ rule pre_kraken2_assign_all:
     threads: 24
     resources:
         mem_mb=params["stats"]["kraken2"]["memory_gb"] * 1024,
-        runtime=60,
+        runtime=6 * 60,
     params:
         in_folder=FASTP,
         out_folder=compose_out_folder_for_pre_kraken2_assign_all,
