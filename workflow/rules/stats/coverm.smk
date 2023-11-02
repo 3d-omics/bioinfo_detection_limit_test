@@ -79,6 +79,8 @@ rule stats_coverm_genome_aggregate_one_mag_catalogue:
         / wildcards.mag_catalogue
         / "genome"
         / wildcards.method,
+    resources:
+        mem_mb=8 * 1024,
     shell:
         """
         Rscript --no-init-file workflow/scripts/aggregate_coverm.R \
@@ -139,6 +141,8 @@ rule stats_coverm_contig_aggregate_mag_catalogue:
         / wildcards.mag_catalogue
         / "contig"
         / wildcards.method,
+    resources:
+        mem_mb=8 * 1024,
     shell:
         """
         Rscript --no-init-file workflow/scripts/aggregate_coverm.R \
