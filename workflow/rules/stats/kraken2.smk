@@ -51,6 +51,7 @@ rule pre_kraken2_assign_all:
                     --db {params.kraken_db_shm} \
                     --threads {threads} \
                     --gzip-compressed \
+                    --paired \
                     --output >(pigz > {params.out_folder}/${{sample_id}}.out.gz) \
                     --report {params.out_folder}/${{sample_id}}.report \
                     --memory-mapping \
