@@ -52,7 +52,7 @@ rule pre_kraken2_assign_all:
                     --threads {threads} \
                     --gzip-compressed \
                     --paired \
-                    --output >(pigz > {params.out_folder}/${{sample_id}}.out.gz) \
+                    --output >(pigz --processes {threads} > {params.out_folder}/${{sample_id}}.out.gz) \
                     --report {params.out_folder}/${{sample_id}}.report \
                     --memory-mapping \
                     {params.in_folder}/${{sample_id}}_1.fq.gz \
