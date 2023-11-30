@@ -1,4 +1,4 @@
-rule samtools_flagstats_cram:
+rule _helpers__samtools__flagstats_cram:
     """Compute flagstats for a cram"""
     input:
         cram="{prefix}.cram",
@@ -15,7 +15,7 @@ rule samtools_flagstats_cram:
         "samtools flagstats {input.cram} > {output.txt} 2> {log}"
 
 
-rule samtools_idxstats_cram:
+rule _helpers__samtools__idxstats_cram:
     """Compute idxstats for a cram"""
     input:
         cram="{prefix}.cram",
@@ -32,7 +32,7 @@ rule samtools_idxstats_cram:
         "samtools idxstats {input.cram} > {output.tsv} 2> {log}"
 
 
-rule samtools_stats_cram_host:
+rule _helpers__samtools__stats_cram_host:
     """Compute stats for a host cram"""
     input:
         cram=BOWTIE2_HOSTS / "{genome}" / "{sample}.{library}.cram",
@@ -54,7 +54,7 @@ rule samtools_stats_cram_host:
         """
 
 
-rule samtools_stats_cram_mag_catalogue:
+rule _helpers__samtools__stats__cram_mag:
     """Compute stats for a MAG cram"""
     input:
         cram=BOWTIE2_MAGS / "{mag_catalogue}" / "{sample}.{library}.cram",
