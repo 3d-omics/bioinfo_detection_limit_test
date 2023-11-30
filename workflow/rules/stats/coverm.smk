@@ -1,6 +1,4 @@
-
-
-rule stats_cram_to_mapped_bam:
+rule _stats__coverm__cram_to_bam:
     """Convert cram to bam
 
     Note: this step is needed because coverm probably does not support cram. The
@@ -15,7 +13,7 @@ rule stats_cram_to_mapped_bam:
     log:
         COVERM / "{mag_catalogue}" / "bams" / "{sample}.{library}.log",
     conda:
-        "stats.yml"
+        "_env.yml"
     threads: 24
     resources:
         runtime=1 * 60,
@@ -33,7 +31,7 @@ rule stats_cram_to_mapped_bam:
         """
 
 
-rule stats_coverm_genome_one_library_one_mag_catalogue:
+rule _stats__coverm__genome:
     """Run coverm genome for one library and one mag catalogue"""
     input:
         bam=COVERM / "{mag_catalogue}" / "bams" / "{sample}.{library}.bam",
@@ -46,7 +44,7 @@ rule stats_coverm_genome_one_library_one_mag_catalogue:
             / "{sample}.{library}.tsv"
         ),
     conda:
-        "stats.yml"
+        "_env.yml"
     log:
         COVERM / "{mag_catalogue}" / "genome" / "{method}" / "{sample}.{library}.log",
     params:
@@ -64,7 +62,7 @@ rule stats_coverm_genome_one_library_one_mag_catalogue:
         """
 
 
-rule stats_coverm_genome_aggregate_one_mag_catalogue:
+rule _stats__coverm__aggregate_genome:
     """Aggregate all the nonpareil results into a single table"""
     input:
         get_coverm_genome_tsv_files_for_aggregation,
@@ -73,7 +71,7 @@ rule stats_coverm_genome_aggregate_one_mag_catalogue:
     log:
         STATS / "coverm_genome_{mag_catalogue}.{method}.log",
     conda:
-        "stats.yml"
+        "_env.yml"
     params:
         input_dir=lambda wildcards: COVERM
         / wildcards.mag_catalogue
@@ -90,7 +88,7 @@ rule stats_coverm_genome_aggregate_one_mag_catalogue:
         """
 
 
-rule stats_coverm_genome:
+rule stats__coverm__genome:
     """Run all rules to run coverm genome over all MAG catalogues"""
     input:
         [
@@ -100,7 +98,7 @@ rule stats_coverm_genome:
         ],
 
 
-rule stats_coverm_contig_one_library_one_mag_catalogue:
+rule _stats__coverm__contig:
     """Run coverm contig for one library and one mag catalogue"""
     input:
         bam=COVERM / "{mag_catalogue}" / "bams" / "{sample}.{library}.bam",
@@ -111,7 +109,7 @@ rule stats_coverm_contig_one_library_one_mag_catalogue:
         / "{method}"
         / "{sample}.{library}.tsv",
     conda:
-        "stats.yml"
+        "_env.yml"
     log:
         COVERM / "{mag_catalogue}" / "contig" / "{method}" / "{sample}.{library}.log",
     params:
@@ -126,7 +124,7 @@ rule stats_coverm_contig_one_library_one_mag_catalogue:
         """
 
 
-rule stats_coverm_contig_aggregate_mag_catalogue:
+rule _stats__coverm__aggregate_contig:
     """Aggregate all the nonpareil results into a single table"""
     input:
         get_coverm_contig_tsv_files_for_aggregation,
@@ -135,7 +133,7 @@ rule stats_coverm_contig_aggregate_mag_catalogue:
     log:
         STATS / "coverm_contig_{mag_catalogue}.{method}.log",
     conda:
-        "stats.yml"
+        "_env.yml"
     params:
         input_dir=lambda wildcards: COVERM
         / wildcards.mag_catalogue
@@ -152,7 +150,7 @@ rule stats_coverm_contig_aggregate_mag_catalogue:
         """
 
 
-rule stats_coverm_contig:
+rule stats__coverm__contig:
     """Run all rules to run coverm contig over all MAG catalogues"""
     input:
         [
@@ -162,8 +160,8 @@ rule stats_coverm_contig:
         ],
 
 
-rule stats_coverm:
+rule stats__coverm:
     """Run both coverm overall and contig"""
     input:
-        rules.stats_coverm_genome.input,
-        rules.stats_coverm_contig.input,
+        rules.stats__coverm__genome.input,
+        rules.stats__coverm__contig.input,

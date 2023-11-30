@@ -1,4 +1,4 @@
-rule stats_nonpareil_one:
+rule _stats__nonpareil__run:
     """Run nonpareil over one sample
 
     Note: Nonpareil only ask for one of the pair-end reads
@@ -17,7 +17,7 @@ rule stats_nonpareil_one:
     log:
         NONPAREIL / "{sample}.{library}.log",
     conda:
-        "stats.yml"
+        "_env.yml"
     params:
         prefix=compose_prefix_for_nonpareil,
     resources:
@@ -36,7 +36,7 @@ rule stats_nonpareil_one:
         """
 
 
-rule stats_nonpareil_all:
+rule stats__nonpareil__run:
     """Run stats_nonpareil_one for all the samples"""
     input:
         [
@@ -46,16 +46,16 @@ rule stats_nonpareil_all:
         ],
 
 
-rule stats_nonpareil:
+rule _stats_nonpareil__aggregate:
     """Aggregate all the nonpareil results into a single table"""
     input:
-        rules.stats_nonpareil_all.input,
+        rules.stats__nonpareil__run.input,
     output:
         STATS / "nonpareil.tsv",
     log:
         STATS / "nonpareil.log",
     conda:
-        "stats.yml"
+        "_env.yml"
     params:
         input_dir=NONPAREIL,
     shell:
@@ -65,3 +65,8 @@ rule stats_nonpareil:
             --output-file {output} \
         2> {log} 1>&2
         """
+
+
+rule stats__nonpareil:
+    input:
+        rules._stats_nonpareil__aggregate.output,

@@ -1,4 +1,4 @@
-rule pre_kraken2_assign_all:
+rule _stats___kraken2:
     """Run kraken2 over all samples at once using the /dev/shm/ trick.
 
     NOTE: /dev/shm may be not empty after the job is done.
@@ -30,7 +30,7 @@ rule pre_kraken2_assign_all:
         out_folder=compose_out_folder_for_pre_kraken2_assign_all,
         kraken_db_shm="/dev/shm/{kraken2_db}",
     conda:
-        "stats.yml"
+        "_env.yml"
     shell:
         """
         mapfile -t sample_ids < <(find "{params.in_folder}" -name "*_1.fq.gz" -exec basename {{}} _1.fq.gz \;)
@@ -68,7 +68,7 @@ rule pre_kraken2_assign_all:
         """
 
 
-rule stats_kraken2_assign_all:
+rule stats__kraken2:
     """Run kraken2 over all samples at once using the /dev/shm/ trick."""
     input:
         [
@@ -76,16 +76,3 @@ rule stats_kraken2_assign_all:
             for sample, library in SAMPLE_LIB_PE + SAMPLE_LIB_SE
             for kraken2_db in KRAKEN2_DBS
         ],
-
-
-rule stats_kraken2_report_all:
-    """Get all kraken2 .report files"""
-    input:
-        rules.stats_kraken2_assign_all.input,
-
-
-rule stats_kraken2:
-    """Get all kraken2 files"""
-    input:
-        rules.stats_kraken2_assign_all.input,
-        rules.stats_kraken2_report_all.input,

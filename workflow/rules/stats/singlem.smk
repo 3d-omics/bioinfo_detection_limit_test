@@ -1,4 +1,4 @@
-rule stats_singlem_pipe_one:
+rule _stats__singlem__pipe:
     """Run singlem over one sample
 
     Note: SingleM asks in the documentation for the raw reads. Here we are
@@ -15,8 +15,7 @@ rule stats_singlem_pipe_one:
     log:
         SINGLEM / "{sample}.{library}.log",
     conda:
-        "stats.yml"
-    threads: 4
+        "_env.yml"
     resources:
         runtime=4 * 60,
         mem_mb=8 * 1024,
@@ -30,13 +29,12 @@ rule stats_singlem_pipe_one:
             --archive-otu-table {output.archive_otu_table} \
             --taxonomic-profile {output.condense} \
             --metapackage {input.data} \
-            --threads {threads} \
             --assignment-threads {threads} \
         2> {log} 1>&2
         """
 
 
-rule stats_singlem_condense:
+rule _stats__singlem__condense:
     """Aggregate all the singlem results into a single table"""
     input:
         archive_otu_tables=[
@@ -49,7 +47,7 @@ rule stats_singlem_condense:
     log:
         STATS / "singlem.log",
     conda:
-        "stats.yml"
+        "_env.yml"
     params:
         input_dir=SINGLEM,
     shell:
@@ -62,7 +60,7 @@ rule stats_singlem_condense:
         """
 
 
-rule stats_singlem:
+rule stats__singlem:
     """Run all stats singlem rules"""
     input:
         STATS / "singlem.tsv",
