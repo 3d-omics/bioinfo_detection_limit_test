@@ -13,7 +13,7 @@ rule _preprocess__bowtie2__mags__build:
     conda:
         "_env.yml"
     params:
-        extra=params["pre"]["bowtie2"]["extra"],
+        extra=params["preprocess"]["bowtie2"]["extra"],
     threads: 8
     resources:
         mem_mb=double_ram(32),
@@ -53,8 +53,8 @@ rule _preprocess__bowtie2__mags__map:
         runtime=24 * 60,
     retries: 5
     params:
-        extra=params["pre"]["bowtie2"]["extra"],
-        samtools_mem=params["pre"]["bowtie2"]["samtools"]["mem_per_thread"],
+        extra=params["preprocess"]["bowtie2"]["extra"],
+        samtools_mem=params["preprocess"]["bowtie2"]["samtools"]["mem_per_thread"],
         rg_id=compose_rg_id,
         rg_extra=compose_rg_extra,
         input_string=compose_input_string_for_bowtie2_mags_map_one_library_to_one_catalogue,

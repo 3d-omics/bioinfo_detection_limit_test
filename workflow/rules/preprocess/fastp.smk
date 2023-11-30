@@ -12,8 +12,8 @@ rule _preprocess__fastp__trim:
     log:
         FASTP / "{sample}.{library}.log",
     params:
-        extra=params["pre"]["fastp"]["extra"],
-        length_required=params["pre"]["fastp"]["length_required"],
+        extra=params["preprocess"]["fastp"]["extra"],
+        length_required=params["preprocess"]["fastp"]["length_required"],
         input_string=compose_input_string_for_fastp_trim_one,
         output_string=compose_output_string_for_fastp_trim_one,
         adapter_string=compose_adapter_string_for_fastp_trim_one,

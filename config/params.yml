@@ -1,7 +1,7 @@
 # Execution parameters
 ---
 
-pre:
+preprocess:
   fastp:
     length_required: 75  # nonpareil requires at least 25bp
     extra: "--trim_poly_g --trim_poly_x"
@@ -23,6 +23,3 @@ stats:
       separator: "^"
     contig:
       methods: ["count", "covered_bases", "length"]  # https://github.com/wwood/CoverM#calculation-methods
-
-  singlem:
-    threads: 1  # raise it at your own . on the tests one is enough

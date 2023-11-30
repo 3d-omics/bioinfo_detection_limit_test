@@ -13,7 +13,7 @@ rule _preprocess__bowtie2__hosts__build:
     conda:
         "_env.yml"
     params:
-        extra=params["pre"]["bowtie2"]["extra"],
+        extra=params["preprocess"]["bowtie2"]["extra"],
     threads: 8
     resources:
         mem_mb=double_ram(32),
@@ -46,8 +46,8 @@ rule _preprocess__bowtie2__hosts__map:
     log:
         BOWTIE2_HOSTS / "{genome}" / "{sample}.{library}_pe.log",
     params:
-        extra=params["pre"]["bowtie2"]["extra"],
-        samtools_mem=params["pre"]["bowtie2"]["samtools"]["mem_per_thread"],
+        extra=params["preprocess"]["bowtie2"]["extra"],
+        samtools_mem=params["preprocess"]["bowtie2"]["samtools"]["mem_per_thread"],
         rg_id=compose_rg_id,
         rg_extra=compose_rg_extra,
         input_string=compose_input_string_for_bowtie2_hosts_map_one,
