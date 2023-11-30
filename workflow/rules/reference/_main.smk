@@ -1,4 +1,4 @@
-rule reference_recompress_host_one:
+rule _reference__recompress_host:
     """Extract the fasta.gz on config.yaml into genome.fa,gz with bgzip"""
     input:
         fa_gz=lambda wildcards: features["references"][wildcards.genome],
@@ -7,7 +7,7 @@ rule reference_recompress_host_one:
     log:
         REFERENCE / "{genome}.log",
     conda:
-        "reference.yml"
+        "_env.yml"
     threads: 8
     shell:
         """
@@ -24,13 +24,13 @@ rule reference_recompress_host_one:
         """
 
 
-rule reference_recompress_host_all:
+rule reference__recompress_hosts:
     """Recompress all host genomes"""
     input:
         [REFERENCE / f"{genome}.fa.gz" for genome in HOST_NAMES],
 
 
-rule reference_recompress_mag_catalogue_one:
+rule _reference__recompress_mags:
     """Extract the fasta.gz on config.yaml into genome.fa,gz with bgzip"""
     input:
         fa_gz=lambda wildcards: features["mag_catalogues"][wildcards.catalogue],
@@ -39,7 +39,7 @@ rule reference_recompress_mag_catalogue_one:
     log:
         REFERENCE / "mags" / "{catalogue}.log",
     conda:
-        "reference.yml"
+        "_env.yml"
     threads: 8
     shell:
         """
@@ -56,7 +56,7 @@ rule reference_recompress_mag_catalogue_one:
         """
 
 
-rule reference_recompress_mag_catalogue_all:
+rule reference__recompress_mags:
     """Recompress all MAG catalogues"""
     input:
         [REFERENCE / "mags" / f"{catalogue}.fa.gz" for catalogue in MAG_CATALOGUES],
@@ -65,5 +65,5 @@ rule reference_recompress_mag_catalogue_all:
 rule reference:
     """Re-bgzip the reference genome and known variants"""
     input:
-        rules.reference_recompress_host_one.input,
-        rules.reference_recompress_mag_catalogue_all.input,
+        rules.reference__recompress_hosts.input,
+        rules.reference__recompress_mags.input,
