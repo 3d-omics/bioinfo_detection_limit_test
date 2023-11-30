@@ -25,7 +25,7 @@ rule report_step_reads:
 rule report_step_fastp:
     """Collect all reports for the fastp step"""
     input:
-        rules.fastp_report_all.input,
+        rules.preprocess__fastp__report.input,
     output:
         html=REPORT_STEP / "fastp.html",
     log:

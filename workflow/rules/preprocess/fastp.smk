@@ -1,4 +1,4 @@
-rule fastp_trim_one:
+rule _preprocess__fastp__trim:
     """Run fastp on one PE library"""
     input:
         unpack(get_fastp_inputs),
@@ -22,7 +22,7 @@ rule fastp_trim_one:
         mem_mb=4 * 1024,
         runtime=240,
     conda:
-        "pre.yml"
+        "_env.yml"
     shell:
         """
         fastp \
@@ -40,7 +40,7 @@ rule fastp_trim_one:
         """
 
 
-rule fastp_trim_all:
+rule preprocess__fastp__trim:
     """Run fastp over all libraries"""
     input:
         [
@@ -50,7 +50,7 @@ rule fastp_trim_all:
         ],
 
 
-rule fastp_fastqc_all:
+rule preprocess__fastp__fastqc:
     """Run fastqc over all libraries"""
     input:
         [
@@ -67,15 +67,15 @@ rule fastp_fastqc_all:
         ],
 
 
-rule fastp_report_all:
+rule preprocess__fastp__report:
     """Collect fastp and fastqc reports"""
     input:
         [FASTP / f"{sample}.{library}_fastp.json" for sample, library in SAMPLE_LIB],
-        rules.fastp_fastqc_all.input,
+        rules.preprocess__fastp__fastqc.input,
 
 
-rule fastp:
+rule preprocess__fastp:
     """Run fastp and collect reports"""
     input:
-        rules.fastp_trim_all.input,
-        rules.fastp_report_all.input,
+        rules.preprocess__fastp__trim.input,
+        rules.preprocess__fastp__report.input,

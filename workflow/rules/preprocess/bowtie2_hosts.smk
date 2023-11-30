@@ -1,4 +1,4 @@
-rule bowtie2_hosts_build:
+rule _preprocess__bowtie2__hosts__build:
     """Build bowtie2 index for the human reference
 
     Let the script decide to use a small or a large index based on the size of
@@ -11,7 +11,7 @@ rule bowtie2_hosts_build:
     log:
         BOWTIE2_HOSTS / "{genome}_index.log",
     conda:
-        "pre.yml"
+        "_env.yml"
     params:
         extra=params["pre"]["bowtie2"]["extra"],
     threads: 8
@@ -30,7 +30,7 @@ rule bowtie2_hosts_build:
         """
 
 
-rule bowtie2_hosts_map_one:
+rule _preprocess__bowtie2__hosts__map:
     """Map one library to reference genome using bowtie2
 
     Output SAM file is piped to samtools sort to generate a CRAM file.
@@ -54,7 +54,7 @@ rule bowtie2_hosts_map_one:
         rmdup_string=compose_rmdup_string_for_bowtie2_hosts_map_one,
     threads: 24
     conda:
-        "pre.yml"
+        "_env.yml"
     resources:
         mem_mb=double_ram(32),
         runtime=24 * 60,
@@ -83,7 +83,7 @@ rule bowtie2_hosts_map_one:
         """
 
 
-rule bowtie2_hosts_extract_one:
+rule _preprocess__bowtie2__hosts__extract_unmapped:
     """
     Keep only pairs unmapped to the human reference genome, sort by name rather
     than by coordinate, and convert to FASTQ.
@@ -97,7 +97,7 @@ rule bowtie2_hosts_extract_one:
     log:
         BOWTIE2_HOSTS / "non{genome}" / "{sample}.{library}.log",
     conda:
-        "pre.yml"
+        "_env.yml"
     threads: 24
     resources:
         runtime=1 * 60,
@@ -130,7 +130,7 @@ rule bowtie2_hosts_extract_one:
         """
 
 
-rule bowtie2_hosts_extract:
+rule preprocess__bowtie2__hosts__extract:
     """Run bowtie2_extract_nonchicken_one for all PE libraries"""
     input:
         [
@@ -147,7 +147,7 @@ rule bowtie2_hosts_extract:
         ],
 
 
-rule bowtie2_hosts_report:
+rule preprocess__bowtie2__hosts__report:
     """Generate bowtie2 reports for all libraries:
     - samtools stats
     - samtools flagstats
@@ -162,8 +162,8 @@ rule bowtie2_hosts_report:
         ],
 
 
-rule bowtie2_hosts:
+rule preprocess__bowtie2__hosts:
     """Run bowtie2 on all libraries and generate reports"""
     input:
-        rules.bowtie2_hosts_report.input,
-        rules.bowtie2_hosts_extract.input,
+        rules.preprocess__bowtie2__hosts__report.input,
+        rules.preprocess__bowtie2__hosts__extract.input,

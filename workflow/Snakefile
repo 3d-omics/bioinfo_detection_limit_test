@@ -34,7 +34,7 @@ include: "rules/folders.smk"
 include: "rules/helpers/_main.smk"
 include: "rules/reference/reference.smk"
 include: "rules/reads/reads.smk"
-include: "rules/pre/pre.smk"
+include: "rules/preprocess/_main.smk"
 include: "rules/stats/stats.smk"
 include: "rules/report/report.smk"
 

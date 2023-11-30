@@ -1,4 +1,4 @@
-rule bowtie2_mags_build:
+rule _preprocess__bowtie2__mags__build:
     """Build bowtie2 index for the mag reference
 
     Let the script decide to use a small or a large index based on the size of
@@ -11,7 +11,7 @@ rule bowtie2_mags_build:
     log:
         BOWTIE2_MAGS / "{mag_catalogue}_index.log",
     conda:
-        "pre.yml"
+        "_env.yml"
     params:
         extra=params["pre"]["bowtie2"]["extra"],
     threads: 8
@@ -30,7 +30,7 @@ rule bowtie2_mags_build:
         """
 
 
-rule bowtie2_mags_map_one_library_to_one_catalogue:
+rule _preprocess__bowtie2__mags__map:
     """Map one library to reference genome using bowtie2
 
     Output SAM file is piped to samtools sort to generate a CRAM file.
@@ -46,7 +46,7 @@ rule bowtie2_mags_map_one_library_to_one_catalogue:
     log:
         BOWTIE2_MAGS / "{mag_catalogue}" / "{sample}.{library}.log",
     conda:
-        "pre.yml"
+        "_env.yml"
     threads: 4
     resources:
         mem_mb=double_ram(32),
@@ -79,7 +79,7 @@ rule bowtie2_mags_map_one_library_to_one_catalogue:
         """
 
 
-rule bowtie2_mags_map_all_libraries_to_all_mags:
+rule preprocess__bowtie2__mags__map:
     """Run bowtie2_map_mags_one for all PE libraries"""
     input:
         [
@@ -89,7 +89,7 @@ rule bowtie2_mags_map_all_libraries_to_all_mags:
         ],
 
 
-rule bowtie2_mags_report_all:
+rule preprocess__bowtie2__mags__report:
     """Generate bowtie2 reports for all PE libraries:
     - samtools stats
     - samtools flagstats
@@ -104,8 +104,8 @@ rule bowtie2_mags_report_all:
         ],
 
 
-rule bowtie2_mags:
+rule preprocess__bowtie2__mags:
     """Run bowtie2 on all libraries and generate reports"""
     input:
-        rules.bowtie2_mags_report_all.input,
-        rules.bowtie2_mags_map_all_libraries_to_all_mags.input,
+        rules.preprocess__bowtie2__mags__report.input,
+        rules.preprocess__bowtie2__mags__map.input,
