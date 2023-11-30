@@ -14,7 +14,7 @@ rule _preprocess__bowtie2__mags__build:
         "_env.yml"
     params:
         extra=params["preprocess"]["bowtie2"]["extra"],
-    threads: 8
+    threads: 24
     resources:
         mem_mb=double_ram(32),
         runtime=24 * 60,
@@ -47,7 +47,7 @@ rule _preprocess__bowtie2__mags__map:
         BOWTIE2_MAGS / "{mag_catalogue}" / "{sample}.{library}.log",
     conda:
         "_env.yml"
-    threads: 4
+    threads: 24
     resources:
         mem_mb=double_ram(32),
         runtime=24 * 60,
