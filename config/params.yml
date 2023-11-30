@@ -20,6 +20,6 @@ stats:
     genome:
       methods: ["count", "covered_bases", "length"]  # https://github.com/wwood/CoverM#calculation-methods
       min_covered_fraction: 0.0
-      separator: "^"
+      separator: "@"
     contig:
       methods: ["count", "covered_bases", "length"]  # https://github.com/wwood/CoverM#calculation-methods
