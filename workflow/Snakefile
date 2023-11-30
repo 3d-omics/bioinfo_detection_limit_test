@@ -36,7 +36,7 @@ include: "rules/reference/_main.smk"
 include: "rules/reads/_main.smk"
 include: "rules/preprocess/_main.smk"
 include: "rules/stats/stats.smk"
-include: "rules/report/report.smk"
+include: "rules/report/_main.smk"
 
 
 rule all:

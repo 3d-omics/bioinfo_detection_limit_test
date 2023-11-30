@@ -1,4 +1,4 @@
-rule report_step_reads:
+rule _report__step__reads:
     """Collect all reports for the reads step"""
     input:
         rules.reads__fastqc.input,
@@ -7,7 +7,7 @@ rule report_step_reads:
     log:
         REPORT_STEP / "reads.log",
     conda:
-        "report.yml"
+        "_env.yml"
     params:
         dir=REPORT_STEP,
     shell:
@@ -22,7 +22,7 @@ rule report_step_reads:
         """
 
 
-rule report_step_fastp:
+rule _report__step__fastp:
     """Collect all reports for the fastp step"""
     input:
         rules.preprocess__fastp__report.input,
@@ -31,7 +31,7 @@ rule report_step_fastp:
     log:
         REPORT_STEP / "fastp.log",
     conda:
-        "report.yml"
+        "_env.yml"
     params:
         dir=REPORT_STEP,
     shell:
@@ -46,7 +46,7 @@ rule report_step_fastp:
         """
 
 
-rule report_step_kraken2_one:
+rule _report__step__kraken2:
     """Collect all reports for the kraken2 step and ONE database"""
     input:
         get_report_step_kraken2_reports,
@@ -55,7 +55,7 @@ rule report_step_kraken2_one:
     log:
         REPORT_STEP / "kraken2_{kraken2_db}.log",
     conda:
-        "report.yml"
+        "_env.yml"
     params:
         dir=REPORT_STEP,
         title="kraken2_{kraken2_db}",
@@ -72,13 +72,13 @@ rule report_step_kraken2_one:
         """
 
 
-rule report_step_kraken2_all:
+rule report__step__kraken2:
     """Collect all reports for the kraken2 step and ALL databases"""
     input:
         [REPORT_STEP / f"kraken2_{kraken2_db}.html" for kraken2_db in KRAKEN2_DBS],
 
 
-rule report_step_bowtie2_host_one:
+rule _report__step__bowtie2_hosts:
     """Collect all reports for the bowtie2 step and ONE host"""
     input:
         reports=[
@@ -92,7 +92,7 @@ rule report_step_bowtie2_host_one:
     log:
         REPORT_STEP / "bowtie2_host_{genome}.log",
     conda:
-        "report.yml"
+        "_env.yml"
     params:
         dir=REPORT_STEP,
         title="bowtie2_host_{genome}",
@@ -110,13 +110,13 @@ rule report_step_bowtie2_host_one:
         """
 
 
-rule report_step_bowtie2_host_all:
+rule report__step__bowtie2_hosts:
     """Collect all reports for the bowtie2 step and ALL hosts"""
     input:
         [REPORT_STEP / f"bowtie2_host_{genome}.html" for genome in HOST_NAMES],
 
 
-rule report_step_bowtie2_mags_one:
+rule _report__step__bowtie2_mags:
     """Collect all reports for the bowtie2 step when mapping to a mag catalogue"""
     input:
         reports=[
@@ -130,7 +130,7 @@ rule report_step_bowtie2_mags_one:
     log:
         REPORT_STEP / "bowtie2_mags_{mag_catalogue}.log",
     conda:
-        "report.yml"
+        "_env.yml"
     params:
         dir=REPORT_STEP,
         title="bowtie2_mags_{mag_catalogue}",
@@ -148,7 +148,7 @@ rule report_step_bowtie2_mags_one:
         """
 
 
-rule report_step_bowtie2_mags_all:
+rule report__step__bowtie2_mags:
     """Collect all reports for the bowtie2 step and ALL mag catalogues"""
     input:
         [
@@ -157,19 +157,11 @@ rule report_step_bowtie2_mags_all:
         ],
 
 
-rule report_step:
+rule report__step:
     """Collect all per step reports for the pipeline"""
     input:
-        rules.report_step_reads.output,
-        rules.report_step_fastp.output,
-        rules.report_step_kraken2_all.input,  # input!
-        rules.report_step_bowtie2_host_all.input,
-        rules.report_step_bowtie2_mags_all.output,
-
-
-localrules:
-    report_step_reads,
-    report_step_fastp,
-    report_step_kraken2_one,
-    report_step_bowtie2_host_one,
-    report_step_bowtie2_mags_one,
+        rules._report__step__reads.output,
+        rules._report__step__fastp.output,
+        rules.report__step__kraken2.input,
+        rules.report__step__bowtie2_hosts.input,
+        rules.report__step__bowtie2_mags.input,

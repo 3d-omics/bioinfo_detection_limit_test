@@ -1,4 +1,4 @@
-rule report_library_one:
+rule _report__library:
     """Make a MultiQC report for a single library"""
     input:
         get_reads_reports_for_library_reports,
@@ -11,7 +11,7 @@ rule report_library_one:
     log:
         REPORT_LIBRARY / "{sample}.{library}.log",
     conda:
-        "report.yml"
+        "_env.yml"
     params:
         library="{sample}.{library}",
         out_dir=REPORT_LIBRARY,
@@ -29,20 +29,10 @@ rule report_library_one:
         """
 
 
-rule report_library_all:
+rule report__library:
     """Make a MultiQC report for every library"""
     input:
         [
             REPORT_LIBRARY / f"{sample}.{library}.html"
             for sample, library in SAMPLE_LIB_PE
         ],
-
-
-rule report_library:
-    """Make all MultiQC reports per library"""
-    input:
-        rules.report_library_all.input,
-
-
-localrules:
-    report_library_one,
