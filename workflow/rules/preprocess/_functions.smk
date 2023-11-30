@@ -2,8 +2,8 @@
 def get_forward_adapter(wildcards):
     """Get forward adapter for a sample and library."""
     adapter = samples[
-        (samples["sample"] == wildcards.sample)
-        & (samples["library"] == wildcards.library)
+        (samples["sample_id"] == wildcards.sample)
+        & (samples["library_id"] == wildcards.library)
     ]["forward_adapter"].tolist()[0]
     if pd.isna(adapter):
         return "AGATCGGAAGAGCACACGTCTGAACTCCAGTCA"
@@ -13,8 +13,8 @@ def get_forward_adapter(wildcards):
 def get_reverse_adapter(wildcards):
     """Get reverse adapter for a sample and library."""
     adapter = samples[
-        (samples["sample"] == wildcards.sample)
-        & (samples["library"] == wildcards.library)
+        (samples["sample_id"] == wildcards.sample)
+        & (samples["library_id"] == wildcards.library)
     ]["reverse_adapter"].tolist()[0]
     if pd.isna(adapter):
         return "AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"

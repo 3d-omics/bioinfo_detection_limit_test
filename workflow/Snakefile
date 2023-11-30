@@ -12,13 +12,13 @@ features = yaml.load(open("config/features.yml", "r"), Loader=yaml.SafeLoader)
 samples = pd.read_table("config/samples.tsv", comment="#", dtype="str")
 
 # Generate useful variables
-SAMPLES = samples["sample"].drop_duplicates().values.tolist()
-SAMPLE_LIB = samples[["sample", "library"]].values.tolist()
+SAMPLES = samples["sample_id"].drop_duplicates().values.tolist()
+SAMPLE_LIB = samples[["sample_id", "library_id"]].values.tolist()
 SAMPLE_LIB_PE = samples[samples["library_type"] == "PE"][
-    ["sample", "library"]
+    ["sample_id", "library_id"]
 ].values.tolist()
 SAMPLE_LIB_SE = samples[samples["library_type"] == "SE"][
-    ["sample", "library"]
+    ["sample_id", "library_id"]
 ].values.tolist()
 HOST_NAMES = (
     [] if features["references"] is None else list(features["references"].keys())
