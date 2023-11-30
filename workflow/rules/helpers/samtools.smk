@@ -8,7 +8,7 @@ rule samtools_flagstats_cram:
     log:
         "{prefix}.flagstats.log",
     conda:
-        "helpers.yml"
+        "_env.yml"
     resources:
         mem_mb=4 * 1024,
     shell:
@@ -25,7 +25,7 @@ rule samtools_idxstats_cram:
     log:
         "{prefix}.idxstats.log",
     conda:
-        "helpers.yml"
+        "_env.yml"
     resources:
         mem_mb=4 * 1024,
     shell:
@@ -43,7 +43,7 @@ rule samtools_stats_cram_host:
     log:
         BOWTIE2_HOSTS / "{genome}" / "{sample}.{library}.stats.log",
     conda:
-        "helpers.yml"
+        "_env.yml"
     shell:
         """
         samtools stats \
@@ -65,7 +65,7 @@ rule samtools_stats_cram_mag_catalogue:
     log:
         BOWTIE2_MAGS / "{mag_catalogue}" / "{sample}.{library}.stats.log",
     conda:
-        "helpers.yml"
+        "_env.yml"
     shell:
         """
         samtools stats \
