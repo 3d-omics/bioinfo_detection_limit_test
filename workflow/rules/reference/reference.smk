@@ -1,7 +1,7 @@
 rule reference_recompress_host_one:
     """Extract the fasta.gz on config.yaml into genome.fa,gz with bgzip"""
     input:
-        fa_gz=lambda wildcards: features["reference"][wildcards.genome],
+        fa_gz=lambda wildcards: features["references"][wildcards.genome],
     output:
         fa_gz=REFERENCE / "{genome}.fa.gz",
     log:

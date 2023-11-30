@@ -20,9 +20,11 @@ SAMPLE_LIB_PE = samples[samples["library_type"] == "PE"][
 SAMPLE_LIB_SE = samples[samples["library_type"] == "SE"][
     ["sample", "library"]
 ].values.tolist()
-HOST_NAMES = [] if features["reference"] is None else list(features["reference"].keys())
+HOST_NAMES = (
+    [] if features["references"] is None else list(features["references"].keys())
+)
 MAG_CATALOGUES = list(features["mag_catalogues"].keys())
-KRAKEN2_DBS = list(features["kraken2_dbs"].keys())
+KRAKEN2_DBS = list(features["databases"]["kraken2"].keys())
 BAM_REPORTS = ["stats.tsv", "flagstats.txt", "idxstats.tsv"]
 LAST_HOST = HOST_NAMES[-1] if len(HOST_NAMES) > 0 else None
 

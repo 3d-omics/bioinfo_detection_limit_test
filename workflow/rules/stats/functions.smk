@@ -49,7 +49,7 @@ def get_coverm_contig_tsv_files_for_aggregation(wildcards):
 
 def get_kraken2_database(wildcards):
     """Get the kraken2 database"""
-    return features["kraken2_dbs"][wildcards.kraken2_db]
+    return features["databases"]["kraken2"][wildcards.kraken2_db]
 
 
 def compose_out_folder_for_pre_kraken2_assign_all(wildcards):

@@ -7,7 +7,7 @@ rule stats_singlem_pipe_one:
     input:
         forward_=get_input_forward_for_stats,
         reverse_=get_input_reverse_for_stats,
-        data=features["singlem_database"],
+        data=features["databases"]["singlem"],
     output:
         archive_otu_table=SINGLEM / "{sample}.{library}.archive.json",
         otu_table=SINGLEM / "{sample}.{library}.otu_table.tsv",
@@ -43,7 +43,7 @@ rule stats_singlem_condense:
             SINGLEM / f"{sample}.{library}.archive.json"
             for sample, library in SAMPLE_LIB
         ],
-        data=features["singlem_database"],
+        data=features["databases"]["singlem"],
     output:
         condense=STATS / "singlem.tsv",
     log:
