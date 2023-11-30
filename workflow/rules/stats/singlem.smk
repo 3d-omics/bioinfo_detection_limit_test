@@ -19,7 +19,7 @@ rule stats_singlem_pipe_one:
     threads: 4
     resources:
         runtime=4 * 60,
-        mem_mb=8 *1024,
+        mem_mb=8 * 1024,
     params:
         input_string=get_input_string_for_stats_singlem_pipe_one,
     shell:
