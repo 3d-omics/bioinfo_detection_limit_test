@@ -14,7 +14,7 @@ rule _preprocess__bowtie2__hosts__build:
         "_env.yml"
     params:
         extra=params["preprocess"]["bowtie2"]["extra"],
-    threads: 8
+    threads: 24
     resources:
         mem_mb=double_ram(32),
         runtime=24 * 60,
