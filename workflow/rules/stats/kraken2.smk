@@ -4,10 +4,11 @@ rule _stats___kraken2:
     NOTE: /dev/shm may be not empty after the job is done.
     """
     input:
-        files=[
-            FASTP / f"{sample}.{library}_{ending}.fq.gz"
-            for sample, library in SAMPLE_LIB_PE + SAMPLE_LIB_SE
-            for ending in ["1", "2"]
+        forwards=[
+            FASTP / f"{sample}.{library}_1.fq.gz" for sample, library in SAMPLE_LIBRARY
+        ],
+        rerverses=[
+            FASTP / f"{sample}.{library}_2.fq.gz" for sample, library in SAMPLE_LIBRARY
         ],
         database=get_kraken2_database,
     output:
@@ -21,7 +22,7 @@ rule _stats___kraken2:
         ],
     log:
         KRAKEN2 / "{kraken2_db}.log",
-    threads: 24
+    threads: 8
     resources:
         mem_mb=params["stats"]["kraken2"]["memory_gb"] * 1024,
         runtime=48 * 60,
@@ -33,7 +34,7 @@ rule _stats___kraken2:
         "_env.yml"
     shell:
         """
-        mapfile -t sample_ids < <(find "{params.in_folder}" -name "*_1.fq.gz" -exec basename {{}} _1.fq.gz \;)
+        mapfile -t sample_ids < <(echo {input.forwards} | tr " " "\\n" | sort | xargs -I {{}} basename {{}} _1.fq.gz)
 
         {{
             mkdir --parents {params.kraken_db_shm}
@@ -46,6 +47,8 @@ rule _stats___kraken2:
             2> {log} 1>&2
 
             for sample_id in ${{sample_ids[@]}} ; do \
+
+                echo $(date) Processing $sample_id 2>> {log} 1>&2
 
                 kraken2 \
                     --db {params.kraken_db_shm} \
@@ -64,7 +67,7 @@ rule _stats___kraken2:
             echo "Failed job" 2>> {log} 1>&2
         }}
 
-        rm -rfv {params.kraken_db_shm} 2>>{log} 1>&2
+        rm --recursive --force --verbose {params.kraken_db_shm} 2>>{log} 1>&2
         """
 
 
