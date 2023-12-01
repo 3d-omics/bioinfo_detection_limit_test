@@ -5,20 +5,20 @@ rule _stats___kraken2:
     """
     input:
         forwards=[
-            FASTP / f"{sample}.{library}_1.fq.gz" for sample, library in SAMPLE_LIBRARY
+            FASTP / f"{sample}.{library}_1.fq.gz" for sample, library in SAMPLE_LIB
         ],
         rerverses=[
-            FASTP / f"{sample}.{library}_2.fq.gz" for sample, library in SAMPLE_LIBRARY
+            FASTP / f"{sample}.{library}_2.fq.gz" for sample, library in SAMPLE_LIB
         ],
         database=get_kraken2_database,
     output:
         out_gzs=[
             KRAKEN2 / "{kraken2_db}" / f"{sample}.{library}.out.gz"
-            for sample, library in SAMPLE_LIB_PE + SAMPLE_LIB_SE
+            for sample, library in SAMPLE_LIB
         ],
         reports=[
             KRAKEN2 / "{kraken2_db}" / f"{sample}.{library}.report"
-            for sample, library in SAMPLE_LIB_PE + SAMPLE_LIB_SE
+            for sample, library in SAMPLE_LIB
         ],
     log:
         KRAKEN2 / "{kraken2_db}.log",
@@ -34,19 +34,28 @@ rule _stats___kraken2:
         "_env.yml"
     shell:
         """
-        mapfile -t sample_ids < <(echo {input.forwards} | tr " " "\\n" | sort | xargs -I {{}} basename {{}} _1.fq.gz)
-
         {{
             mkdir --parents {params.kraken_db_shm}
             mkdir --parents {params.out_folder}
 
             rsync \
-                -Pravt \
+                --archive \
+                --progress \
+                --recursive \
+                --times \
+                --verbose \
                 {input.database}/*.k2d \
                 {params.kraken_db_shm} \
             2> {log} 1>&2
 
-            for sample_id in ${{sample_ids[@]}} ; do \
+            for file in {input.forwards} ; do \
+
+                sample_id=$(basename $file _1.fq.gz)
+                forward={params.in_folder}/${{sample_id}}_1.fq.gz
+                reverse={params.in_folder}/${{sample_id}}_2.fq.gz
+                output={params.out_folder}/${{sample_id}}.out.gz
+                report={params.out_folder}/${{sample_id}}.report
+                log={params.out_folder}/${{sample_id}}.log
 
                 echo $(date) Processing $sample_id 2>> {log} 1>&2
 
@@ -55,12 +64,12 @@ rule _stats___kraken2:
                     --threads {threads} \
                     --gzip-compressed \
                     --paired \
-                    --output >(pigz --processes {threads} > {params.out_folder}/${{sample_id}}.out.gz) \
-                    --report {params.out_folder}/${{sample_id}}.report \
+                    --output >(pigz --processes {threads} > $output) \
+                    --report $report \
                     --memory-mapping \
-                    {params.in_folder}/${{sample_id}}_1.fq.gz \
-                    {params.in_folder}/${{sample_id}}_2.fq.gz \
-                2> {params.out_folder}/${{sample_id}}.log  1>&2
+                    $forward \
+                    $reverse \
+                2> $log 1>&2
 
             done
         }} || {{
