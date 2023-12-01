@@ -11,9 +11,9 @@ dependencies:
   - kraken2=2.1.3
   - nonpareil=3.4.1
   - pigz=2.6
-  - rsync=3.2.7
-  - samtools=1.18
-  - singlem=0.15.0
   - r-argparse=2.2.2
   - r-nonpareil=3.4.0
   - r-tidyverse=2.0.0
+  - rsync=3.2.7
+  - samtools=1.18
+  - singlem=0.15.0
