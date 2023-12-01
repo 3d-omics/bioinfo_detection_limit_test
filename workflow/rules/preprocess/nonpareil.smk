@@ -33,7 +33,7 @@ rule _preprocess__nonpareil__run:
         > {params.forward_fq} 2> {log}
 
         nonpareil \
-            -s {output.forward_fq} \
+            -s {params.forward_fq} \
             -T kmer \
             -b {params.prefix} \
             -f fastq \
@@ -48,13 +48,13 @@ rule preprocess__nonpareil__run:
     """Run stats_nonpareil_one for all the samples"""
     input:
         [
-            NONPAREIL / f"{sample}.{library}.{extension}"
+            NONPAREIL / "run" / f"{sample}.{library}.{extension}"
             for extension in ["npa", "npc", "npl", "npo"]
             for sample, library in SAMPLE_LIB
         ],
 
 
-rule _stats_nonpareil__aggregate:
+rule _preprocess__nonpareil__aggregate:
     """Aggregate all the nonpareil results into a single table"""
     input:
         rules.preprocess__nonpareil__run.input,
@@ -65,7 +65,7 @@ rule _stats_nonpareil__aggregate:
     conda:
         "_env.yml"
     params:
-        input_dir=NONPAREIL,
+        input_dir=NONPAREIL / "run",
     shell:
         """
         Rscript --no-init-file workflow/scripts/aggregate_nonpareil.R \
@@ -77,4 +77,4 @@ rule _stats_nonpareil__aggregate:
 
 rule preprocess__nonpareil:
     input:
-        rules._stats_nonpareil__aggregate.output,
+        rules._preprocess__nonpareil__aggregate.output,
