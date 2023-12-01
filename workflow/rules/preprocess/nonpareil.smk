@@ -40,7 +40,7 @@ rule _preprocess__nonpareil__run:
             -t {threads} \
         2>> {log} 1>&2 || true
 
-        rm --force {params.forward_fq} 2>> {log} 1>&2
+        rm --force --verbose {params.forward_fq} 2>> {log} 1>&2
         """
 
 
