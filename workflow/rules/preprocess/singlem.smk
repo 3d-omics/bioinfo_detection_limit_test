@@ -1,19 +1,19 @@
-rule _stats__singlem__pipe:
+rule _preprocess__singlem__pipe:
     """Run singlem over one sample
 
     Note: SingleM asks in the documentation for the raw reads. Here we are
     passing it the non-host and trimmed ones.
     """
     input:
-        forward_=get_input_forward_for_stats,
-        reverse_=get_input_reverse_for_stats,
+        forward_=get_host_clean_forward,
+        reverse_=get_host_clean_reverse,
         data=features["databases"]["singlem"],
     output:
-        archive_otu_table=SINGLEM / "{sample}.{library}.archive.json",
-        otu_table=SINGLEM / "{sample}.{library}.otu_table.tsv",
-        condense=SINGLEM / "{sample}.{library}.condense.tsv",
+        archive_otu_table=SINGLEM / "pipe" / "{sample}.{library}.archive.json",
+        otu_table=SINGLEM / "pipe" / "{sample}.{library}.otu_table.tsv",
+        condense=SINGLEM / "pipe" / "{sample}.{library}.condense.tsv",
     log:
-        SINGLEM / "{sample}.{library}.log",
+        SINGLEM / "pipe" / "{sample}.{library}.log",
     conda:
         "_env.yml"
     resources:
@@ -34,18 +34,18 @@ rule _stats__singlem__pipe:
         """
 
 
-rule _stats__singlem__condense:
+rule _preprocess__singlem__condense:
     """Aggregate all the singlem results into a single table"""
     input:
         archive_otu_tables=[
-            SINGLEM / f"{sample}.{library}.archive.json"
+            SINGLEM / "pipe" / f"{sample}.{library}.archive.json"
             for sample, library in SAMPLE_LIB
         ],
         data=features["databases"]["singlem"],
     output:
-        condense=STATS / "singlem.tsv",
+        condense=SINGLEM / "singlem.tsv",
     log:
-        STATS / "singlem.log",
+        SINGLEM / "singlem.log",
     conda:
         "_env.yml"
     params:
@@ -60,7 +60,7 @@ rule _stats__singlem__condense:
         """
 
 
-rule stats__singlem:
+rule preprocess__singlem:
     """Run all stats singlem rules"""
     input:
-        STATS / "singlem.tsv",
+        SINGLEM / "singlem.tsv",

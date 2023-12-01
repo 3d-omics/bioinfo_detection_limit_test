@@ -1,4 +1,4 @@
-rule _stats___kraken2:
+rule _preprocess__kraken2__assign:
     """Run kraken2 over all samples at once using the /dev/shm/ trick.
 
     NOTE: /dev/shm may be not empty after the job is done.
@@ -24,7 +24,7 @@ rule _stats___kraken2:
         KRAKEN2 / "{kraken2_db}.log",
     threads: 8
     resources:
-        mem_mb=params["stats"]["kraken2"]["memory_gb"] * 1024,
+        mem_mb=params["preprocess"]["kraken2"]["memory_gb"] * 1024,
         runtime=48 * 60,
     params:
         in_folder=FASTP,
@@ -80,7 +80,7 @@ rule _stats___kraken2:
         """
 
 
-rule stats__kraken2:
+rule preprocess__kraken2:
     """Run kraken2 over all samples at once using the /dev/shm/ trick."""
     input:
         [

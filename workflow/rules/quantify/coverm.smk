@@ -1,4 +1,4 @@
-rule _stats__coverm__cram_to_bam:
+rule _quantify__coverm__cram_to_bam:
     """Convert cram to bam
 
     Note: this step is needed because coverm probably does not support cram. The
@@ -6,7 +6,7 @@ rule _stats__coverm__cram_to_bam:
     it works.
     """
     input:
-        cram=BOWTIE2_MAGS / "{mag_catalogue}" / "{sample}.{library}.cram",
+        cram=QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample}.{library}.cram",
         reference=REFERENCE / "mags" / "{mag_catalogue}.fa.gz",
     output:
         bam=temp(COVERM / "{mag_catalogue}" / "bams" / "{sample}.{library}.bam"),
@@ -31,7 +31,7 @@ rule _stats__coverm__cram_to_bam:
         """
 
 
-rule _stats__coverm__genome:
+rule _quantify__coverm__genome:
     """Run coverm genome for one library and one mag catalogue"""
     input:
         bam=COVERM / "{mag_catalogue}" / "bams" / "{sample}.{library}.bam",
@@ -49,8 +49,10 @@ rule _stats__coverm__genome:
         COVERM / "{mag_catalogue}" / "genome" / "{method}" / "{sample}.{library}.log",
     params:
         method="{method}",
-        min_covered_fraction=params["stats"]["coverm"]["genome"]["min_covered_fraction"],
-        separator=params["stats"]["coverm"]["genome"]["separator"],
+        min_covered_fraction=params["quantify"]["coverm"]["genome"][
+            "min_covered_fraction"
+        ],
+        separator=params["quantify"]["coverm"]["genome"]["separator"],
     shell:
         """
         coverm genome \
@@ -62,14 +64,14 @@ rule _stats__coverm__genome:
         """
 
 
-rule _stats__coverm__aggregate_genome:
+rule _quantify__coverm__aggregate_genome:
     """Aggregate all the nonpareil results into a single table"""
     input:
         get_coverm_genome_tsv_files_for_aggregation,
     output:
-        STATS / "coverm_genome_{mag_catalogue}.{method}.tsv",
+        COVERM / "coverm_genome_{mag_catalogue}.{method}.tsv",
     log:
-        STATS / "coverm_genome_{mag_catalogue}.{method}.log",
+        COVERM / "coverm_genome_{mag_catalogue}.{method}.log",
     conda:
         "_env.yml"
     params:
@@ -88,17 +90,17 @@ rule _stats__coverm__aggregate_genome:
         """
 
 
-rule stats__coverm__genome:
+rule quantify__coverm__genome:
     """Run all rules to run coverm genome over all MAG catalogues"""
     input:
         [
-            STATS / f"coverm_genome_{mag_catalogue}.{method}.tsv"
+            COVERM / f"coverm_genome_{mag_catalogue}.{method}.tsv"
             for mag_catalogue in MAG_CATALOGUES
-            for method in params["stats"]["coverm"]["genome"]["methods"]
+            for method in params["quantify"]["coverm"]["genome"]["methods"]
         ],
 
 
-rule _stats__coverm__contig:
+rule _quantify__coverm__contig:
     """Run coverm contig for one library and one mag catalogue"""
     input:
         bam=COVERM / "{mag_catalogue}" / "bams" / "{sample}.{library}.bam",
@@ -124,14 +126,14 @@ rule _stats__coverm__contig:
         """
 
 
-rule _stats__coverm__aggregate_contig:
+rule _quantify__coverm__aggregate_contig:
     """Aggregate all the nonpareil results into a single table"""
     input:
         get_coverm_contig_tsv_files_for_aggregation,
     output:
-        STATS / "coverm_contig_{mag_catalogue}.{method}.tsv",
+        COVERM / "coverm_contig_{mag_catalogue}.{method}.tsv",
     log:
-        STATS / "coverm_contig_{mag_catalogue}.{method}.log",
+        COVERM / "coverm_contig_{mag_catalogue}.{method}.log",
     conda:
         "_env.yml"
     params:
@@ -150,18 +152,18 @@ rule _stats__coverm__aggregate_contig:
         """
 
 
-rule stats__coverm__contig:
+rule quantify__coverm__contig:
     """Run all rules to run coverm contig over all MAG catalogues"""
     input:
         [
-            STATS / f"coverm_contig_{mag_catalogue}.{method}.tsv"
+            COVERM / f"coverm_contig_{mag_catalogue}.{method}.tsv"
             for mag_catalogue in MAG_CATALOGUES
-            for method in params["stats"]["coverm"]["contig"]["methods"]
+            for method in params["quantify"]["coverm"]["contig"]["methods"]
         ],
 
 
-rule stats__coverm:
+rule quantify__coverm:
     """Run both coverm overall and contig"""
     input:
-        rules.stats__coverm__genome.input,
-        rules.stats__coverm__contig.input,
+        rules.quantify__coverm__genome.input,
+        rules.quantify__coverm__contig.input,

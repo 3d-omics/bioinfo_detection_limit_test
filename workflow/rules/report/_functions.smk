@@ -32,7 +32,7 @@ def get_bowtie2_host_for_library_reports(wildcards):
     sample = wildcards.sample
     library = wildcards.library
     return [
-        BOWTIE2_HOSTS / host_name / f"{sample}.{library}.{report}"
+        PRE_BOWTIE2 / host_name / f"{sample}.{library}.{report}"
         for host_name in HOST_NAMES
         for report in BAM_REPORTS
     ]
@@ -43,7 +43,7 @@ def get_bowtie2_mags_for_library_reports(wildcards):
     sample = wildcards.sample
     library = wildcards.library
     return [
-        BOWTIE2_MAGS / mag_catalogue / f"{sample}.{library}.{report}"
+        QUANT_BOWTIE2 / mag_catalogue / f"{sample}.{library}.{report}"
         for mag_catalogue in MAG_CATALOGUES
         for report in BAM_REPORTS
     ]

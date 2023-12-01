@@ -1,4 +1,4 @@
-rule _preprocess__bowtie2__hosts__build:
+rule _preprocess__bowtie2__build:
     """Build bowtie2 index for the human reference
 
     Let the script decide to use a small or a large index based on the size of
@@ -7,9 +7,9 @@ rule _preprocess__bowtie2__hosts__build:
     input:
         reference=REFERENCE / "{genome}.fa.gz",
     output:
-        mock=touch(BOWTIE2_HOSTS / "{genome}_index"),
+        mock=touch(PRE_BOWTIE2 / "{genome}_index"),
     log:
-        BOWTIE2_HOSTS / "{genome}_index.log",
+        PRE_BOWTIE2 / "{genome}_index.log",
     conda:
         "_env.yml"
     params:
@@ -30,7 +30,7 @@ rule _preprocess__bowtie2__hosts__build:
         """
 
 
-rule _preprocess__bowtie2__hosts__map:
+rule _preprocess__bowtie2__map:
     """Map one library to reference genome using bowtie2
 
     Output SAM file is piped to samtools sort to generate a CRAM file.
@@ -38,13 +38,13 @@ rule _preprocess__bowtie2__hosts__map:
     input:
         forward_=get_input_forward_for_host_mapping,
         reverse_=get_input_reverse_for_host_mapping,
-        mock=BOWTIE2_HOSTS / "{genome}_index",
+        mock=PRE_BOWTIE2 / "{genome}_index",
         reference=REFERENCE / "{genome}.fa.gz",
     output:
-        cram=BOWTIE2_HOSTS / "{genome}" / "{sample}.{library}.cram",
-        crai=BOWTIE2_HOSTS / "{genome}" / "{sample}.{library}.cram.crai",
+        cram=PRE_BOWTIE2 / "{genome}" / "{sample}.{library}.cram",
+        crai=PRE_BOWTIE2 / "{genome}" / "{sample}.{library}.cram.crai",
     log:
-        BOWTIE2_HOSTS / "{genome}" / "{sample}.{library}_pe.log",
+        PRE_BOWTIE2 / "{genome}" / "{sample}.{library}_pe.log",
     params:
         extra=params["preprocess"]["bowtie2"]["extra"],
         samtools_mem=params["preprocess"]["bowtie2"]["samtools"]["mem_per_thread"],
@@ -89,19 +89,19 @@ rule _preprocess__bowtie2__hosts__map:
         """
 
 
-rule _preprocess__bowtie2__hosts__extract_unmapped:
+rule _preprocess__bowtie2__extract:
     """
     Keep only pairs unmapped to the human reference genome, sort by name rather
     than by coordinate, and convert to FASTQ.
     """
     input:
-        cram=BOWTIE2_HOSTS / "{genome}" / "{sample}.{library}.cram",
+        cram=PRE_BOWTIE2 / "{genome}" / "{sample}.{library}.cram",
         reference=REFERENCE / "{genome}.fa.gz",
     output:
-        forward_=BOWTIE2_HOSTS / "non{genome}" / "{sample}.{library}_1.fq.gz",
-        reverse_=touch(BOWTIE2_HOSTS / "non{genome}" / "{sample}.{library}_2.fq.gz"),
+        forward_=PRE_BOWTIE2 / "non{genome}" / "{sample}.{library}_1.fq.gz",
+        reverse_=touch(PRE_BOWTIE2 / "non{genome}" / "{sample}.{library}_2.fq.gz"),
     log:
-        BOWTIE2_HOSTS / "non{genome}" / "{sample}.{library}.log",
+        PRE_BOWTIE2 / "non{genome}" / "{sample}.{library}.log",
     conda:
         "_env.yml"
     threads: 24
@@ -136,24 +136,24 @@ rule _preprocess__bowtie2__hosts__extract_unmapped:
         """
 
 
-rule preprocess__bowtie2__hosts__extract:
+rule preprocess__bowtie2__extract:
     """Run bowtie2_extract_nonchicken_one for all PE libraries"""
     input:
         [
-            BOWTIE2_HOSTS / f"non{genome}" / f"{sample}.{library}_{end}.fq.gz"
+            PRE_BOWTIE2 / f"non{genome}" / f"{sample}.{library}_{end}.fq.gz"
             for genome in [LAST_HOST]
             for sample, library in SAMPLE_LIB_PE
             for end in ["1", "2"]
         ],
         [
-            BOWTIE2_HOSTS / f"non{genome}" / f"{sample}.{library}_{end}.fq.gz"
+            PRE_BOWTIE2 / f"non{genome}" / f"{sample}.{library}_{end}.fq.gz"
             for genome in [LAST_HOST]
             for sample, library in SAMPLE_LIB_SE
             for end in ["1"]
         ],
 
 
-rule preprocess__bowtie2__hosts__report:
+rule preprocess__bowtie2__report:
     """Generate bowtie2 reports for all libraries:
     - samtools stats
     - samtools flagstats
@@ -161,15 +161,15 @@ rule preprocess__bowtie2__hosts__report:
     """
     input:
         [
-            BOWTIE2_HOSTS / genome / f"{sample}.{library}.{report}"
+            PRE_BOWTIE2 / genome / f"{sample}.{library}.{report}"
             for genome in HOST_NAMES
             for sample, library in SAMPLE_LIB
             for report in BAM_REPORTS
         ],
 
 
-rule preprocess__bowtie2__hosts:
+rule preprocess__bowtie2:
     """Run bowtie2 on all libraries and generate reports"""
     input:
-        rules.preprocess__bowtie2__hosts__report.input,
-        rules.preprocess__bowtie2__hosts__extract.input,
+        rules.preprocess__bowtie2__report.input,
+        rules.preprocess__bowtie2__extract.input,

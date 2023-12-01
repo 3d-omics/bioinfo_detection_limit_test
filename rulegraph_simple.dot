@@ -16,21 +16,22 @@ digraph snakemake_dag {
     }
 
 	subgraph cluster_1 {
-		label = "Preprocessing";
+		label = "Preprocess";
 		shape=box; style=rounded; fontname=sans; fontsize=10; penwidth=2; margin=10;
     	fastp        [label = "fastp", color = "0.64 0.6 0.85", style="rounded"];
     	bowtie2_host [label = "bowtie2\nHosts", color = "0.43 0.6 0.85", style="rounded"];
-	    bowtie2_mags [label = "bowtie2\nMAGs", color = "0.02 0.6 0.85", style="rounded"];
-		fastp -> bowtie2_host -> bowtie2_mags
+		nonpareil    [label = "nonpareil", color = "0.14 0.6 0.85", style="rounded"];
+		singlem      [label = "SingleM", color = "0.27 0.6 0.85", style="rounded"];
+		kraken2      [label = "kraken2", color = "0.01 0.6 0.85", style="rounded"];
+
+		fastp -> bowtie2_host
 	}
 
 	subgraph cluster_2 {
-		label = "Statistics";
+		label = "Quantify";
 		shape=box; style=rounded; fontname=sans; fontsize=10; penwidth=2; margin=10;
-		nonpareil    [label = "nonpareil", color = "0.14 0.6 0.85", style="rounded"];
+		bowtie2_mags [label = "bowtie2\nMAGs", color = "0.02 0.6 0.85", style="rounded"];
 		coverm       [label = "coverm", color = "0.27 0.6 0.85", style="rounded"];
-		singlem      [label = "SingleM", color = "0.27 0.6 0.85", style="rounded"];
-		kraken2      [label = "kraken2", color = "0.01 0.6 0.85", style="rounded"];
 
 	}
 
@@ -43,8 +44,9 @@ digraph snakemake_dag {
     mags -> bowtie2_mags
 
     fastp -> kraken2
+	fastp -> bowtie2_host
     bowtie2_host -> nonpareil
 	bowtie2_host -> singlem
     bowtie2_mags -> coverm
-
+	 bowtie2_host -> bowtie2_mags
 }

@@ -1,4 +1,4 @@
-rule _stats__nonpareil__run:
+rule _preprocess__nonpareil__run:
     """Run nonpareil over one sample
 
     Note: Nonpareil only ask for one of the pair-end reads
@@ -7,24 +7,30 @@ rule _stats__nonpareil__run:
     empty files
     """
     input:
-        forward_=get_input_forward_for_stats,
+        forward_=get_host_clean_forward,
     output:
-        forward_fq=temp(NONPAREIL / "{sample}.{library}_1.fq"),
-        npa=touch(NONPAREIL / "{sample}.{library}.npa"),
-        npc=touch(NONPAREIL / "{sample}.{library}.npc"),
-        npl=touch(NONPAREIL / "{sample}.{library}.npl"),
-        npo=touch(NONPAREIL / "{sample}.{library}.npo"),
+        npa=touch(NONPAREIL / "run" / "{sample}.{library}.npa"),
+        npc=touch(NONPAREIL / "run" / "{sample}.{library}.npc"),
+        npl=touch(NONPAREIL / "run" / "{sample}.{library}.npl"),
+        npo=touch(NONPAREIL / "run" / "{sample}.{library}.npo"),
     log:
-        NONPAREIL / "{sample}.{library}.log",
+        NONPAREIL / "run" / "{sample}.{library}.log",
     conda:
         "_env.yml"
     params:
         prefix=compose_prefix_for_nonpareil,
+        forward_fq=lambda wildcards: NONPAREIL
+        / "run"
+        / "{wildcards.sample}.{wildcards.library}_1.fq",
     resources:
         runtime=24 * 60,
     shell:
         """
-        gzip -dc {input.forward_} > {output.forward_fq} 2> {log}
+        gzip \
+            --decompress \
+            --stdout \
+            {input.forward_} \
+        > {params.forward_fq} 2> {log}
 
         nonpareil \
             -s {output.forward_fq} \
@@ -33,10 +39,12 @@ rule _stats__nonpareil__run:
             -f fastq \
             -t {threads} \
         2>> {log} 1>&2 || true
+
+        rm --force {params.forward_fq} 2>> {log} 1>&2
         """
 
 
-rule stats__nonpareil__run:
+rule preprocess__nonpareil__run:
     """Run stats_nonpareil_one for all the samples"""
     input:
         [
@@ -49,11 +57,11 @@ rule stats__nonpareil__run:
 rule _stats_nonpareil__aggregate:
     """Aggregate all the nonpareil results into a single table"""
     input:
-        rules.stats__nonpareil__run.input,
+        rules.preprocess__nonpareil__run.input,
     output:
-        STATS / "nonpareil.tsv",
+        NONPAREIL / "nonpareil.tsv",
     log:
-        STATS / "nonpareil.log",
+        NONPAREIL / "nonpareil.log",
     conda:
         "_env.yml"
     params:
@@ -67,6 +75,6 @@ rule _stats_nonpareil__aggregate:
         """
 
 
-rule stats__nonpareil:
+rule preprocess__nonpareil:
     input:
         rules._stats_nonpareil__aggregate.output,

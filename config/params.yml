@@ -9,13 +9,15 @@ preprocess:
     extra: ""
     samtools:
       mem_per_thread: 1G
-
-stats:
-
   kraken2:
     memory_gb: 1
     extra: ""
 
+quantify:
+  bowtie2:
+    extra: ""
+    samtools:
+      mem_per_thread: 1G
   coverm:
     genome:
       methods: ["count", "covered_bases", "length"]  # https://github.com/wwood/CoverM#calculation-methods

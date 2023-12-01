@@ -39,7 +39,7 @@ include: "rules/helpers/_main.smk"
 include: "rules/reference/_main.smk"
 include: "rules/reads/_main.smk"
 include: "rules/preprocess/_main.smk"
-include: "rules/stats/_main.smk"
+include: "rules/quantify/_main.smk"
 include: "rules/report/_main.smk"
 
 
@@ -48,5 +48,5 @@ rule all:
         # rules.reads.input,
         # rules.reference.input,
         # rules.pre.input,
-        rules.stats.input,
+        rules.quantify.input,
         rules.report.input,
