@@ -76,7 +76,7 @@ rule _stats___kraken2:
             echo "Failed job" 2>> {log} 1>&2
         }}
 
-        rm --recursive --force --verbose {params.kraken_db_shm} 2>>{log} 1>&2
+        rm --force --recursive --verbose {params.kraken_db_shm} 2>>{log} 1>&2
         """
 
 
