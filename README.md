@@ -38,7 +38,7 @@ snakemake \
       #sample2	lib1	PE	resources/reads/sample2_1.fq.gz	resources/reads/sample2_2.fq.gz
       sample2	lib1	SE	resources/reads/sample2_1.fq.gz		AGATCGGAAGAGCACACGTCTGAACTCCAGTCA
       ```
-   2. `config/features.tsv`: the references against which to map the libraries: human, chicken / pig, MAG catalogue.
+   2. `config/features.yml`: the references against which to map the libraries: human, chicken / pig, MAG catalogue.
       ```
       reference:  # Multiple references. Will be mapped in this order. Leave empty for no host.
          human: resources/reference/human_22_sub.fa.gz
@@ -55,7 +55,7 @@ snakemake \
       singlem_database: "resources/singlem_mock"  # Point to downloaded db from `singlem download`
       ```
 
-   3. `config/params.tsv`: parameters for every program. The defaults are reasonable.
+   3. `config/params.yml`: parameters for every program. The defaults are reasonable.
 
 
 4. Run the pipeline and go for a walk:
