@@ -84,3 +84,16 @@ jobs:
             --conda-cleanup-pkgs cache
             --latency-wait 5
             report
+
+      - uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: results
+          path: |
+            results/**/*.log
+            # results/
+            # reports/
+            # !**/*.cram
+            # !**/*.fq.gz
+            # !**/*.bam
+            # !**/*.bt2
