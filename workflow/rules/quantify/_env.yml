@@ -11,5 +11,4 @@ dependencies:
   - gzip=1.12
   - pigz=2.6
   - r-argparse=2.2.2
-  - r-nonpareil=3.4.0
   - r-tidyverse=2.0.0
