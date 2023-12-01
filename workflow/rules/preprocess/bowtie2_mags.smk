@@ -60,6 +60,12 @@ rule _preprocess__bowtie2__mags__map:
         input_string=compose_input_string_for_bowtie2_mags_map_one_library_to_one_catalogue,
     shell:
         """
+        find \
+            $(dirname {output.cram}) \
+            -name "$(basename {output.cram}).tmp.*.bam" \
+            -delete \
+        2> {log} 1>&2
+
         ( bowtie2 \
             -x {input.mock} \
             {params.input_string} \
@@ -75,7 +81,7 @@ rule _preprocess__bowtie2__mags__map:
             --reference {input.reference} \
             --threads {threads} \
             --write-index \
-        ) 2> {log} 1>&2
+        ) 2>> {log} 1>&2
         """
 
 

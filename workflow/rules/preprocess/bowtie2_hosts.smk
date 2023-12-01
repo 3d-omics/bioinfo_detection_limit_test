@@ -61,6 +61,12 @@ rule _preprocess__bowtie2__hosts__map:
     retries: 5
     shell:
         """
+        find \
+            $(dirname {output.cram}) \
+            -name "$(basename {output.cram}).tmp.*.bam" \
+            -delete \
+        2> {log} 1>&2
+
         ( bowtie2 \
             -x {input.mock} \
             {params.input_string} \
@@ -79,7 +85,7 @@ rule _preprocess__bowtie2__hosts__map:
             --output {output.cram} \
             --output-fmt cram,level=9,nthreads={threads} \
             --write-index \
-        ) 2> {log} 1>&2
+        ) 2>> {log} 1>&2
         """
 
 
