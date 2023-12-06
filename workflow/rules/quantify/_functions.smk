@@ -4,7 +4,7 @@ def get_coverm_genome_tsv_files_for_aggregation(wildcards):
     method = wildcards.method
     return [
         COVERM / mag_catalogue / "genome" / method / f"{sample}.{library}.tsv"
-        for sample, library in SAMPLE_LIB
+        for sample, library in SAMPLE_LIBRARY
     ]
 
 
@@ -14,5 +14,5 @@ def get_coverm_contig_tsv_files_for_aggregation(wildcards):
     method = wildcards.method
     return [
         COVERM / mag_catalogue / "contig" / method / f"{sample}.{library}.tsv"
-        for sample, library in SAMPLE_LIB
+        for sample, library in SAMPLE_LIBRARY
     ]

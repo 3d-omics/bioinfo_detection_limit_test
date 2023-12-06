@@ -57,7 +57,6 @@ rule _quantify__bowtie2__map:
         samtools_mem=params["quantify"]["bowtie2"]["samtools"]["mem_per_thread"],
         rg_id=compose_rg_id,
         rg_extra=compose_rg_extra,
-        input_string=compose_input_string_for_bowtie2_mags_map_one_library_to_one_catalogue,
     shell:
         """
         find \
@@ -68,7 +67,8 @@ rule _quantify__bowtie2__map:
 
         ( bowtie2 \
             -x {input.mock} \
-            {params.input_string} \
+            -1 {input.forward_} \
+            -2 {input.reverse_} \
             --rg '{params.rg_extra}' \
             --rg-id '{params.rg_id}' \
             --threads {threads} \
@@ -91,7 +91,7 @@ rule quantify__bowtie2__map:
     input:
         [
             QUANT_BOWTIE2 / mag_catalogue / f"{sample}.{library}.cram"
-            for sample, library in SAMPLE_LIB
+            for sample, library in SAMPLE_LIBRARY
             for mag_catalogue in MAG_CATALOGUES
         ],
 
@@ -105,7 +105,7 @@ rule quantify__bowtie2__report:
     input:
         [
             QUANT_BOWTIE2 / mag_catalogue / f"{sample}.{library}.{report}"
-            for sample, library in SAMPLE_LIB
+            for sample, library in SAMPLE_LIBRARY
             for report in BAM_REPORTS
             for mag_catalogue in MAG_CATALOGUES
         ],

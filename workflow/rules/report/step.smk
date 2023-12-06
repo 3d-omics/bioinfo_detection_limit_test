@@ -84,7 +84,7 @@ rule _report__step__bowtie2_hosts:
         reports=[
             PRE_BOWTIE2 / genome / f"{sample}.{library}.{report}"
             for genome in ["{genome}"]
-            for sample, library in SAMPLE_LIB
+            for sample, library in SAMPLE_LIBRARY
             for report in BAM_REPORTS
         ],
     output:
@@ -122,7 +122,7 @@ rule _report__step__bowtie2_mags:
         reports=[
             QUANT_BOWTIE2 / mag_catalogue / f"{sample}.{library}.{report}"
             for mag_catalogue in ["{mag_catalogue}"]
-            for sample, library in SAMPLE_LIB_PE
+            for sample, library in SAMPLE_LIBRARY
             for report in ["stats.tsv", "flagstats.txt"]
         ],
     output:

@@ -5,20 +5,20 @@ rule _preprocess__kraken2__assign:
     """
     input:
         forwards=[
-            FASTP / f"{sample}.{library}_1.fq.gz" for sample, library in SAMPLE_LIB
+            FASTP / f"{sample}.{library}_1.fq.gz" for sample, library in SAMPLE_LIBRARY
         ],
         rerverses=[
-            FASTP / f"{sample}.{library}_2.fq.gz" for sample, library in SAMPLE_LIB
+            FASTP / f"{sample}.{library}_2.fq.gz" for sample, library in SAMPLE_LIBRARY
         ],
         database=get_kraken2_database,
     output:
         out_gzs=[
             KRAKEN2 / "{kraken2_db}" / f"{sample}.{library}.out.gz"
-            for sample, library in SAMPLE_LIB
+            for sample, library in SAMPLE_LIBRARY
         ],
         reports=[
             KRAKEN2 / "{kraken2_db}" / f"{sample}.{library}.report"
-            for sample, library in SAMPLE_LIB
+            for sample, library in SAMPLE_LIBRARY
         ],
     log:
         KRAKEN2 / "{kraken2_db}.log",
@@ -85,6 +85,6 @@ rule preprocess__kraken2:
     input:
         [
             KRAKEN2 / kraken2_db / f"{sample}.{library}.report"
-            for sample, library in SAMPLE_LIB_PE + SAMPLE_LIB_SE
+            for sample, library in SAMPLE_LIBRARY
             for kraken2_db in KRAKEN2_DBS
         ],

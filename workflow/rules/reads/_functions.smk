@@ -13,4 +13,4 @@ def get_reverse(wildcards):
         (samples["sample_id"] == wildcards.sample)
         & (samples["library_id"] == wildcards.library)
     ]["reverse_filename"].values[0]
-    return reverse_filename if not pd.isna(reverse_filename) else "/dev/null"
+    return reverse_filename

@@ -2,29 +2,18 @@ def get_reads_reports_for_library_reports(wildcards):
     """Compose the paths for the reads reports"""
     sample = wildcards.sample
     library = wildcards.library
-    library_type = "pe" if [sample, library] in SAMPLE_LIB_PE else "se"
-    if is_paired(wildcards):
-        return [READS / f"{sample}.{library}_{end}_fastqc.zip" for end in ["1", "2"]]
-    else:
-        return [READS / f"{sample}.{library}_1_fastqc.zip"]
+    return [READS / f"{sample}.{library}_{end}_fastqc.zip" for end in ["1", "2"]]
 
 
 def get_fastp_reports_for_library_reports(wildcards):
     """Compose the paths for the fastp reports"""
     sample = wildcards.sample
     library = wildcards.library
-    library_type = "pe" if [sample, library] in SAMPLE_LIB_PE else "se"
-    if is_paired(wildcards):
-        return [
-            FASTP / f"{sample}.{library}_fastp.json",
-            FASTP / f"{sample}.{library}_1_fastqc.zip",
-            FASTP / f"{sample}.{library}_2_fastqc.zip",
-        ]
-    else:
-        return [
-            FASTP / f"{sample}.{library}_fastp.json",
-            FASTP / f"{sample}.{library}_1_fastqc.zip",
-        ]
+    return [
+        FASTP / f"{sample}.{library}_fastp.json",
+        FASTP / f"{sample}.{library}_1_fastqc.zip",
+        FASTP / f"{sample}.{library}_2_fastqc.zip",
+    ]
 
 
 def get_bowtie2_host_for_library_reports(wildcards):
@@ -64,5 +53,5 @@ def get_report_step_kraken2_reports(wildcards):
     kraken2_db = wildcards.kraken2_db
     return [
         KRAKEN2 / kraken2_db / f"{sample}.{library}.report"
-        for sample, library in SAMPLE_LIB
+        for sample, library in SAMPLE_LIBRARY
     ]

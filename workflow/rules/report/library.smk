@@ -34,5 +34,5 @@ rule report__library:
     input:
         [
             REPORT_LIBRARY / f"{sample}.{library}.html"
-            for sample, library in SAMPLE_LIB_PE
+            for sample, library in SAMPLE_LIBRARY
         ],

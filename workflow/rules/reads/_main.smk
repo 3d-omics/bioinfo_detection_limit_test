@@ -25,7 +25,7 @@ rule reads__link:
     input:
         [
             READS / f"{sample}.{library}_{end}.fq.gz"
-            for sample, library in SAMPLE_LIB_PE + SAMPLE_LIB_SE
+            for sample, library in SAMPLE_LIBRARY
             for end in ["1", "2"]
         ],
 
@@ -35,13 +35,8 @@ rule reads__fastqc:
     input:
         [
             READS / f"{sample}.{library}_{end}_fastqc.{extension}"
-            for sample, library in SAMPLE_LIB_PE
+            for sample, library in SAMPLE_LIBRARY
             for end in ["1", "2"]
-            for extension in ["html", "zip"]
-        ],
-        [
-            READS / f"{sample}.{library}_1_fastqc.{extension}"
-            for sample, library in SAMPLE_LIB_SE
             for extension in ["html", "zip"]
         ],
 

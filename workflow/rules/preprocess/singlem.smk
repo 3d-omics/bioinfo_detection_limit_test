@@ -39,7 +39,7 @@ rule _preprocess__singlem__condense:
     input:
         archive_otu_tables=[
             SINGLEM / "pipe" / f"{sample}.{library}.archive.json"
-            for sample, library in SAMPLE_LIB
+            for sample, library in SAMPLE_LIBRARY
         ],
         data=features["databases"]["singlem"],
     output:

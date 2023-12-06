@@ -30,7 +30,8 @@ rule _preprocess__nonpareil__run:
             --decompress \
             --stdout \
             {input.forward_} \
-        > {params.forward_fq} 2> {log}
+        > {params.forward_fq} \
+        2> {log}
 
         nonpareil \
             -s {params.forward_fq} \
@@ -38,7 +39,8 @@ rule _preprocess__nonpareil__run:
             -b {params.prefix} \
             -f fastq \
             -t {threads} \
-        2>> {log} 1>&2 || true
+        2>> {log} \
+        1>&2 || true
 
         rm --force --verbose {params.forward_fq} 2>> {log} 1>&2
         """
@@ -50,7 +52,7 @@ rule preprocess__nonpareil__run:
         [
             NONPAREIL / "run" / f"{sample}.{library}.{extension}"
             for extension in ["npa", "npc", "npl", "npo"]
-            for sample, library in SAMPLE_LIB
+            for sample, library in SAMPLE_LIBRARY
         ],
 
 

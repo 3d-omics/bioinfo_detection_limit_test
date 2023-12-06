@@ -1,12 +1,13 @@
 rule _preprocess__fastp__trim:
     """Run fastp on one PE library"""
     input:
-        unpack(get_fastp_inputs),
+        forward_=READS / "{sample}.{library}_1.fq.gz",
+        reverse_=READS / "{sample}.{library}_2.fq.gz",
     output:
         forward_=temp(FASTP / "{sample}.{library}_1.fq.gz"),
-        reverse_=temp(touch(FASTP / "{sample}.{library}_2.fq.gz")),
-        unpaired1=temp(touch(FASTP / "{sample}.{library}_u1.fq.gz")),
-        unpaired2=temp(touch(FASTP / "{sample}.{library}_u2.fq.gz")),
+        reverse_=temp(FASTP / "{sample}.{library}_2.fq.gz"),
+        unpaired1=temp(FASTP / "{sample}.{library}_u1.fq.gz"),
+        unpaired2=temp(FASTP / "{sample}.{library}_u2.fq.gz"),
         html=FASTP / "{sample}.{library}_fastp.html",
         json=FASTP / "{sample}.{library}_fastp.json",
     log:
@@ -14,9 +15,8 @@ rule _preprocess__fastp__trim:
     params:
         extra=params["preprocess"]["fastp"]["extra"],
         length_required=params["preprocess"]["fastp"]["length_required"],
-        input_string=compose_input_string_for_fastp_trim_one,
-        output_string=compose_output_string_for_fastp_trim_one,
-        adapter_string=compose_adapter_string_for_fastp_trim_one,
+        forward_adapter=get_forward_adapter,
+        reverse_adapter=get_reverse_adapter,
     threads: 16
     resources:
         mem_mb=4 * 1024,
@@ -26,9 +26,14 @@ rule _preprocess__fastp__trim:
     shell:
         """
         fastp \
-            {params.input_string} \
-            {params.output_string} \
-            {params.adapter_string} \
+            --in1 {input.forward_} \
+            --in2 {input.reverse_} \
+            --out1 >(bgzip -l 1 -@ {threads} > {output.forward_}) \
+            --out2 >(bgzip -l 1 -@ {threads} > {output.reverse_}) \
+            --unpaired1 >(bgzip -l 1 -@ {threads} > {output.unpaired1}) \
+            --unpaired2 >(bgzip -l 1 -@ {threads} > {output.unpaired2}) \
+            --adapter_sequence {params.forward_adapter} \
+            --adapter_sequence_r2 {params.reverse_adapter} \
             --html {output.html} \
             --json {output.json} \
             --compression 1 \
@@ -45,7 +50,7 @@ rule preprocess__fastp__trim:
     input:
         [
             FASTP / f"{sample}.{library}_{end}.fq.gz"
-            for sample, library in SAMPLE_LIB
+            for sample, library in SAMPLE_LIBRARY
             for end in "1 2 u1 u2".split(" ")
         ],
 
@@ -55,14 +60,8 @@ rule preprocess__fastp__fastqc:
     input:
         [
             FASTP / f"{sample}.{library}_{end}_fastqc.{extension}"
-            for sample, library in SAMPLE_LIB_PE
+            for sample, library in SAMPLE_LIBRARY
             for end in ["1", "2"]
-            for extension in ["html", "zip"]
-        ],
-        [
-            FASTP / f"{sample}.{library}_{end}_fastqc.{extension}"
-            for sample, library in SAMPLE_LIB_SE
-            for end in ["1"]
             for extension in ["html", "zip"]
         ],
 
@@ -70,7 +69,7 @@ rule preprocess__fastp__fastqc:
 rule preprocess__fastp__report:
     """Collect fastp and fastqc reports"""
     input:
-        [FASTP / f"{sample}.{library}_fastp.json" for sample, library in SAMPLE_LIB],
+        [FASTP / f"{sample}.{library}_fastp.json" for sample, library in SAMPLE_LIBRARY],
         rules.preprocess__fastp__fastqc.input,
 
 

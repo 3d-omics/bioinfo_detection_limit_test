@@ -50,8 +50,6 @@ rule _preprocess__bowtie2__map:
         samtools_mem=params["preprocess"]["bowtie2"]["samtools"]["mem_per_thread"],
         rg_id=compose_rg_id,
         rg_extra=compose_rg_extra,
-        input_string=compose_input_string_for_bowtie2_hosts_map_one,
-        rmdup_string=compose_rmdup_string_for_bowtie2_hosts_map_one,
     threads: 24
     conda:
         "_env.yml"
@@ -69,7 +67,8 @@ rule _preprocess__bowtie2__map:
 
         ( bowtie2 \
             -x {input.mock} \
-            {params.input_string} \
+            -1 {input.forward_} \
+            -2 {input.reverse_} \
             --threads {threads} \
             --rg-id '{params.rg_id}' \
             --rg '{params.rg_extra}' \
@@ -79,8 +78,8 @@ rule _preprocess__bowtie2__map:
             -T {output.cram} \
             -m {params.samtools_mem} \
         | samtools rmdup \
-            {params.rmdup_string} \
-            - - \
+            - \
+            - \
         | samtools view \
             --reference {input.reference} \
             --output {output.cram} \
@@ -109,9 +108,6 @@ rule _preprocess__bowtie2__extract:
     resources:
         runtime=1 * 60,
         mem_mb=double_ram(32),
-    params:
-        output_string=compose_output_string_for_bowtie2_hosts_extract_one,
-        filter_int=compose_filter_int_for_bowtie2_hosts_extract_one,
     retries: 5
     shell:
         """
@@ -120,18 +116,20 @@ rule _preprocess__bowtie2__extract:
             --threads {threads} \
             -u \
             -o /dev/stdout \
-            -f {params.filter_int} \
+            -f 12 \
             {input.cram} \
         | samtools collate \
             -O \
             -u \
             -f \
             --reference {input.reference} \
-            -@ {threads} \
+            --threads {threads} \
             - \
         | samtools fastq \
-            {params.output_string} \
-            -c 9 \
+            -1 {output.forward_} \
+            -2 {output.reverse_} \
+            -0 /dev/null \
+            -c 1 \
             --threads {threads} \
         ) 2> {log} 1>&2
         """
@@ -143,14 +141,8 @@ rule preprocess__bowtie2__extract:
         [
             PRE_BOWTIE2 / f"non{genome}" / f"{sample}.{library}_{end}.fq.gz"
             for genome in [LAST_HOST]
-            for sample, library in SAMPLE_LIB_PE
+            for sample, library in SAMPLE_LIBRARY
             for end in ["1", "2"]
-        ],
-        [
-            PRE_BOWTIE2 / f"non{genome}" / f"{sample}.{library}_{end}.fq.gz"
-            for genome in [LAST_HOST]
-            for sample, library in SAMPLE_LIB_SE
-            for end in ["1"]
         ],
 
 
@@ -164,7 +156,7 @@ rule preprocess__bowtie2__report:
         [
             PRE_BOWTIE2 / genome / f"{sample}.{library}.{report}"
             for genome in HOST_NAMES
-            for sample, library in SAMPLE_LIB
+            for sample, library in SAMPLE_LIBRARY
             for report in BAM_REPORTS
         ],
 
