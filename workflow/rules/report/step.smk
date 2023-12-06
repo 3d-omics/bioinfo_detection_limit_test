@@ -123,7 +123,7 @@ rule _report__step__bowtie2_mags:
             QUANT_BOWTIE2 / mag_catalogue / f"{sample}.{library}.{report}"
             for mag_catalogue in ["{mag_catalogue}"]
             for sample, library in SAMPLE_LIB_PE
-            for report in BAM_REPORTS
+            for report in ["stats.tsv", "flagstats.txt"]
         ],
     output:
         html=REPORT_STEP / "bowtie2_mags_{mag_catalogue}.html",

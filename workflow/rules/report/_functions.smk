@@ -45,7 +45,7 @@ def get_bowtie2_mags_for_library_reports(wildcards):
     return [
         QUANT_BOWTIE2 / mag_catalogue / f"{sample}.{library}.{report}"
         for mag_catalogue in MAG_CATALOGUES
-        for report in BAM_REPORTS
+        for report in ["stats.tsv", "flagstats.txt"]
     ]
 
 
