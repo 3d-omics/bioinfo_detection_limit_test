@@ -5,20 +5,22 @@ rule _preprocess__kraken2__assign:
     """
     input:
         forwards=[
-            FASTP / f"{sample}.{library}_1.fq.gz" for sample, library in SAMPLE_LIBRARY
+            FASTP / f"{sample_id}.{library_id}_1.fq.gz"
+            for sample_id, library_id in SAMPLE_LIBRARY
         ],
         rerverses=[
-            FASTP / f"{sample}.{library}_2.fq.gz" for sample, library in SAMPLE_LIBRARY
+            FASTP / f"{sample_id}.{library_id}_2.fq.gz"
+            for sample_id, library_id in SAMPLE_LIBRARY
         ],
         database=get_kraken2_database,
     output:
         out_gzs=[
-            KRAKEN2 / "{kraken2_db}" / f"{sample}.{library}.out.gz"
-            for sample, library in SAMPLE_LIBRARY
+            KRAKEN2 / "{kraken2_db}" / f"{sample_id}.{library_id}.out.gz"
+            for sample_id, library_id in SAMPLE_LIBRARY
         ],
         reports=[
-            KRAKEN2 / "{kraken2_db}" / f"{sample}.{library}.report"
-            for sample, library in SAMPLE_LIBRARY
+            KRAKEN2 / "{kraken2_db}" / f"{sample_id}.{library_id}.report"
+            for sample_id, library_id in SAMPLE_LIBRARY
         ],
     log:
         KRAKEN2 / "{kraken2_db}.log",
@@ -84,7 +86,7 @@ rule preprocess__kraken2:
     """Run kraken2 over all samples at once using the /dev/shm/ trick."""
     input:
         [
-            KRAKEN2 / kraken2_db / f"{sample}.{library}.report"
-            for sample, library in SAMPLE_LIBRARY
+            KRAKEN2 / kraken2_db / f"{sample_id}.{library_id}.report"
+            for sample_id, library_id in SAMPLE_LIBRARY
             for kraken2_db in KRAKEN2_DBS
         ],

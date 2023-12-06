@@ -1,17 +1,17 @@
 rule _preprocess__fastp__trim:
     """Run fastp on one PE library"""
     input:
-        forward_=READS / "{sample}.{library}_1.fq.gz",
-        reverse_=READS / "{sample}.{library}_2.fq.gz",
+        forward_=READS / "{sample_id}.{library_id}_1.fq.gz",
+        reverse_=READS / "{sample_id}.{library_id}_2.fq.gz",
     output:
-        forward_=temp(FASTP / "{sample}.{library}_1.fq.gz"),
-        reverse_=temp(FASTP / "{sample}.{library}_2.fq.gz"),
-        unpaired1=temp(FASTP / "{sample}.{library}_u1.fq.gz"),
-        unpaired2=temp(FASTP / "{sample}.{library}_u2.fq.gz"),
-        html=FASTP / "{sample}.{library}_fastp.html",
-        json=FASTP / "{sample}.{library}_fastp.json",
+        forward_=temp(FASTP / "{sample_id}.{library_id}_1.fq.gz"),
+        reverse_=temp(FASTP / "{sample_id}.{library_id}_2.fq.gz"),
+        unpaired1=temp(FASTP / "{sample_id}.{library_id}_u1.fq.gz"),
+        unpaired2=temp(FASTP / "{sample_id}.{library_id}_u2.fq.gz"),
+        html=FASTP / "{sample_id}.{library_id}_fastp.html",
+        json=FASTP / "{sample_id}.{library_id}_fastp.json",
     log:
-        FASTP / "{sample}.{library}.log",
+        FASTP / "{sample_id}.{library_id}.log",
     params:
         extra=params["preprocess"]["fastp"]["extra"],
         length_required=params["preprocess"]["fastp"]["length_required"],
@@ -49,8 +49,8 @@ rule preprocess__fastp__trim:
     """Run fastp over all libraries"""
     input:
         [
-            FASTP / f"{sample}.{library}_{end}.fq.gz"
-            for sample, library in SAMPLE_LIBRARY
+            FASTP / f"{sample_id}.{library_id}_{end}.fq.gz"
+            for sample_id, library_id in SAMPLE_LIBRARY
             for end in "1 2 u1 u2".split(" ")
         ],
 
@@ -59,8 +59,8 @@ rule preprocess__fastp__fastqc:
     """Run fastqc over all libraries"""
     input:
         [
-            FASTP / f"{sample}.{library}_{end}_fastqc.{extension}"
-            for sample, library in SAMPLE_LIBRARY
+            FASTP / f"{sample_id}.{library_id}_{end}_fastqc.{extension}"
+            for sample_id, library_id in SAMPLE_LIBRARY
             for end in ["1", "2"]
             for extension in ["html", "zip"]
         ],
@@ -69,7 +69,10 @@ rule preprocess__fastp__fastqc:
 rule preprocess__fastp__report:
     """Collect fastp and fastqc reports"""
     input:
-        [FASTP / f"{sample}.{library}_fastp.json" for sample, library in SAMPLE_LIBRARY],
+        [
+            FASTP / f"{sample_id}.{library_id}_fastp.json"
+            for sample_id, library_id in SAMPLE_LIBRARY
+        ],
         rules.preprocess__fastp__fastqc.input,
 
 

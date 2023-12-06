@@ -41,10 +41,10 @@ rule _preprocess__bowtie2__map:
         mock=PRE_BOWTIE2 / "{genome}_index",
         reference=REFERENCE / "{genome}.fa.gz",
     output:
-        cram=PRE_BOWTIE2 / "{genome}" / "{sample}.{library}.cram",
-        crai=PRE_BOWTIE2 / "{genome}" / "{sample}.{library}.cram.crai",
+        cram=PRE_BOWTIE2 / "{genome}" / "{sample_id}.{library_id}.cram",
+        crai=PRE_BOWTIE2 / "{genome}" / "{sample_id}.{library_id}.cram.crai",
     log:
-        PRE_BOWTIE2 / "{genome}" / "{sample}.{library}_pe.log",
+        PRE_BOWTIE2 / "{genome}" / "{sample_id}.{library_id}_pe.log",
     params:
         extra=params["preprocess"]["bowtie2"]["extra"],
         samtools_mem=params["preprocess"]["bowtie2"]["samtools"]["mem_per_thread"],
@@ -95,13 +95,13 @@ rule _preprocess__bowtie2__extract:
     than by coordinate, and convert to FASTQ.
     """
     input:
-        cram=PRE_BOWTIE2 / "{genome}" / "{sample}.{library}.cram",
+        cram=PRE_BOWTIE2 / "{genome}" / "{sample_id}.{library_id}.cram",
         reference=REFERENCE / "{genome}.fa.gz",
     output:
-        forward_=PRE_BOWTIE2 / "non{genome}" / "{sample}.{library}_1.fq.gz",
-        reverse_=touch(PRE_BOWTIE2 / "non{genome}" / "{sample}.{library}_2.fq.gz"),
+        forward_=PRE_BOWTIE2 / "non{genome}" / "{sample_id}.{library_id}_1.fq.gz",
+        reverse_=touch(PRE_BOWTIE2 / "non{genome}" / "{sample_id}.{library_id}_2.fq.gz"),
     log:
-        PRE_BOWTIE2 / "non{genome}" / "{sample}.{library}.log",
+        PRE_BOWTIE2 / "non{genome}" / "{sample_id}.{library_id}.log",
     conda:
         "_env.yml"
     threads: 24
@@ -139,9 +139,9 @@ rule preprocess__bowtie2__extract:
     """Run bowtie2_extract_nonchicken_one for all PE libraries"""
     input:
         [
-            PRE_BOWTIE2 / f"non{genome}" / f"{sample}.{library}_{end}.fq.gz"
+            PRE_BOWTIE2 / f"non{genome}" / f"{sample_id}.{library_id}_{end}.fq.gz"
             for genome in [LAST_HOST]
-            for sample, library in SAMPLE_LIBRARY
+            for sample_id, library_id in SAMPLE_LIBRARY
             for end in ["1", "2"]
         ],
 
@@ -154,9 +154,9 @@ rule preprocess__bowtie2__report:
     """
     input:
         [
-            PRE_BOWTIE2 / genome / f"{sample}.{library}.{report}"
+            PRE_BOWTIE2 / genome / f"{sample_id}.{library_id}.{report}"
             for genome in HOST_NAMES
-            for sample, library in SAMPLE_LIBRARY
+            for sample_id, library_id in SAMPLE_LIBRARY
             for report in BAM_REPORTS
         ],
 

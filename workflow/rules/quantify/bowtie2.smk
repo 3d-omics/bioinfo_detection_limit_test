@@ -41,10 +41,10 @@ rule _quantify__bowtie2__map:
         mock=QUANT_BOWTIE2 / "{mag_catalogue}_index",
         reference=REFERENCE / "mags" / "{mag_catalogue}.fa.gz",
     output:
-        cram=QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample}.{library}.cram",
-        crai=QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample}.{library}.cram.crai",
+        cram=QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}.cram",
+        crai=QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}.cram.crai",
     log:
-        QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample}.{library}.log",
+        QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}.log",
     conda:
         "_env.yml"
     threads: 24
@@ -90,8 +90,8 @@ rule quantify__bowtie2__map:
     """Run bowtie2_map_mags_one for all PE libraries"""
     input:
         [
-            QUANT_BOWTIE2 / mag_catalogue / f"{sample}.{library}.cram"
-            for sample, library in SAMPLE_LIBRARY
+            QUANT_BOWTIE2 / mag_catalogue / f"{sample_id}.{library_id}.cram"
+            for sample_id, library_id in SAMPLE_LIBRARY
             for mag_catalogue in MAG_CATALOGUES
         ],
 
@@ -104,8 +104,8 @@ rule quantify__bowtie2__report:
     """
     input:
         [
-            QUANT_BOWTIE2 / mag_catalogue / f"{sample}.{library}.{report}"
-            for sample, library in SAMPLE_LIBRARY
+            QUANT_BOWTIE2 / mag_catalogue / f"{sample_id}.{library_id}.{report}"
+            for sample_id, library_id in SAMPLE_LIBRARY
             for report in BAM_REPORTS
             for mag_catalogue in MAG_CATALOGUES
         ],

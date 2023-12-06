@@ -9,22 +9,21 @@ rule _preprocess__singlem__pipe:
         reverse_=get_host_clean_reverse,
         data=features["databases"]["singlem"],
     output:
-        archive_otu_table=SINGLEM / "pipe" / "{sample}.{library}.archive.json",
-        otu_table=SINGLEM / "pipe" / "{sample}.{library}.otu_table.tsv",
-        condense=SINGLEM / "pipe" / "{sample}.{library}.condense.tsv",
+        archive_otu_table=SINGLEM / "pipe" / "{sample_id}.{library_id}.archive.json",
+        otu_table=SINGLEM / "pipe" / "{sample_id}.{library_id}.otu_table.tsv",
+        condense=SINGLEM / "pipe" / "{sample_id}.{library_id}.condense.tsv",
     log:
-        SINGLEM / "pipe" / "{sample}.{library}.log",
+        SINGLEM / "pipe" / "{sample_id}.{library_id}.log",
     conda:
         "_env.yml"
     resources:
         runtime=4 * 60,
         mem_mb=8 * 1024,
-    params:
-        input_string=get_input_string_for_stats_singlem_pipe_one,
     shell:
         """
         singlem pipe \
-            {params.input_string} \
+            --forward {input.forward_} \
+            --reverse {input.reverse_} \
             --otu-table {output.otu_table} \
             --archive-otu-table {output.archive_otu_table} \
             --taxonomic-profile {output.condense} \
@@ -38,8 +37,8 @@ rule _preprocess__singlem__condense:
     """Aggregate all the singlem results into a single table"""
     input:
         archive_otu_tables=[
-            SINGLEM / "pipe" / f"{sample}.{library}.archive.json"
-            for sample, library in SAMPLE_LIBRARY
+            SINGLEM / "pipe" / f"{sample_id}.{library_id}.archive.json"
+            for sample_id, library_id in SAMPLE_LIBRARY
         ],
         data=features["databases"]["singlem"],
     output:

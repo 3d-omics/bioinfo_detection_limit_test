@@ -6,12 +6,12 @@ rule _quantify__coverm__cram_to_bam:
     it works.
     """
     input:
-        cram=QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample}.{library}.cram",
+        cram=QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}.cram",
         reference=REFERENCE / "mags" / "{mag_catalogue}.fa.gz",
     output:
-        bam=temp(COVERM / "{mag_catalogue}" / "bams" / "{sample}.{library}.bam"),
+        bam=temp(COVERM / "{mag_catalogue}" / "bams" / "{sample_id}.{library_id}.bam"),
     log:
-        COVERM / "{mag_catalogue}" / "bams" / "{sample}.{library}.log",
+        COVERM / "{mag_catalogue}" / "bams" / "{sample_id}.{library_id}.log",
     conda:
         "_env.yml"
     threads: 24
@@ -34,19 +34,23 @@ rule _quantify__coverm__cram_to_bam:
 rule _quantify__coverm__genome:
     """Run coverm genome for one library and one mag catalogue"""
     input:
-        bam=COVERM / "{mag_catalogue}" / "bams" / "{sample}.{library}.bam",
+        bam=COVERM / "{mag_catalogue}" / "bams" / "{sample_id}.{library_id}.bam",
     output:
         tsv=touch(
             COVERM
             / "{mag_catalogue}"
             / "genome"
             / "{method}"
-            / "{sample}.{library}.tsv"
+            / "{sample_id}.{library_id}.tsv"
         ),
     conda:
         "_env.yml"
     log:
-        COVERM / "{mag_catalogue}" / "genome" / "{method}" / "{sample}.{library}.log",
+        COVERM
+        / "{mag_catalogue}"
+        / "genome"
+        / "{method}"
+        / "{sample_id}.{library_id}.log",
     params:
         method="{method}",
         min_covered_fraction=params["quantify"]["coverm"]["genome"][

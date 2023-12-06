@@ -9,12 +9,12 @@ rule _preprocess__nonpareil__run:
     input:
         forward_=get_host_clean_forward,
     output:
-        npa=touch(NONPAREIL / "run" / "{sample}.{library}.npa"),
-        npc=touch(NONPAREIL / "run" / "{sample}.{library}.npc"),
-        npl=touch(NONPAREIL / "run" / "{sample}.{library}.npl"),
-        npo=touch(NONPAREIL / "run" / "{sample}.{library}.npo"),
+        npa=touch(NONPAREIL / "run" / "{sample_id}.{library_id}.npa"),
+        npc=touch(NONPAREIL / "run" / "{sample_id}.{library_id}.npc"),
+        npl=touch(NONPAREIL / "run" / "{sample_id}.{library_id}.npl"),
+        npo=touch(NONPAREIL / "run" / "{sample_id}.{library_id}.npo"),
     log:
-        NONPAREIL / "run" / "{sample}.{library}.log",
+        NONPAREIL / "run" / "{sample_id}.{library_id}.log",
     conda:
         "_env.yml"
     params:
@@ -50,9 +50,9 @@ rule preprocess__nonpareil__run:
     """Run stats_nonpareil_one for all the samples"""
     input:
         [
-            NONPAREIL / "run" / f"{sample}.{library}.{extension}"
+            NONPAREIL / "run" / f"{sample_id}.{library_id}.{extension}"
             for extension in ["npa", "npc", "npl", "npo"]
-            for sample, library in SAMPLE_LIBRARY
+            for sample_id, library_id in SAMPLE_LIBRARY
         ],
 
 
