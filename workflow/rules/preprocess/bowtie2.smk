@@ -76,6 +76,7 @@ rule _preprocess__bowtie2__map:
             {params.extra} \
         | samtools sort \
             --threads {threads} \
+            -T {output.cram} \
             -m {params.samtools_mem} \
         | samtools rmdup \
             {params.rmdup_string} \
