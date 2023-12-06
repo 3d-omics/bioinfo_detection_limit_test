@@ -1,4 +1,4 @@
-# Snakemake workflow: `detection limit test`
+# Snakemake workflow: `mg_quant`
 
 [![Snakemake](https://img.shields.io/badge/snakemake-≥6.3.0-brightgreen.svg)](https://snakemake.github.io)
 [![GitHub actions status](https://github.com/3d-omics/bioinfo_detection_limit_test/workflows/Tests/badge.svg?branch=devel)](https://github.com/3d-omics/bioinfo_detection_limit_test/actions?query=branch%devel+workflow%3ATests)
@@ -16,7 +16,7 @@ A Snakemake workflow for assessing detection limit from laser-microdissected sam
 Clone the repository, and set it as the working directory.
 
 ```
-git clone --recursive https://github.com/3d-omics/detection_limit_test.git
+git clone --recursive https://github.com/3d-omics/mg_quant.git
 cd detection_limit_test
 ```
 
@@ -33,7 +33,7 @@ snakemake \
       If the `forward_adapter` and `reverse_adapter` fields are empty, they are assumed to be the current Paired-End ones: `AGATCGGAAGAGCACACGTCTGAACTCCAGTCA` and `AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT`, respectively.
       If your sample is Single-End, specify it in the `library_type` column. Whatever is in the `reverse` will be ignored.
       ```
-      sample	library	library_type	forward	reverse	forward_adapter	reverse_adapter
+      sample	library	library_type	forward_filename	reverse_filename	forward_adapter	reverse_adapter
       sample1	lib1	PE	resources/reads/sample1_1.fq.gz	resources/reads/sample1_2.fq.gz
       #sample2	lib1	PE	resources/reads/sample2_1.fq.gz	resources/reads/sample2_2.fq.gz
       sample2	lib1	SE	resources/reads/sample2_1.fq.gz		AGATCGGAAGAGCACACGTCTGAACTCCAGTCA
