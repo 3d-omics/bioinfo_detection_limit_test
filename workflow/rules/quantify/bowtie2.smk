@@ -69,18 +69,19 @@ rule _quantify__bowtie2__map:
         ( bowtie2 \
             -x {input.mock} \
             {params.input_string} \
-            --threads {threads} \
-            --rg-id '{params.rg_id}' \
             --rg '{params.rg_extra}' \
+            --rg-id '{params.rg_id}' \
+            --threads {threads} \
             {params.extra} \
         | samtools sort \
-            -l 9 \
-            -M \
-            -m {params.samtools_mem} \
-            -o {output.cram} \
             --reference {input.reference} \
             --threads {threads} \
             --write-index \
+            -M \
+            -T {output.cram} \
+            -l 9 \
+            -m {params.samtools_mem} \
+            -o {output.cram} \
         ) 2>> {log} 1>&2
         """
 
