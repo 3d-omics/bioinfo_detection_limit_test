@@ -6,22 +6,19 @@ preprocess:
     length_required: 75  # nonpareil requires at least 25bp
     extra: "--trim_poly_g --trim_poly_x"
   bowtie2:
-    extra: ""
     samtools:
       mem_per_thread: 1G
   kraken2:
     memory_gb: 1
-    extra: ""
 
 quantify:
   bowtie2:
-    extra: ""
     samtools:
       mem_per_thread: 1G
-  coverm:
+  coverm:   # https://github.com/wwood/CoverM#calculation-methods
     genome:
-      methods: ["count", "covered_bases", "length"]  # https://github.com/wwood/CoverM#calculation-methods
+      methods: ["count", "covered_bases", "length"]
       min_covered_fraction: 0.0
       separator: "@"
     contig:
-      methods: ["count", "covered_bases", "length"]  # https://github.com/wwood/CoverM#calculation-methods
+      methods: ["count", "covered_bases", "length"]

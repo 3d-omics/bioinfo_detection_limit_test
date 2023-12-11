@@ -12,8 +12,6 @@ rule _quantify__bowtie2__build:
         QUANT_BOWTIE2 / "{mag_catalogue}_index.log",
     conda:
         "_env.yml"
-    params:
-        extra=params["quantify"]["bowtie2"]["extra"],
     threads: 24
     resources:
         mem_mb=double_ram(32),
@@ -23,7 +21,6 @@ rule _quantify__bowtie2__build:
         """
         bowtie2-build \
             --threads {threads} \
-            {params.extra} \
             {input.reference} \
             {output.mock} \
         2> {log} 1>&2
@@ -42,7 +39,6 @@ rule _quantify__bowtie2__map:
         reference=REFERENCE / "mags" / "{mag_catalogue}.fa.gz",
     output:
         cram=QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}.cram",
-        crai=QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}.cram.crai",
     log:
         QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}.log",
     conda:
@@ -53,7 +49,6 @@ rule _quantify__bowtie2__map:
         runtime=24 * 60,
     retries: 5
     params:
-        extra=params["quantify"]["bowtie2"]["extra"],
         samtools_mem=params["quantify"]["bowtie2"]["samtools"]["mem_per_thread"],
         rg_id=compose_rg_id,
         rg_extra=compose_rg_extra,
@@ -72,11 +67,9 @@ rule _quantify__bowtie2__map:
             --rg '{params.rg_extra}' \
             --rg-id '{params.rg_id}' \
             --threads {threads} \
-            {params.extra} \
         | samtools sort \
             --reference {input.reference} \
             --threads {threads} \
-            --write-index \
             -M \
             -T {output.cram} \
             -l 9 \

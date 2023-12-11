@@ -12,8 +12,6 @@ rule _preprocess__bowtie2__build:
         PRE_BOWTIE2 / "{genome}_index.log",
     conda:
         "_env.yml"
-    params:
-        extra=params["preprocess"]["bowtie2"]["extra"],
     threads: 24
     resources:
         mem_mb=double_ram(32),
@@ -23,7 +21,6 @@ rule _preprocess__bowtie2__build:
         """
         bowtie2-build \
             --threads {threads} \
-            {params.extra} \
             {input.reference} \
             {output.mock} \
         2> {log} 1>&2
@@ -42,11 +39,9 @@ rule _preprocess__bowtie2__map:
         reference=REFERENCE / "{genome}.fa.gz",
     output:
         cram=PRE_BOWTIE2 / "{genome}" / "{sample_id}.{library_id}.cram",
-        crai=PRE_BOWTIE2 / "{genome}" / "{sample_id}.{library_id}.cram.crai",
     log:
         PRE_BOWTIE2 / "{genome}" / "{sample_id}.{library_id}_pe.log",
     params:
-        extra=params["preprocess"]["bowtie2"]["extra"],
         samtools_mem=params["preprocess"]["bowtie2"]["samtools"]["mem_per_thread"],
         rg_id=compose_rg_id,
         rg_extra=compose_rg_extra,
@@ -72,7 +67,6 @@ rule _preprocess__bowtie2__map:
             --threads {threads} \
             --rg-id '{params.rg_id}' \
             --rg '{params.rg_extra}' \
-            {params.extra} \
         | samtools sort \
             --threads {threads} \
             -T {output.cram} \
@@ -84,7 +78,6 @@ rule _preprocess__bowtie2__map:
             --reference {input.reference} \
             --output {output.cram} \
             --output-fmt cram,level=9,nthreads={threads} \
-            --write-index \
         ) 2>> {log} 1>&2
         """
 

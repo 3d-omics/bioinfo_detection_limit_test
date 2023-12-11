@@ -1,3 +1,16 @@
+rule _helpers__samtools__crai:
+    input:
+        "{prefix}.cram",
+    output:
+        "{prefix}.cram.crai",
+    log:
+        "{prefix}.cram.crai.log",
+    conda:
+        "_env.yml"
+    shell:
+        "samtools index {input} 2> {log} 1>&2"
+
+
 rule _helpers__samtools__flagstats_cram:
     """Compute flagstats for a cram"""
     input:
