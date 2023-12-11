@@ -18,7 +18,7 @@ rule _preprocess__singlem__pipe:
         "_env.yml"
     resources:
         runtime=4 * 60,
-        mem_mb=8 * 1024,
+        mem_mb=16 * 1024,
     shell:
         """
         singlem pipe \
