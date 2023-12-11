@@ -13,7 +13,6 @@ rule _preprocess__fastp__trim:
     log:
         FASTP / "{sample_id}.{library_id}.log",
     params:
-        extra=params["preprocess"]["fastp"]["extra"],
         length_required=params["preprocess"]["fastp"]["length_required"],
         forward_adapter=get_forward_adapter,
         reverse_adapter=get_reverse_adapter,
@@ -36,11 +35,11 @@ rule _preprocess__fastp__trim:
             --adapter_sequence_r2 {params.reverse_adapter} \
             --html {output.html} \
             --json {output.json} \
-            --compression 1 \
-            --verbose \
             --length_required {params.length_required} \
             --thread {threads} \
-            {params.extra} \
+            --trim_poly_g \
+            --trim_poly_x \
+            --verbose \
         2> {log} 1>&2
         """
 

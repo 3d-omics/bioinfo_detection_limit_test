@@ -4,7 +4,6 @@
 preprocess:
   fastp:
     length_required: 75  # nonpareil requires at least 25bp
-    extra: "--trim_poly_g --trim_poly_x"
   bowtie2:
     samtools:
       mem_per_thread: 1G
