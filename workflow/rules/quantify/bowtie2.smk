@@ -14,7 +14,7 @@ rule _quantify__bowtie2__build:
         "_env.yml"
     threads: 24
     resources:
-        mem_mb=double_ram(32),
+        mem_mb=double_ram(params["preprocess"]["bowtie2"]["mem_gb"]),
         runtime=24 * 60,
     retries: 5
     shell:
@@ -45,11 +45,11 @@ rule _quantify__bowtie2__map:
         "_env.yml"
     threads: 24
     resources:
-        mem_mb=double_ram(32),
+        mem_mb=double_ram(params["quantify"]["bowtie2"]["mem_gb"]),
         runtime=24 * 60,
     retries: 5
     params:
-        samtools_mem=params["quantify"]["bowtie2"]["samtools"]["mem_per_thread"],
+        samtools_mem=params["quantify"]["bowtie2"]["samtools_mem"],
         rg_id=compose_rg_id,
         rg_extra=compose_rg_extra,
     shell:

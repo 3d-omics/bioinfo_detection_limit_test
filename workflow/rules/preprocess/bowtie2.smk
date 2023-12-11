@@ -14,7 +14,7 @@ rule _preprocess__bowtie2__build:
         "_env.yml"
     threads: 24
     resources:
-        mem_mb=double_ram(32),
+        mem_mb=double_ram(params["preprocess"]["bowtie2"]["mem_gb"]),
         runtime=24 * 60,
     retries: 5
     shell:
@@ -42,14 +42,14 @@ rule _preprocess__bowtie2__map:
     log:
         PRE_BOWTIE2 / "{genome}" / "{sample_id}.{library_id}_pe.log",
     params:
-        samtools_mem=params["preprocess"]["bowtie2"]["samtools"]["mem_per_thread"],
+        samtools_mem=params["preprocess"]["bowtie2"]["samtools_mem"],
         rg_id=compose_rg_id,
         rg_extra=compose_rg_extra,
     threads: 24
     conda:
         "_env.yml"
     resources:
-        mem_mb=double_ram(32),
+        mem_mb=double_ram(params["preprocess"]["bowtie2"]["mem_gb"]),
         runtime=24 * 60,
     retries: 5
     shell:
@@ -100,7 +100,7 @@ rule _preprocess__bowtie2__extract:
     threads: 24
     resources:
         runtime=1 * 60,
-        mem_mb=double_ram(32),
+        mem_mb=double_ram(params["preprocess"]["bowtie2"]["mem_gb"]),
     retries: 5
     shell:
         """
