@@ -1,4 +1,4 @@
-include: "_functions.smk"
+include: "__functions__.smk"
 
 
 rule _reads__link:
@@ -12,7 +12,7 @@ rule _reads__link:
     log:
         READS / "{sample_id}.{library_id}.log",
     conda:
-        "_env.yml"
+        "__env__.yml"
     shell:
         """
         ln --symbolic $(readlink --canonicalize {input.forward_}) {output.forward_} 2> {log}

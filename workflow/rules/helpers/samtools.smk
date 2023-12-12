@@ -6,7 +6,7 @@ rule _helpers__samtools__crai:
     log:
         "{prefix}.cram.crai.log",
     conda:
-        "_env.yml"
+        "__env__.yml"
     shell:
         "samtools index {input} 2> {log} 1>&2"
 
@@ -21,7 +21,7 @@ rule _helpers__samtools__flagstats_cram:
     log:
         "{prefix}.flagstats.log",
     conda:
-        "_env.yml"
+        "__env__.yml"
     resources:
         mem_mb=4 * 1024,
     shell:
@@ -38,7 +38,7 @@ rule _helpers__samtools__idxstats_cram:
     log:
         "{prefix}.idxstats.log",
     conda:
-        "_env.yml"
+        "__env__.yml"
     resources:
         mem_mb=4 * 1024,
     shell:

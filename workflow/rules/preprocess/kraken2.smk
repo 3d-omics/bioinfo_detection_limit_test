@@ -33,7 +33,7 @@ rule _preprocess__kraken2__assign:
         out_folder=compose_out_folder_for_pre_kraken2_assign_all,
         kraken_db_shm="/dev/shm/{kraken2_db}",
     conda:
-        "_env.yml"
+        "__env__.yml"
     shell:
         """
         {{

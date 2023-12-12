@@ -1,4 +1,4 @@
-include: "_functions.smk"
+include: "__functions__.smk"
 include: "samtools.smk"
 include: "coverm.smk"
 include: "bowtie2.smk"
