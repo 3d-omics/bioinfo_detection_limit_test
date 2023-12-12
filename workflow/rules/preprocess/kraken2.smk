@@ -37,6 +37,8 @@ rule _preprocess__kraken2__assign:
     shell:
         """
         {{
+            echo Running kraken2 in $(hostname) 2>> {log} 1>&2
+
             mkdir --parents {params.kraken_db_shm}
             mkdir --parents {params.out_folder}
 
