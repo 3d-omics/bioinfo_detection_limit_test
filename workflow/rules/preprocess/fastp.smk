@@ -18,7 +18,7 @@ rule _preprocess__fastp__trim:
         reverse_adapter=get_reverse_adapter,
     threads: 16
     resources:
-        mem_mb=4 * 1024,
+        mem_mb=8 * 1024,
         runtime=240,
     conda:
         "__env__.yml"
