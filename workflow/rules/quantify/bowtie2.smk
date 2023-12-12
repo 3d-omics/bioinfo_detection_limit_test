@@ -68,6 +68,7 @@ rule _quantify__bowtie2__map:
             --rg-id '{params.rg_id}' \
             --threads {threads} \
         | samtools sort \
+            --output-fmt CRAM \
             --reference {input.reference} \
             --threads {threads} \
             -M \

@@ -68,16 +68,14 @@ rule _preprocess__bowtie2__map:
             --rg-id '{params.rg_id}' \
             --rg '{params.rg_extra}' \
         | samtools sort \
-            --threads {threads} \
-            -T {output.cram} \
-            -m {params.samtools_mem} \
-        | samtools rmdup \
-            - \
-            - \
-        | samtools view \
+            --output-fmt CRAM \
             --reference {input.reference} \
-            --output {output.cram} \
-            --output-fmt cram,level=9,nthreads={threads} \
+            --threads {threads} \
+            -M \
+            -T {output.cram} \
+            -l 9 \
+            -m {params.samtools_mem} \
+            -o {output.cram}
         ) 2>> {log} 1>&2
         """
 
