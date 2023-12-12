@@ -15,7 +15,7 @@ rule _preprocess__singlem__pipe:
     log:
         SINGLEM / "pipe" / "{sample_id}.{library_id}.log",
     conda:
-        "__env__.yml"
+        "__environment__.yml"
     resources:
         runtime=4 * 60,
         mem_mb=16 * 1024,
@@ -46,7 +46,7 @@ rule _preprocess__singlem__condense:
     log:
         SINGLEM / "singlem.log",
     conda:
-        "__env__.yml"
+        "__environment__.yml"
     params:
         input_dir=SINGLEM,
     shell:
@@ -73,7 +73,7 @@ rule _preprocess__singlem__microbial_fraction:
     log:
         SINGLEM / "microbial_fraction" / "{sample_id}.{library_id}.log",
     conda:
-        "__env__.yml"
+        "__environment__.yml"
     shell:
         """
         singlem microbial_fraction \
@@ -98,7 +98,7 @@ rule _preprocess__singlem__aggregate_microbial_fraction:
     log:
         SINGLEM / "microbial_fraction.log",
     conda:
-        "__env__.yml"
+        "__environment__.yml"
     shell:
         """
         ( csvstack \

@@ -7,7 +7,7 @@ rule _reference__recompress_host:
     log:
         REFERENCE / "{genome}.log",
     conda:
-        "__env__.yml"
+        "__environment__.yml"
     threads: 8
     shell:
         """
@@ -39,7 +39,7 @@ rule _reference__recompress_mags:
     log:
         REFERENCE / "mags" / "{catalogue}.log",
     conda:
-        "__env__.yml"
+        "__environment__.yml"
     threads: 8
     shell:
         """

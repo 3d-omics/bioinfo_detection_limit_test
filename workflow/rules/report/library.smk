@@ -11,7 +11,7 @@ rule _report__library:
     log:
         REPORT_LIBRARY / "{sample}.{library}.log",
     conda:
-        "__env__.yml"
+        "__environment__.yml"
     params:
         library="{sample}.{library}",
         out_dir=REPORT_LIBRARY,

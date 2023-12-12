@@ -11,7 +11,7 @@ rule _quantify__bowtie2__build:
     log:
         QUANT_BOWTIE2 / "{mag_catalogue}_index.log",
     conda:
-        "__env__.yml"
+        "__environment__.yml"
     threads: 24
     resources:
         mem_mb=double_ram(params["preprocess"]["bowtie2"]["mem_gb"]),
@@ -42,7 +42,7 @@ rule _quantify__bowtie2__map:
     log:
         QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}.log",
     conda:
-        "__env__.yml"
+        "__environment__.yml"
     threads: 24
     resources:
         mem_mb=double_ram(params["quantify"]["bowtie2"]["mem_gb"]),

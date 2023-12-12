@@ -13,7 +13,7 @@ rule _quantify__coverm__cram_to_bam:
     log:
         COVERM / "{mag_catalogue}" / "bams" / "{sample_id}.{library_id}.log",
     conda:
-        "__env__.yml"
+        "__environment__.yml"
     threads: 24
     resources:
         runtime=1 * 60,
@@ -44,7 +44,7 @@ rule _quantify__coverm__genome:
             / "{sample_id}.{library_id}.tsv"
         ),
     conda:
-        "__env__.yml"
+        "__environment__.yml"
     log:
         COVERM
         / "{mag_catalogue}"
@@ -77,7 +77,7 @@ rule _quantify__coverm__aggregate_genome:
     log:
         COVERM / "coverm_genome_{mag_catalogue}.{method}.log",
     conda:
-        "__env__.yml"
+        "__environment__.yml"
     params:
         input_dir=lambda wildcards: COVERM
         / wildcards.mag_catalogue
@@ -115,7 +115,7 @@ rule _quantify__coverm__contig:
         / "{method}"
         / "{sample}.{library}.tsv",
     conda:
-        "__env__.yml"
+        "__environment__.yml"
     log:
         COVERM / "{mag_catalogue}" / "contig" / "{method}" / "{sample}.{library}.log",
     params:
@@ -139,7 +139,7 @@ rule _quantify__coverm__aggregate_contig:
     log:
         COVERM / "coverm_contig_{mag_catalogue}.{method}.log",
     conda:
-        "__env__.yml"
+        "__environment__.yml"
     params:
         input_dir=lambda wildcards: COVERM
         / wildcards.mag_catalogue

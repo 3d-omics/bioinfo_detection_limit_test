@@ -12,7 +12,7 @@ rule _reads__link:
     log:
         READS / "{sample_id}.{library_id}.log",
     conda:
-        "__env__.yml"
+        "__environment__.yml"
     shell:
         """
         ln --symbolic $(readlink --canonicalize {input.forward_}) {output.forward_} 2> {log}

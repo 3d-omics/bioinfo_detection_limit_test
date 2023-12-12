@@ -9,7 +9,7 @@ rule _helpers__samtools__stats_cram_host:
     log:
         PRE_BOWTIE2 / "{genome}" / "{sample_id}.{library_id}.stats.log",
     conda:
-        "__env__.yml"
+        "__environment__.yml"
     shell:
         """
         samtools stats \

@@ -9,7 +9,7 @@ rule _quantify__samtools__stats__cram_mag:
     log:
         QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample}.{library}.stats.log",
     conda:
-        "__env__.yml"
+        "__environment__.yml"
     shell:
         """
         samtools stats \
