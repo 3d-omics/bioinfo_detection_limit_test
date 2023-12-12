@@ -65,11 +65,13 @@ rule _preprocess__singlem__microbial_fraction:
         forward_=get_host_clean_forward,
         reverse_=get_host_clean_reverse,
         data=features["databases"]["singlem"],
-        condense=SINGLEM / "{sample_id}.{library_id}.condense.tsv",
+        condense=SINGLEM / "pipe" / "{sample_id}.{library_id}.condense.tsv",
     output:
-        microbial_fraction=SINGLEM / "{sample_id}.{library_id}.microbial_fraction.tsv",
+        microbial_fraction=SINGLEM
+        / "microbial_fraction"
+        / "{sample_id}.{library_id}.tsv",
     log:
-        SINGLEM / "{sample_id}.{library_id}.microbial_fraction.log",
+        SINGLEM / "microbial_fraction" / "{sample_id}.{library_id}.log",
     conda:
         "_env.yml"
     shell:
@@ -88,7 +90,7 @@ rule _preprocess__singlem__aggregate_microbial_fraction:
     """Aggregate all the microbial_fraction files into one tsv"""
     input:
         tsvs=[
-            SINGLEM / "{sample_id}.{library_id}.microbial_fraction.tsv"
+            SINGLEM / "microbial_fraction" / "{sample_id}.{library_id}.tsv"
             for sample_id, library_id in SAMPLE_LIBRARY
         ],
     output:
@@ -112,5 +114,5 @@ rule _preprocess__singlem__aggregate_microbial_fraction:
 rule preprocess__singlem:
     """Run all stats singlem rules"""
     input:
-        SINGLEM / "singlem.tsv",
-        SINGLEM / "microbial_fraction.tsv",
+        rules._preprocess__singlem__condense.output,
+        rules._preprocess__singlem__aggregate_microbial_fraction.output,
