@@ -21,7 +21,7 @@ rule _preprocess__nonpareil__run:
         prefix=compose_prefix_for_nonpareil,
         forward_fq=lambda wildcards: NONPAREIL
         / "run"
-        / "{wildcards.sample}.{wildcards.library}_1.fq",
+        / f"{wildcards.sample}.{wildcards.library}_1.fq",
     resources:
         runtime=24 * 60,
     shell:
