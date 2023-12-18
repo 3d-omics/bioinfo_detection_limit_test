@@ -90,7 +90,7 @@ rule _preprocess__singlem__aggregate_microbial_fraction:
     """Aggregate all the microbial_fraction files into one tsv"""
     input:
         tsvs=[
-            SINGLEM / "microbial_fraction" / "{sample_id}.{library_id}.tsv"
+            SINGLEM / "microbial_fraction" / f"{sample_id}.{library_id}.tsv"
             for sample_id, library_id in SAMPLE_LIBRARY
         ],
     output:
