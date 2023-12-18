@@ -17,7 +17,7 @@ rule _preprocess__singlem__pipe:
     conda:
         "__environment__.yml"
     resources:
-        runtime=4 * 60,
+        runtime=24 * 60,
         mem_mb=16 * 1024,
     shell:
         """
