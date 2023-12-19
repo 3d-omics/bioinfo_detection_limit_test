@@ -59,6 +59,8 @@ rule _report__step__kraken2:
     params:
         dir=REPORT_STEP,
         title="kraken2_{kraken2_db}",
+    resources:
+        mem_mb=4 * 1024,
     shell:
         """
         multiqc \
