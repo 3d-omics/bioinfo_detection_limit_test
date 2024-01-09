@@ -47,7 +47,7 @@ jobs:
         run: conda clean --all --yes
 
       - name: Test workflow - Preprocessing
-        uses: snakemake/snakemake-github-action@v1.24.0
+        uses: ezherman/snakemake-github-action@5027c0e706ada924ab91e0501bd92185fc98de3c
         with:
           directory: .
           snakefile: workflow/Snakefile
@@ -60,7 +60,7 @@ jobs:
             preprocess
 
       - name: Test workflow - Quantify
-        uses: snakemake/snakemake-github-action@v1.24.0
+        uses: ezherman/snakemake-github-action@5027c0e706ada924ab91e0501bd92185fc98de3c
         with:
           directory: .
           snakefile: workflow/Snakefile
@@ -73,7 +73,7 @@ jobs:
             quantify
 
       - name: Test workflow - Report
-        uses: snakemake/snakemake-github-action@v1.24.0
+        uses: ezherman/snakemake-github-action@5027c0e706ada924ab91e0501bd92185fc98de3c
         with:
           directory: .
           snakefile: workflow/Snakefile
