@@ -1,8 +1,0 @@
-# Environment to link reads. coreutils is needed for the `ln` command.
----
-channels:
-  - conda-forge
-  - bioconda
-  - nodefaults
-dependencies:
-  - coreutils=9.3

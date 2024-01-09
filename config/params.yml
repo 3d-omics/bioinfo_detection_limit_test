@@ -1,25 +1,23 @@
 # Execution parameters
 ---
-fastp:
-  length_required: 75  # nonpareil requires at least 25bp
-  extra: "--trim_poly_g --trim_poly_x"
 
-kraken2:
-  mem_mb: 1024
-  extra: ""
+preprocess:
+  fastp:
+    length_required: 75  # nonpareil requires at least 25bp
+  bowtie2:  # mem_gb >= mem_host + threads * samtools_mem
+    mem_gb: 32
+    samtools_mem: 1G
+  kraken2:
+    memory_gb: 1
 
-bowtie2:
-  extra: ""
-  samtools:
-    mem_per_thread: 1G
-
-coverm:
-  genome:
-    methods: ["count", "covered_bases", "length"]  # https://github.com/wwood/CoverM#calculation-methods
-    min_covered_fraction: 0.0
-    separator: "^"
-  contig:
-    methods: ["count", "covered_bases", "length"]  # https://github.com/wwood/CoverM#calculation-methods
-
-singlem:
-  threads: 1  # raise it at your own . on the tests one is enough
+quantify:
+  bowtie2:  # mem_gb >= mem_mag + threads * samtools_mem
+    mem_gb: 64
+    samtools_mem: 1G
+  coverm:   # https://github.com/wwood/CoverM#calculation-methods
+    genome:
+      methods: ["count", "covered_bases", "length"]
+      min_covered_fraction: 0.0
+      separator: "@"
+    contig:
+      methods: ["count", "covered_bases", "length"]

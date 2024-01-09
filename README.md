@@ -1,4 +1,4 @@
-# Snakemake workflow: `detection limit test`
+# Snakemake workflow: `mg_quant`
 
 [![Snakemake](https://img.shields.io/badge/snakemake-≥6.3.0-brightgreen.svg)](https://snakemake.github.io)
 [![GitHub actions status](https://github.com/3d-omics/bioinfo_detection_limit_test/workflows/Tests/badge.svg?branch=devel)](https://github.com/3d-omics/bioinfo_detection_limit_test/actions?query=branch%devel+workflow%3ATests)
@@ -16,7 +16,7 @@ A Snakemake workflow for assessing detection limit from laser-microdissected sam
 Clone the repository, and set it as the working directory.
 
 ```
-git clone --recursive https://github.com/3d-omics/detection_limit_test.git
+git clone --recursive https://github.com/3d-omics/mg_quant.git
 cd detection_limit_test
 ```
 
@@ -30,8 +30,33 @@ snakemake \
 
 3. Edit the following files:
    1. `config/samples.tsv`: the control file with the sequencing libraries and their location.
-   2. `config/features.tsv`: the references against which to map the libraries: human, chicken / pig, MAG catalogue.
-   3. `config/params.tsv`: parameters for every program. The defaults are reasonable.
+      If the `forward_adapter` and `reverse_adapter` fields are empty, they are assumed to be the current Paired-End ones: `AGATCGGAAGAGCACACGTCTGAACTCCAGTCA` and `AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT`, respectively.
+      If your sample is Single-End, specify it in the `library_type` column. Whatever is in the `reverse` will be ignored.
+      ```
+      sample	library	library_type	forward_filename	reverse_filename	forward_adapter	reverse_adapter
+      sample1	lib1	PE	resources/reads/sample1_1.fq.gz	resources/reads/sample1_2.fq.gz
+      #sample2	lib1	PE	resources/reads/sample2_1.fq.gz	resources/reads/sample2_2.fq.gz
+      sample2	lib1	SE	resources/reads/sample2_1.fq.gz		AGATCGGAAGAGCACACGTCTGAACTCCAGTCA
+      ```
+   2. `config/features.yml`: the references against which to map the libraries: human, chicken / pig, MAG catalogue.
+      ```
+      reference:  # Multiple references. Will be mapped in this order. Leave empty for no host.
+         human: resources/reference/human_22_sub.fa.gz
+         chicken: resources/reference/chicken_39_sub.fa.gz
+
+      mag_catalogues:  # Multiple MAG catalogues
+         mag1: resources/reference/mags_sub.fa.gz
+         mag2: resources/reference/mags_sub.fa.gz
+
+      kraken2_dbs:  # Multiple dbs can be used, one per line. Leave this line alone if no analysis is needed.
+         mock_db1: resources/kraken2_mock
+         mock_db2: resources/kraken2_mock
+
+      singlem_database: "resources/singlem_mock"  # Point to downloaded db from `singlem download`
+      ```
+
+   3. `config/params.yml`: parameters for every program. The defaults are reasonable.
+
 
 4. Run the pipeline and go for a walk:
 
@@ -40,6 +65,10 @@ snakemake \
 ./run_slurm  # in a cluster environment with slurm
 ```
 
+## Rulegraph
+
+![rulegraph](rulegraph_simple.svg)
+
 ## Brief description
 
 1. Trim reads and remove adaptors with `fastp`
@@ -47,21 +76,17 @@ snakemake \
    1. Map to the reference with `bowtie2`
    2. Extract the reads that have one of both ends unmapped with `samtools`
    3. Map those unmapped reads to the next reference
-3. Generate MAG statistics with
-   1. `coverm`
-   2. `singlem`
-   3. `nonpareil`
-4. Generate lots of reports in the `reports/` folder
-
-## Rulegraph
-
-![rulegraph](rulegraph.svg)
+3. Generate MAG-based statistics with  `coverm`
+4. Generate MAG-independent statistics with `singlem` and `nonpareil`
+5. Assign taxonomically reads with `kraken2`
+6. Generate lots of reports in the `reports/` folder
 
 
 ## Possible problems
 
-- `singlem` and/or `nonpareil` didnot finish some output because of low coverage.
-  Paste this:
+- `singlem` and/or `nonpareil` didnot finish some output because of low coverage: comment with a `#` the `samples.tsv` file.
+
+- Or paste this:
 
    ```
    Rscript workflow/scripts/aggregate_nonpareil.R \
@@ -73,7 +98,7 @@ snakemake \
       --output-file results/stats/singlem.tsv
    ```
 
-- Or comment with a `#` the `samples.tsv` file.
+
 
 
 ## References
@@ -86,3 +111,4 @@ snakemake \
 - [nonpareil](http://enve-omics.ce.gatech.edu/nonpareil/)
 - [fastqc](https://github.com/s-andrews/FastQC)
 - [multiqc](https://multiqc.info/)
+- [kraken2](https://github.com/DerrickWood/kraken2)

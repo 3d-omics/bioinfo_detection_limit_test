@@ -1,0 +1,9 @@
+# Environment to link and index references
+---
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - coreutils=9.3
+  - samtools=1.17
