@@ -1,7 +1,7 @@
 READS = Path("results/reads/")
 REFERENCE = Path("results/reference/")
 
-PRE = Path("results/preprocessing/")
+PRE = Path("results/preprocess/")
 FASTP = PRE / "fastp"
 PRE_BOWTIE2 = PRE / "bowtie2"
 KRAKEN2 = PRE / "kraken2"
