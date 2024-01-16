@@ -125,6 +125,7 @@ rule _quantify__coverm__contig:
         ( samtools view \
             --with-header \
             --reference {input.reference} \
+            --exclude-flags 4 \
             {input.cram} \
         | coverm contig \
             --bam-files /dev/stdin \
