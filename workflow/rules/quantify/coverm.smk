@@ -54,7 +54,7 @@ rule _quantify__coverm__genome:
         separator=params["quantify"]["coverm"]["genome"]["separator"],
     shell:
         """
-        (samtools view \
+        ( samtools view \
             --with-header \
             --reference {input.reference} \
             --exclude-flags 4 \
