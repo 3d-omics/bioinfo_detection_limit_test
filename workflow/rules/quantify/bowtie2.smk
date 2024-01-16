@@ -71,7 +71,6 @@ rule _quantify__bowtie2__map:
             --output-fmt CRAM \
             --reference {input.reference} \
             --threads {threads} \
-            -M \
             -T {output.cram} \
             -l 9 \
             -m {params.samtools_mem} \
