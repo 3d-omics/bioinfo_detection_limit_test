@@ -1,56 +1,18 @@
-rule _quantify__coverm__cram_to_bam:
-    """Convert cram to bam
-
-    Note: this step is needed because coverm probably does not support cram. The
-    log from coverm shows failures to get the reference online, but nonetheless
-    it works.
-    """
-    input:
-        cram=QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}.cram",
-        reference=REFERENCE / "mags" / "{mag_catalogue}.fa.gz",
-    output:
-        bam=temp(COVERM / "{mag_catalogue}" / "bams" / "{sample_id}.{library_id}.bam"),
-    log:
-        COVERM / "{mag_catalogue}" / "bams" / "{sample_id}.{library_id}.log",
-    conda:
-        "__environment__.yml"
-    threads: 24
-    resources:
-        runtime=1 * 60,
-        mem_mb=4 * 1024,
-    shell:
-        """
-        samtools view \
-            -F 4 \
-            --threads {threads} \
-            --reference {input.reference} \
-            --output {output.bam} \
-            --fast \
-            {input.cram} \
-        2> {log}
-        """
-
-
 rule _quantify__coverm__genome:
     """Run coverm genome for one library and one mag catalogue"""
     input:
-        bam=COVERM / "{mag_catalogue}" / "bams" / "{sample_id}.{library_id}.bam",
+        cram=QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}.cram",
+        crai=QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}.cram.crai",
+        reference=REFERENCE / "mags" / "{mag_catalogue}.fa.gz",
+        fai=REFERENCE / "mags" / "{mag_catalogue}.fa.gz.fai",
     output:
         tsv=touch(
-            COVERM
-            / "{mag_catalogue}"
-            / "genome"
-            / "{method}"
-            / "{sample_id}.{library_id}.tsv"
+            COVERM / "{mag_catalogue}/genome/{method}/{sample_id}.{library_id}.tsv"
         ),
     conda:
         "__environment__.yml"
     log:
-        COVERM
-        / "{mag_catalogue}"
-        / "genome"
-        / "{method}"
-        / "{sample_id}.{library_id}.log",
+        COVERM / "{mag_catalogue}/genome/{method}/{sample_id}.{library_id}.log",
     params:
         method="{method}",
         min_covered_fraction=params["quantify"]["coverm"]["genome"][
@@ -59,12 +21,18 @@ rule _quantify__coverm__genome:
         separator=params["quantify"]["coverm"]["genome"]["separator"],
     shell:
         """
-        coverm genome \
-            --bam-files {input.bam} \
+        ( samtools view \
+            --with-header \
+            --reference {input.reference} \
+            --exclude-flags 4 \
+            {input.cram} \
+        | coverm genome \
+            --bam-files /dev/stdin \
             --methods {params.method} \
-            --separator {params.separator} \
+            --separator "{params.separator}" \
             --min-covered-fraction {params.min_covered_fraction} \
-        > {output} 2> {log} || true
+            --output-file {output.tsv} \
+        ) 2> {log} 1>&2
         """
 
 
@@ -107,26 +75,31 @@ rule quantify__coverm__genome:
 rule _quantify__coverm__contig:
     """Run coverm contig for one library and one mag catalogue"""
     input:
-        bam=COVERM / "{mag_catalogue}" / "bams" / "{sample}.{library}.bam",
+        cram=QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}.cram",
+        crai=QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}.cram.crai",
+        reference=REFERENCE / "mags" / "{mag_catalogue}.fa.gz",
+        fai=REFERENCE / "mags" / "{mag_catalogue}.fa.gz.fai",
     output:
-        tsv=COVERM
-        / "{mag_catalogue}"
-        / "contig"
-        / "{method}"
-        / "{sample}.{library}.tsv",
+        tsv=COVERM / "{mag_catalogue}/contig/{method}/{sample_id}.{library_id}.tsv",
     conda:
         "__environment__.yml"
     log:
-        COVERM / "{mag_catalogue}" / "contig" / "{method}" / "{sample}.{library}.log",
+        COVERM / "{mag_catalogue}/contig/{method}/{sample_id}.{library_id}.log",
     params:
         method="{method}",
     shell:
         """
-        coverm contig \
-            --bam-files {input.bam} \
+        ( samtools view \
+            --with-header \
+            --reference {input.reference} \
+            --exclude-flags 4 \
+            {input.cram} \
+        | coverm contig \
+            --bam-files /dev/stdin \
             --methods {params.method} \
             --proper-pairs-only \
-        > {output} 2> {log} || true
+            --output-file {output.tsv} \
+        ) 2> {log} 1>&2
         """
 
 

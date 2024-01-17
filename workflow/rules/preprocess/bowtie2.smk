@@ -71,7 +71,6 @@ rule _preprocess__bowtie2__map:
             --output-fmt CRAM \
             --reference {input.reference} \
             --threads {threads} \
-            -M \
             -T {output.cram} \
             -l 9 \
             -m {params.samtools_mem} \
@@ -120,7 +119,7 @@ rule _preprocess__bowtie2__extract:
             -1 {output.forward_} \
             -2 {output.reverse_} \
             -0 /dev/null \
-            -c 1 \
+            -c 9 \
             --threads {threads} \
         ) 2> {log} 1>&2
         """

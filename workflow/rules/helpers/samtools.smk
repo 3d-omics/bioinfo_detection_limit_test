@@ -43,3 +43,17 @@ rule _helpers__samtools__idxstats_cram:
         mem_mb=4 * 1024,
     shell:
         "samtools idxstats {input.cram} > {output.tsv} 2> {log}"
+
+
+rule _helpers__samtools__index_fa_gz:
+    """Index a fa.gz file"""
+    input:
+        "{prefix}.fa.gz",
+    output:
+        "{prefix}.fa.gz.fai",
+    log:
+        "{prefix}.fa.gz.fai.log",
+    conda:
+        "__environment__.yml"
+    shell:
+        "samtools faidx {input} 2> {log} 1>&2"
