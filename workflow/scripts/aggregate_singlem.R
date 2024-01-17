@@ -1,4 +1,4 @@
- #!/usr/bin/env Rscript
+#!/usr/bin/env Rscript
 
 library(tidyverse)
 library(argparse)
@@ -30,6 +30,6 @@ files <- list.files(args$input_folder, pattern = "*.tsv", full.names = TRUE)
 
 files %>%
   map(function(x) read_tsv(x, col_types = cols()), .progress = TRUE) %>%
-  keep(function(x) nrow(x) > 0) %>%  # Discard empty files
+  keep(function(x) nrow(x) > 0) %>% # Discard empty files
   bind_rows() %>%
   write_tsv(output_file)
