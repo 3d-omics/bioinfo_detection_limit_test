@@ -30,29 +30,26 @@ snakemake \
 
 3. Edit the following files:
    1. `config/samples.tsv`: the control file with the sequencing libraries and their location.
-      If the `forward_adapter` and `reverse_adapter` fields are empty, they are assumed to be the current Paired-End ones: `AGATCGGAAGAGCACACGTCTGAACTCCAGTCA` and `AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT`, respectively.
-      If your sample is Single-End, specify it in the `library_type` column. Whatever is in the `reverse` will be ignored.
       ```
-      sample	library	library_type	forward_filename	reverse_filename	forward_adapter	reverse_adapter
-      sample1	lib1	PE	resources/reads/sample1_1.fq.gz	resources/reads/sample1_2.fq.gz
-      #sample2	lib1	PE	resources/reads/sample2_1.fq.gz	resources/reads/sample2_2.fq.gz
-      sample2	lib1	SE	resources/reads/sample2_1.fq.gz		AGATCGGAAGAGCACACGTCTGAACTCCAGTCA
+      sample_id	library_id	forward_filename	reverse_filename	forward_adapter	reverse_adapter
+      sample1	lib1	resources/reads/sample1_1.fq.gz	resources/reads/sample1_2.fq.gz	AGATCGGAAGAGCACACGTCTGAACTCCAGTCA	AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT
+      sample2	lib1	resources/reads/sample2_1.fq.gz	resources/reads/sample2_2.fq.gz	AGATCGGAAGAGCACACGTCTGAACTCCAGTCA	AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT
       ```
-   2. `config/features.yml`: the references against which to map the libraries: human, chicken / pig, MAG catalogue.
+   2. `config/features.yml`: the references and databases against which to screen the libraries: human, chicken / pig, MAG catalogue.
       ```
-      reference:  # Multiple references. Will be mapped in this order. Leave empty for no host.
+      references:  # Reads will be mapped sequentially
          human: resources/reference/human_22_sub.fa.gz
          chicken: resources/reference/chicken_39_sub.fa.gz
 
-      mag_catalogues:  # Multiple MAG catalogues
+      mag_catalogues:
          mag1: resources/reference/mags_sub.fa.gz
-         mag2: resources/reference/mags_sub.fa.gz
+         # mag2: resources/reference/mags_sub.fa.gz
 
-      kraken2_dbs:  # Multiple dbs can be used, one per line. Leave this line alone if no analysis is needed.
-         mock_db1: resources/kraken2_mock
-         mock_db2: resources/kraken2_mock
-
-      singlem_database: "resources/singlem_mock"  # Point to downloaded db from `singlem download`
+      databases:
+         kraken2:
+            mock1: resources/databases/kraken2/kraken2_RefSeqV205_Complete_500GB
+            # refseq500: resources/databases/kraken2/kraken2_RefSeqV205_Complete_500GB
+         singlem: resources/databases/singlem/S3.2.1.GTDB_r214.metapackage_20231006.smpkg.zb
       ```
 
    3. `config/params.yml`: parameters for every program. The defaults are reasonable.
@@ -80,25 +77,6 @@ snakemake \
 4. Generate MAG-independent statistics with `singlem` and `nonpareil`
 5. Assign taxonomically reads with `kraken2`
 6. Generate lots of reports in the `reports/` folder
-
-
-## Possible problems
-
-- `singlem` and/or `nonpareil` didnot finish some output because of low coverage: comment with a `#` the `samples.tsv` file.
-
-- Or paste this:
-
-   ```
-   Rscript workflow/scripts/aggregate_nonpareil.R \
-      --input-folder results/stats/nonpareil \
-      --output-file results/stats/nonpareil.tsv
-
-   Rscript workflow/scripts/aggregate_singlem.R \
-      --input-folder results/stats/singlem \
-      --output-file results/stats/singlem.tsv
-   ```
-
-
 
 
 ## References
