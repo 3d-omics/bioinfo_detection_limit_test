@@ -8,7 +8,7 @@ preprocess:
     mem_gb: 32
     samtools_mem: 1G
   kraken2:
-    memory_gb: 1
+    memory_gb: 1  # This should be the size of the database in disk
 
 quantify:
   bowtie2:  # mem_gb >= mem_mag + threads * samtools_mem
