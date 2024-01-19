@@ -35,7 +35,7 @@ def get_input_for_host_mapping(wildcards, forward_or_reverse):
     sample_id = wildcards.sample_id
     library_id = wildcards.library_id
     genome = wildcards.genome
-    end = 1 if forward_or_reverse == "fowrward_filename" else 2
+    end = 1 if forward_or_reverse == "forward_filename" else 2
     if genome == HOST_NAMES[0]:
         return FASTP / f"{sample_id}.{library_id}_{end}.fq.gz"
     genome_index = HOST_NAMES.index(genome)
