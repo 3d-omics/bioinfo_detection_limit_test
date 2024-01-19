@@ -60,8 +60,6 @@ jobs:
             preprocess__fastp
             preprocess__kraken2
             preprocess__bowtie2
-            # preprocess__nonpareil
-            # preprocess__singlem
 
       - name: Test workflow - Quantify
         uses: ezherman/snakemake-github-action@5027c0e706ada924ab91e0501bd92185fc98de3c
