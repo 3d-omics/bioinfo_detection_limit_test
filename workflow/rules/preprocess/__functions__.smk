@@ -1,6 +1,7 @@
 # fastp ----
 def get_adapter(wildcards, forward_or_reverse):
     """Get forward or reverse adapter"""
+    assert forward_or_reverse in ["forward_adapter", "reverse_adapter"]
     return samples[
         (samples["sample_id"] == wildcards.sample_id)
         & (samples["library_id"] == wildcards.library_id)
