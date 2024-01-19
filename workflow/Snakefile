@@ -13,7 +13,7 @@ samples = pd.read_table("config/samples.tsv", comment="#", dtype="str")
 
 # fill adaptors in samples
 samples["forward_adapter"].fillna("AGATCGGAAGAGCACACGTCTGAACTCCAGTCA", inplace=True)
-samples["reverse_adapter"].fillna("AGATCGGAAGAGCACACGTCTGAACTCCAGTCA", inplace=True)
+samples["reverse_adapter"].fillna("AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT", inplace=True)
 
 # Generate useful variables
 SAMPLES = samples["sample_id"].drop_duplicates().values.tolist()
