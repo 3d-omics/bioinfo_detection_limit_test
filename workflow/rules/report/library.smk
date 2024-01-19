@@ -15,6 +15,9 @@ rule _report__library:
     params:
         library=lambda w: f"{w.sample_id}.{w.library_id}",
         out_dir=REPORT_LIBRARY,
+    resources:
+        mem_mb=double_ram(2),
+    retries: 5
     shell:
         """
         multiqc \

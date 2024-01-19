@@ -14,6 +14,9 @@ rule _report__step__reads:
         "__environment__.yml"
     params:
         dir=REPORT_STEP,
+    resources:
+        mem_mb=double_ram(2),
+    retries: 5
     shell:
         """
         multiqc \
@@ -24,102 +27,6 @@ rule _report__step__reads:
             {input} \
         2> {log} 1>&2
         """
-
-
-# rule _report__step__fastp:
-#     """Collect all reports for the fastp step"""
-#     input:
-#         rules.preprocess__fastp__report.input,
-#     output:
-#         html=REPORT_STEP / "fastp.html",
-#     log:
-#         REPORT_STEP / "fastp.log",
-#     conda:
-#         "__environment__.yml"
-#     params:
-#         dir=REPORT_STEP,
-#     shell:
-#         """
-#         multiqc \
-#             --title fastp \
-#             --force \
-#             --filename fastp \
-#             --outdir {params.dir} \
-#             {input} \
-#         2> {log} 1>&2
-#         """
-
-
-# rule _report__step__kraken2:
-#     """Collect all reports for the kraken2 step and ONE database"""
-#     input:
-#         get_report_step_kraken2_reports,
-#     output:
-#         html=REPORT_STEP / "kraken2_{kraken2_db}.html",
-#     log:
-#         REPORT_STEP / "kraken2_{kraken2_db}.log",
-#     conda:
-#         "__environment__.yml"
-#     params:
-#         dir=REPORT_STEP,
-#         title="kraken2_{kraken2_db}",
-#     resources:
-#         mem_mb=4 * 1024,
-#     shell:
-#         """
-#         multiqc \
-#             --title {params.title} \
-#             --force \
-#             --filename {params.title} \
-#             --outdir {params.dir} \
-#             --module kraken \
-#             {input} \
-#         2> {log} 1>&2
-#         """
-
-
-# rule report__step__kraken2:
-#     """Collect all reports for the kraken2 step and ALL databases"""
-#     input:
-#         [REPORT_STEP / f"kraken2_{kraken2_db}.html" for kraken2_db in KRAKEN2_DBS],
-
-
-# rule _report__step__bowtie2_hosts:
-#     """Collect all reports for the bowtie2 step and ONE host"""
-#     input:
-#         reports=[
-#             PRE_BOWTIE2 / genome / f"{sample_id}.{library}.{report}"
-#             for genome in ["{genome}"]
-#             for sample, library in SAMPLE_LIBRARY
-#             for report in BAM_REPORTS
-#         ],
-#     output:
-#         html=REPORT_STEP / "bowtie2_host_{genome}.html",
-#     log:
-#         REPORT_STEP / "bowtie2_host_{genome}.log",
-#     conda:
-#         "__environment__.yml"
-#     params:
-#         dir=REPORT_STEP,
-#         title="bowtie2_host_{genome}",
-#     shell:
-#         """
-#         multiqc \
-#             --title {params.title} \
-#             --force \
-#             --filename {params.title} \
-#             --outdir {params.dir} \
-#             --dirs \
-#             --dirs-depth 1 \
-#             {input.reports} \
-#         2> {log} 1>&2
-#         """
-
-
-# rule report__step__bowtie2_hosts:
-#     """Collect all reports for the bowtie2 step and ALL hosts"""
-#     input:
-#         [REPORT_STEP / f"bowtie2_host_{genome}.html" for genome in HOST_NAMES],
 
 
 rule _report__step__preprocess:
@@ -153,6 +60,9 @@ rule _report__step__preprocess:
         "__environment__.yml"
     params:
         dir=REPORT_STEP,
+    resources:
+        mem_mb=double_ram(2),
+    retries: 5
     shell:
         """
         multiqc \
@@ -184,6 +94,9 @@ rule _report__step__quantify:
         "__environment__.yml"
     params:
         dir=REPORT_STEP,
+    resources:
+        mem_mb=double_ram(2),
+    retries: 5
     shell:
         """
         multiqc \
