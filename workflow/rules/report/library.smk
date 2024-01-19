@@ -3,17 +3,17 @@ rule _report__library:
     input:
         get_reads_reports_for_library_reports,
         get_fastp_reports_for_library_reports,
-        get_kraken2_for_library_reports,
         get_bowtie2_host_for_library_reports,
+        get_kraken2_for_library_reports,
         get_bowtie2_mags_for_library_reports,
     output:
-        REPORT_LIBRARY / "{sample}.{library}.html",
+        REPORT_LIBRARY / "{sample_id}.{library_id}.html",
     log:
-        REPORT_LIBRARY / "{sample}.{library}.log",
+        REPORT_LIBRARY / "{sample_id}.{library_id}.log",
     conda:
         "__environment__.yml"
     params:
-        library="{sample}.{library}",
+        library=lambda w: f"{w.sample_id}.{w.library_id}",
         out_dir=REPORT_LIBRARY,
     shell:
         """
@@ -33,6 +33,6 @@ rule report__library:
     """Make a MultiQC report for every library"""
     input:
         [
-            REPORT_LIBRARY / f"{sample}.{library}.html"
-            for sample, library in SAMPLE_LIBRARY
+            REPORT_LIBRARY / f"{sample_id}.{library_id}.html"
+            for sample_id, library_id in SAMPLE_LIBRARY
         ],

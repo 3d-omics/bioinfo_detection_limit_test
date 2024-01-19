@@ -1,57 +1,48 @@
 def get_reads_reports_for_library_reports(wildcards):
     """Compose the paths for the reads reports"""
-    sample = wildcards.sample
-    library = wildcards.library
-    return [READS / f"{sample}.{library}_{end}_fastqc.zip" for end in ["1", "2"]]
+    sample_id = wildcards.sample_id
+    library_id = wildcards.library_id
+    return [READS / f"{sample_id}.{library_id}_{end}_fastqc.zip" for end in ["1", "2"]]
 
 
 def get_fastp_reports_for_library_reports(wildcards):
     """Compose the paths for the fastp reports"""
-    sample = wildcards.sample
-    library = wildcards.library
+    sample_id = wildcards.sample_id
+    library_id = wildcards.library_id
     return [
-        FASTP / f"{sample}.{library}_fastp.json",
-        FASTP / f"{sample}.{library}_1_fastqc.zip",
-        FASTP / f"{sample}.{library}_2_fastqc.zip",
+        FASTP / f"{sample_id}.{library_id}_fastp.json",
+        FASTP / f"{sample_id}.{library_id}_1_fastqc.zip",
+        FASTP / f"{sample_id}.{library_id}_2_fastqc.zip",
     ]
 
 
 def get_bowtie2_host_for_library_reports(wildcards):
     """Compose the paths for the bowtie2_hosts reports"""
-    sample = wildcards.sample
-    library = wildcards.library
+    sample_id = wildcards.sample_id
+    library_id = wildcards.library_id
     return [
-        PRE_BOWTIE2 / host_name / f"{sample}.{library}.{report}"
+        PRE_BOWTIE2 / host_name / f"{sample_id}.{library_id}.{report}"
         for host_name in HOST_NAMES
         for report in BAM_REPORTS
     ]
 
 
-def get_bowtie2_mags_for_library_reports(wildcards):
-    """Compose the paths for the bowtie2_mags reports"""
-    sample = wildcards.sample
-    library = wildcards.library
-    return [
-        QUANT_BOWTIE2 / mag_catalogue / f"{sample}.{library}.{report}"
-        for mag_catalogue in MAG_CATALOGUES
-        for report in ["stats.tsv", "flagstats.txt"]
-    ]
-
-
 def get_kraken2_for_library_reports(wildcards):
     """Compose the paths for the kraken2 reports"""
-    sample = wildcards.sample
-    library = wildcards.library
+    sample_id = wildcards.sample_id
+    library_id = wildcards.library_id
     return [
-        KRAKEN2 / kraken2_db / f"{sample}.{library}.report"
+        KRAKEN2 / kraken2_db / f"{sample_id}.{library_id}.report"
         for kraken2_db in KRAKEN2_DBS
     ]
 
 
-def get_report_step_kraken2_reports(wildcards):
-    """Get all reports for the kraken2 step"""
-    kraken2_db = wildcards.kraken2_db
+def get_bowtie2_mags_for_library_reports(wildcards):
+    """Compose the paths for the bowtie2_mags reports"""
+    sample_id = wildcards.sample_id
+    library_id = wildcards.library_id
     return [
-        KRAKEN2 / kraken2_db / f"{sample}.{library}.report"
-        for sample, library in SAMPLE_LIBRARY
+        QUANT_BOWTIE2 / mag_catalogue / f"{sample_id}.{library_id}.{report}"
+        for mag_catalogue in MAG_CATALOGUES
+        for report in ["stats.tsv", "flagstats.txt"]
     ]
