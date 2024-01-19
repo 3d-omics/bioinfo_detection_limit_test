@@ -25,12 +25,12 @@ repos:
     rev: v0.9.0
     hooks:
       - id: shellcheck
-  - repo: https://github.com/lorenzwalthert/precommit
-    rev: v0.3.2
-    hooks:
-      - id: style-files
-        additional_dependencies:
-          - r-lib/styler
-      - id: lintr
-        additional_dependencies:
-          - r-lib/lintr
+  # - repo: https://github.com/lorenzwalthert/precommit
+  #   rev: v0.3.2
+  #   hooks:
+  #     - id: style-files
+  #       additional_dependencies:
+  #         - r-lib/styler
+  #     - id: lintr
+  #       additional_dependencies:
+  #         - r-lib/lintr
