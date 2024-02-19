@@ -19,9 +19,7 @@ rule _preprocess__nonpareil__run:
         "__environment__.yml"
     params:
         prefix=compose_prefix_for_nonpareil,
-        forward_fq=lambda wildcards: NONPAREIL
-        / "run"
-        / f"{wildcards.sample_id}.{wildcards.library_id}_1.fq",
+        forward_fq=lambda w: NONPAREIL / "run" / f"{w.sample_id}.{w.library_id}_1.fq",
     resources:
         runtime=24 * 60,
     shell:
