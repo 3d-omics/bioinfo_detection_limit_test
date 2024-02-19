@@ -20,6 +20,8 @@ rule _preprocess__fastp__trim:
     resources:
         mem_mb=8 * 1024,
         runtime=240,
+    group:
+        "preprocess"
     conda:
         "__environment__.yml"
     shell:
