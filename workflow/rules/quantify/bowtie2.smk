@@ -52,6 +52,8 @@ rule _quantify__bowtie2__map:
         samtools_mem=params["quantify"]["bowtie2"]["samtools_mem"],
         rg_id=compose_rg_id,
         rg_extra=compose_rg_extra,
+    group:
+        "quantify"
     shell:
         """
         find \

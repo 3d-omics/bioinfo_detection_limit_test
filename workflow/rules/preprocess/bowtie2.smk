@@ -52,6 +52,8 @@ rule _preprocess__bowtie2__map:
         mem_mb=double_ram(params["preprocess"]["bowtie2"]["mem_gb"]),
         runtime=24 * 60,
     retries: 5
+    group:
+        "preprocess"
     shell:
         """
         find \
@@ -99,6 +101,8 @@ rule _preprocess__bowtie2__extract:
         runtime=1 * 60,
         mem_mb=double_ram(params["preprocess"]["bowtie2"]["mem_gb"]),
     retries: 5
+    group:
+        "preprocess"
     shell:
         """
         ( samtools view \
