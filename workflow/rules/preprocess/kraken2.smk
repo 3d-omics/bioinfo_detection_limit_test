@@ -11,6 +11,7 @@ rule _preprocess__kraken2_database:
         mem_mb=params["preprocess"]["kraken2"]["memory_gb"] * 1024,
     group:
         "preprocess__kraken2"
+    threads: 0
     shell:
         """
         mkdir --parents {output}
@@ -44,7 +45,7 @@ rule _preprocess__kraken2__assign:
         mem_mb=1024,
         runtime=60,
     group:
-        "preprocess__kraken2"
+        "kraken2"
     shell:
         """
         kraken2 \
