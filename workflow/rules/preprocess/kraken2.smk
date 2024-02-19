@@ -10,7 +10,7 @@ rule _preprocess__kraken2_database:
     resources:
         mem_mb=params["preprocess"]["kraken2"]["memory_gb"] * 1024,
     group:
-        "preprocess__kraken2"
+        "kraken2"
     threads: 0
     shell:
         """
