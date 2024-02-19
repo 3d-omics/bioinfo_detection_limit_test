@@ -17,6 +17,7 @@ rule _preprocess__bowtie2__build:
         mem_mb=double_ram(params["preprocess"]["bowtie2"]["mem_gb"]),
         runtime=24 * 60,
     retries: 5
+    cache: True
     shell:
         """
         bowtie2-build \

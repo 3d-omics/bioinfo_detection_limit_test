@@ -54,6 +54,7 @@ rule _quantify__bowtie2__map:
         rg_extra=compose_rg_extra,
     group:
         "quantify"
+    cache: True
     shell:
         """
         find \
