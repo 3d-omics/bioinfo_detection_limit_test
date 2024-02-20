@@ -54,7 +54,7 @@ rule _preprocess__bowtie2__map:
         runtime=24 * 60,
     retries: 5
     group:
-        "preprocess"
+        "sample"
     shell:
         """
         find \

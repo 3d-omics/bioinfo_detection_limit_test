@@ -53,7 +53,7 @@ rule _quantify__bowtie2__map:
         rg_id=compose_rg_id,
         rg_extra=compose_rg_extra,
     group:
-        "quantify"
+        "sample"
     cache: True
     shell:
         """
