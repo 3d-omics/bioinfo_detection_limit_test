@@ -51,10 +51,9 @@ rule _preprocess__bowtie2__map:
     resources:
         mem_mb=double_ram(params["preprocess"]["bowtie2"]["mem_gb"]),
         runtime=24 * 60,
-    # retries: 5
     group:
         "sample"
-    # shadow: True
+    retries: 5
     shell:
         """
         ( samtools view \
@@ -77,57 +76,8 @@ rule _preprocess__bowtie2__map:
             --reference {input.reference} \
             --threads {threads} \
             -T {output.cram} \
-            -l 9 \
             -m {params.samtools_mem} \
             -o {output.cram}
-        ) 2> {log} 1>&2
-        """
-
-
-rule _preprocess__bowtie2__extract_non_host:
-    """
-    Keep only pairs unmapped to the human reference genome, sort by name rather
-    than by coordinate, and convert to FASTQ.
-    """
-    input:
-        cram=PRE_BOWTIE2 / LAST_HOST / "{sample_id}.{library_id}.cram",
-        reference=REFERENCE / f"{LAST_HOST}.fa.gz",
-    output:
-        forward_=PRE_BOWTIE2 / "non_host" / "{sample_id}.{library_id}_1.fq.gz",
-        reverse_=PRE_BOWTIE2 / "non_host" / "{sample_id}.{library_id}_2.fq.gz",
-    log:
-        PRE_BOWTIE2 / "non_host" / "{sample_id}.{library_id}.log",
-    conda:
-        "__environment__.yml"
-    threads: 24
-    resources:
-        runtime=1 * 60,
-        mem_mb=double_ram(params["preprocess"]["bowtie2"]["mem_gb"]),
-    retries: 5
-    group:
-        "preprocess"
-    shell:
-        """
-        ( samtools view \
-            --reference {input.reference} \
-            --threads {threads} \
-            -u \
-            -o /dev/stdout \
-            -f 12 \
-            {input.cram} \
-        | samtools collate \
-            -O \
-            -u \
-            -f \
-            --reference {input.reference} \
-            --threads {threads} \
-            - \
-        | samtools fastq \
-            -1 {output.forward_} \
-            -2 {output.reverse_} \
-            -0 /dev/null \
-            -c 9 \
-            --threads {threads} \
         ) 2> {log} 1>&2
         """
 

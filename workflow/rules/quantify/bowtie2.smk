@@ -17,6 +17,7 @@ rule _quantify__bowtie2__build:
         mem_mb=double_ram(params["preprocess"]["bowtie2"]["mem_gb"]),
         runtime=24 * 60,
     retries: 5
+    cache: True
     shell:
         """
         bowtie2-build \
@@ -46,14 +47,13 @@ rule _quantify__bowtie2__map:
     resources:
         mem_mb=double_ram(params["quantify"]["bowtie2"]["mem_gb"]),
         runtime=24 * 60,
-    retries: 5
     params:
         samtools_mem=params["quantify"]["bowtie2"]["samtools_mem"],
         rg_id=compose_rg_id,
         rg_extra=compose_rg_extra,
     group:
         "sample"
-    cache: True
+    retries: 5
     shell:
         """
         ( samtools view \
@@ -76,7 +76,6 @@ rule _quantify__bowtie2__map:
             --reference {input.reference} \
             --threads {threads} \
             -T {output.cram} \
-            -l 9 \
             -m {params.samtools_mem} \
             -o {output.cram} \
         ) 2> {log} 1>&2
