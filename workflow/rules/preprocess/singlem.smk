@@ -2,8 +2,8 @@ rule preprocess__singlem__fastq:
     input:
         cram=get_host_clean_cram,
     output:
-        forward_=SINGLEM / "fastq" / "{sample_id}.{library_id}_1.fq.gz",
-        reverse_=SINGLEM / "fastq" / "{sample_id}.{library_id}_2.fq.gz",
+        forward_=temp(SINGLEM / "fastq" / "{sample_id}.{library_id}_1.fq.gz"),
+        reverse_=temp(SINGLEM / "fastq" / "{sample_id}.{library_id}_2.fq.gz"),
     log:
         SINGLEM / "fastq" / "{sample_id}.{library_id}.log",
     conda:
