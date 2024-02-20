@@ -29,10 +29,10 @@ rule _preprocess__fastp__trim:
         fastp \
             --in1 {input.forward_} \
             --in2 {input.reverse_} \
-            --out1 >(bgzip -l 9 -@ {threads} > {output.forward_}) \
-            --out2 >(bgzip -l 9 -@ {threads} > {output.reverse_}) \
-            --unpaired1 >(bgzip -l 9 -@ {threads} > {output.unpaired1}) \
-            --unpaired2 >(bgzip -l 9 -@ {threads} > {output.unpaired2}) \
+            --out1 >(bgzip -@ {threads} > {output.forward_}) \
+            --out2 >(bgzip -@ {threads} > {output.reverse_}) \
+            --unpaired1 >(bgzip -@ {threads} > {output.unpaired1}) \
+            --unpaired2 >(bgzip -@ {threads} > {output.unpaired2}) \
             --adapter_sequence {params.forward_adapter} \
             --adapter_sequence_r2 {params.reverse_adapter} \
             --html {output.html} \
@@ -46,13 +46,36 @@ rule _preprocess__fastp__trim:
         """
 
 
+rule preprocess__fastp__import:
+    input:
+        forward_=FASTP / "{sample_id}.{library_id}_1.fq.gz",
+        reverse_=FASTP / "{sample_id}.{library_id}_2.fq.gz",
+    output:
+        cram=FASTP / "{sample_id}.{library_id}.cram",
+    log:
+        FASTP / "{sample_id}.{library_id}.cram.log",
+    conda:
+        "__environment__.yml"
+    group:
+        "sample"
+    shell:
+        """
+        samtools import \
+            -1 {input.forward_} \
+            -2 {input.reverse_} \
+            --output-fmt CRAM \
+            --threads {threads} \
+            -o {output.cram} \
+        2> {log} 1>&2
+        """
+
+
 rule preprocess__fastp__trim:
     """Run fastp over all libraries"""
     input:
         [
-            FASTP / f"{sample_id}.{library_id}_{end}.fq.gz"
+            FASTP / f"{sample_id}.{library_id}.cram"
             for sample_id, library_id in SAMPLE_LIBRARY
-            for end in "1 2 u1 u2".split(" ")
         ],
 
 

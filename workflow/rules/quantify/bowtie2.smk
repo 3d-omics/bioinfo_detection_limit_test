@@ -33,8 +33,7 @@ rule _quantify__bowtie2__map:
     Output SAM file is piped to samtools sort to generate a CRAM file.
     """
     input:
-        forward_=get_host_clean_forward,
-        reverse_=get_host_clean_reverse,
+        cram=get_host_clean_cram,
         mock=QUANT_BOWTIE2 / "{mag_catalogue}_index",
         reference=REFERENCE / "mags" / "{mag_catalogue}.fa.gz",
     output:
@@ -57,16 +56,18 @@ rule _quantify__bowtie2__map:
     cache: True
     shell:
         """
-        find \
-            $(dirname {output.cram}) \
-            -name "$(basename {output.cram}).tmp.*.bam" \
-            -delete \
-        2> {log} 1>&2
-
-        ( bowtie2 \
+        ( samtools view \
+            -u \
+            -f 12 \
+            {input.cram} \
+        | samtools sort \
+            -u \
+            -n \
+            --threads {threads} \
+        | bowtie2 \
             -x {input.mock} \
-            -1 {input.forward_} \
-            -2 {input.reverse_} \
+            -b /dev/stdin \
+            --align-paired-reads \
             --rg '{params.rg_extra}' \
             --rg-id '{params.rg_id}' \
             --threads {threads} \
@@ -78,7 +79,7 @@ rule _quantify__bowtie2__map:
             -l 9 \
             -m {params.samtools_mem} \
             -o {output.cram} \
-        ) 2>> {log} 1>&2
+        ) 2> {log} 1>&2
         """
 
 

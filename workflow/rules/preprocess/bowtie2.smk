@@ -34,14 +34,13 @@ rule _preprocess__bowtie2__map:
     Output SAM file is piped to samtools sort to generate a CRAM file.
     """
     input:
-        forward_=get_input_forward_for_host_mapping,
-        reverse_=get_input_reverse_for_host_mapping,
+        cram=get_input_cram_for_host_mapping,
         mock=PRE_BOWTIE2 / "{genome}_index",
         reference=REFERENCE / "{genome}.fa.gz",
     output:
         cram=PRE_BOWTIE2 / "{genome}" / "{sample_id}.{library_id}.cram",
     log:
-        PRE_BOWTIE2 / "{genome}" / "{sample_id}.{library_id}_pe.log",
+        PRE_BOWTIE2 / "{genome}" / "{sample_id}.{library_id}.log",
     params:
         samtools_mem=params["preprocess"]["bowtie2"]["samtools_mem"],
         rg_id=compose_rg_id,
@@ -52,21 +51,24 @@ rule _preprocess__bowtie2__map:
     resources:
         mem_mb=double_ram(params["preprocess"]["bowtie2"]["mem_gb"]),
         runtime=24 * 60,
-    retries: 5
+    # retries: 5
     group:
         "sample"
+    # shadow: True
     shell:
         """
-        find \
-            $(dirname {output.cram}) \
-            -name "$(basename {output.cram}).tmp.*.bam" \
-            -delete \
-        2> {log} 1>&2
-
-        ( bowtie2 \
+        ( samtools view \
+            -f 12 \
+            -u \
+            {input.cram} \
+        | samtools sort \
+            -u \
+            -n \
+            --threads {threads} \
+        | bowtie2 \
             -x {input.mock} \
-            -1 {input.forward_} \
-            -2 {input.reverse_} \
+            -b /dev/stdin \
+            --align-paired-reads \
             --threads {threads} \
             --rg-id '{params.rg_id}' \
             --rg '{params.rg_extra}' \
@@ -78,23 +80,23 @@ rule _preprocess__bowtie2__map:
             -l 9 \
             -m {params.samtools_mem} \
             -o {output.cram}
-        ) 2>> {log} 1>&2
+        ) 2> {log} 1>&2
         """
 
 
-rule _preprocess__bowtie2__extract:
+rule _preprocess__bowtie2__extract_non_host:
     """
     Keep only pairs unmapped to the human reference genome, sort by name rather
     than by coordinate, and convert to FASTQ.
     """
     input:
-        cram=PRE_BOWTIE2 / "{genome}" / "{sample_id}.{library_id}.cram",
-        reference=REFERENCE / "{genome}.fa.gz",
+        cram=PRE_BOWTIE2 / LAST_HOST / "{sample_id}.{library_id}.cram",
+        reference=REFERENCE / f"{LAST_HOST}.fa.gz",
     output:
-        forward_=PRE_BOWTIE2 / "non{genome}" / "{sample_id}.{library_id}_1.fq.gz",
-        reverse_=touch(PRE_BOWTIE2 / "non{genome}" / "{sample_id}.{library_id}_2.fq.gz"),
+        forward_=PRE_BOWTIE2 / "non_host" / "{sample_id}.{library_id}_1.fq.gz",
+        reverse_=PRE_BOWTIE2 / "non_host" / "{sample_id}.{library_id}_2.fq.gz",
     log:
-        PRE_BOWTIE2 / "non{genome}" / "{sample_id}.{library_id}.log",
+        PRE_BOWTIE2 / "non_host" / "{sample_id}.{library_id}.log",
     conda:
         "__environment__.yml"
     threads: 24
@@ -130,34 +132,11 @@ rule _preprocess__bowtie2__extract:
         """
 
 
-rule preprocess__bowtie2__extract:
-    """Run bowtie2_extract_nonchicken_one for all PE libraries"""
-    input:
-        [
-            PRE_BOWTIE2 / f"non{genome}" / f"{sample_id}.{library_id}_{end}.fq.gz"
-            for genome in [LAST_HOST]
-            for sample_id, library_id in SAMPLE_LIBRARY
-            for end in ["1", "2"]
-        ],
-
-
-rule preprocess__bowtie2__report:
-    """Generate bowtie2 reports for all libraries:
-    - samtools stats
-    - samtools flagstats
-    - samtools idxstats
-    """
-    input:
-        [
-            PRE_BOWTIE2 / genome / f"{sample_id}.{library_id}.{report}"
-            for genome in HOST_NAMES
-            for sample_id, library_id in SAMPLE_LIBRARY
-            for report in BAM_REPORTS
-        ],
-
-
 rule preprocess__bowtie2:
     """Run bowtie2 on all libraries and generate reports"""
     input:
-        rules.preprocess__bowtie2__report.input,
-        rules.preprocess__bowtie2__extract.input,
+        [
+            PRE_BOWTIE2 / "non_host" / f"{sample_id}.{library_id}_{end}.fq.gz"
+            for sample_id, library_id in SAMPLE_LIBRARY
+            for end in [1, 2]
+        ],
