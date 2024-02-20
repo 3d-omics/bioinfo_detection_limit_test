@@ -1,4 +1,4 @@
-rule _preprocess__kraken2_database:
+rule preprocess__kraken2__service:
     input:
         database=get_kraken2_database,
     output:
@@ -28,7 +28,7 @@ rule _preprocess__kraken2_database:
         """
 
 
-rule _preprocess__kraken2__assign:
+rule preprocess__kraken2__assign:
     """Run kraken2 over one sample and using the database as a service"""
     input:
         forward_=FASTP / "{sample_id}.{library_id}_1.fq.gz",

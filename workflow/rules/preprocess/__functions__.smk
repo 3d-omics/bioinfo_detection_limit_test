@@ -58,7 +58,7 @@ def compose_prefix_for_nonpareil(wildcards):
     return NONPAREIL / f"{wildcards.sample_id}.{wildcards.library_id}"
 
 
-# last fastq files ----
+# last cram files ----
 def get_host_clean_cram(wildcards):
     """Get the input file that is clean from hosts"""
     last_genome = HOST_NAMES[-1]
@@ -67,9 +67,3 @@ def get_host_clean_cram(wildcards):
     if len(HOST_NAMES) == 0:
         return FASTP / f"{sample_id}.{library_id}.cram"
     return PRE_BOWTIE2 / last_genome / f"{sample_id}.{library_id}.cram"
-# def get_host_clean_forward(wildcards):
-#     """Get the forward input file that is clean from hosts"""
-#     return get_host_clean(wildcards, "forward_clean")
-# def get_host_clean_reverse(wildcards):
-#     """Get the forward input file that is clean from hosts"""
-#     return get_host_clean(wildcards, "reverse_clean")

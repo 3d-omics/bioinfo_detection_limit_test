@@ -1,4 +1,4 @@
-rule _preprocess__nonpareil__run:
+rule preprocess__nonpareil__:
     """Run nonpareil over one sample
 
     Note: Nonpareil only ask for one of the pair-end reads
@@ -46,20 +46,14 @@ rule _preprocess__nonpareil__run:
         """
 
 
-rule preprocess__nonpareil__run:
-    """Run stats_nonpareil_one for all the samples"""
-    input:
-        [
-            NONPAREIL / "run" / f"{sample_id}.{library_id}.{extension}"
-            for extension in ["npa", "npc", "npl", "npo"]
-            for sample_id, library_id in SAMPLE_LIBRARY
-        ],
-
-
-rule _preprocess__nonpareil__aggregate:
+rule preprocess__nonpareil__aggregate:
     """Aggregate all the nonpareil results into a single table"""
     input:
-        rules.preprocess__nonpareil__run.input,
+        [
+            NONPAREIL / "run" / f"{sample_id}.{library_id}.{suffix}"
+            for sample_id, library_id in SAMPLE_LIBRARY
+            for suffix in ["npa", "npc", "npl", "npo"]
+        ],
     output:
         NONPAREIL / "nonpareil.tsv",
     log:
@@ -79,4 +73,4 @@ rule _preprocess__nonpareil__aggregate:
 
 rule preprocess__nonpareil:
     input:
-        rules._preprocess__nonpareil__aggregate.output,
+        rules.preprocess__nonpareil__aggregate.output,

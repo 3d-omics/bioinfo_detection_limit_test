@@ -1,4 +1,4 @@
-rule _quantify__coverm__genome:
+rule quantify__coverm__genome__:
     """Run coverm genome for one library and one mag catalogue"""
     input:
         cram=QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}.cram",
@@ -36,7 +36,7 @@ rule _quantify__coverm__genome:
         """
 
 
-rule _quantify__coverm__aggregate_genome:
+rule quantify__coverm__genome__aggregate:
     """Aggregate all the nonpareil results into a single table"""
     input:
         get_coverm_genome_tsv_files_for_aggregation,
@@ -72,7 +72,7 @@ rule quantify__coverm__genome:
         ],
 
 
-rule _quantify__coverm__contig:
+rule quantify__coverm__contig__:
     """Run coverm contig for one library and one mag catalogue"""
     input:
         cram=QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}.cram",
@@ -103,7 +103,7 @@ rule _quantify__coverm__contig:
         """
 
 
-rule _quantify__coverm__aggregate_contig:
+rule quantify__coverm__contig__aggregate:
     """Aggregate all the nonpareil results into a single table"""
     input:
         get_coverm_contig_tsv_files_for_aggregation,
