@@ -21,6 +21,9 @@ default-resources:
 
 set-threads:
 
+    reference__recompress__host__: 8
+    reference__recompress__mags__: 8
+
     preprocess__fastp__: 24
     preprocess__fastp__import: 24
     preprocess__index__: 24
