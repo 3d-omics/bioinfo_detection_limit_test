@@ -22,8 +22,6 @@ rule helpers__samtools__flagstats_cram:
         "{prefix}.flagstats.log",
     conda:
         "__environment__.yml"
-    resources:
-        mem_mb=4 * 1024,
     shell:
         "samtools flagstats {input.cram} > {output.txt} 2> {log}"
 
@@ -39,8 +37,6 @@ rule helpers__samtools__idxstats_cram:
         "{prefix}.idxstats.log",
     conda:
         "__environment__.yml"
-    resources:
-        mem_mb=4 * 1024,
     shell:
         "samtools idxstats {input.cram} > {output.tsv} 2> {log}"
 
