@@ -14,8 +14,6 @@ rule report__step__reads:
         "__environment__.yml"
     params:
         dir=REPORT_STEP,
-    resources:
-        mem_mb=double_ram(2),
     retries: 5
     shell:
         """
@@ -60,8 +58,6 @@ rule report__step__preprocess:
         "__environment__.yml"
     params:
         dir=REPORT_STEP,
-    resources:
-        mem_mb=double_ram(2),
     retries: 5
     shell:
         """
@@ -94,8 +90,6 @@ rule report__step__quantify:
         "__environment__.yml"
     params:
         dir=REPORT_STEP,
-    resources:
-        mem_mb=double_ram(2),
     retries: 5
     shell:
         """

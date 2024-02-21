@@ -33,6 +33,7 @@ set-threads:
     quantify__index__: 24
     quantify__bowtie2__: 24
 
+
 set-resources:
 
     preprocess__fastp__:
@@ -74,7 +75,14 @@ set-resources:
     helpers__samtools_idxstats_cram:
         mem_mb: 4 * 1024
 
-
+    report__step__reads:
+        mem_mb: 2 * 1024 * 2 ** (attempt - 1)
+    report__step__preprocess:
+        mem_mb: 2 * 1024 * 2 ** (attempt - 1)
+    report__step__quantify:
+        mem_mb: 2 * 1024 * 2 ** (attempt - 1)
+    report__library__:
+        mem_mb: 2 * 1024 * 2 ** (attempt - 1)
 
 
 groups:
