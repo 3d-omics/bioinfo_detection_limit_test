@@ -21,13 +21,8 @@ rule preprocess__index__:
     conda:
         "__environment__.yml"
     params:
-        prefix=lambda w: PRE_INDEX / w.genome,
-    threads: 24
-    resources:
-        mem_mb=double_ram(params["preprocess"]["bowtie2"]["mem_gb"]),
-        runtime=24 * 60,
-    # retries: 5
-    cache: True
+        prefix=lambda w: PRE_INDEX / f"{w.genome}",
+    retries: 5
     shell:
         """
         bowtie2-build \

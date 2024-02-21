@@ -24,15 +24,8 @@ rule preprocess__bowtie2__:
         samtools_mem=params["preprocess"]["bowtie2"]["samtools_mem"],
         rg_id=compose_rg_id,
         rg_extra=compose_rg_extra,
-    threads: 24
     conda:
         "__environment__.yml"
-    resources:
-        mem_mb=double_ram(params["preprocess"]["bowtie2"]["mem_gb"]),
-        runtime=24 * 60,
-    group:
-        "sample"
-    # retries: 5
     shell:
         """
         ( samtools view \

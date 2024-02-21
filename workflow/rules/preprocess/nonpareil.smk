@@ -20,8 +20,6 @@ rule preprocess__nonpareil__:
     params:
         prefix=compose_prefix_for_nonpareil,
         forward_fq=lambda w: NONPAREIL / "run" / f"{w.sample_id}.{w.library_id}_1.fq",
-    resources:
-        runtime=24 * 60,
     shell:
         """
         samtools fastq \

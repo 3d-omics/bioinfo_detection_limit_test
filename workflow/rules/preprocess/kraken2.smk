@@ -7,11 +7,6 @@ rule preprocess__kraken2__service:
         KRAKEN2 / "{kraken2_db}.log",
     conda:
         "__environment__.yml"
-    resources:
-        mem_mb=params["preprocess"]["kraken2"]["memory_gb"] * 1024,
-    group:
-        "kraken2"
-    threads: 0
     shell:
         """
         mkdir --parents {output}
@@ -41,11 +36,6 @@ rule preprocess__kraken2__assign:
         KRAKEN2 / "{kraken2_db}" / "{sample_id}.{library_id}.log",
     conda:
         "__environment__.yml"
-    resources:
-        mem_mb=1024,
-        runtime=60,
-    group:
-        "kraken2"
     shell:
         """
         kraken2 \

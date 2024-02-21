@@ -14,12 +14,6 @@ rule preprocess__fastp__:
         length_required=params["preprocess"]["fastp"]["length_required"],
         forward_adapter=get_forward_adapter,
         reverse_adapter=get_reverse_adapter,
-    threads: 16
-    resources:
-        mem_mb=8 * 1024,
-        runtime=240,
-    group:
-        "sample"
     conda:
         "__environment__.yml"
     shell:
