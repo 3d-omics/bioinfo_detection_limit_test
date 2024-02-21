@@ -46,7 +46,7 @@ rule preprocess__nonpareil__:
         """
 
 
-rule preprocess__nonpareil__aggregate:
+rule preprocess__nonpareil:
     """Aggregate all the nonpareil results into a single table"""
     input:
         [
@@ -69,8 +69,3 @@ rule preprocess__nonpareil__aggregate:
             --output-file {output} \
         2> {log} 1>&2
         """
-
-
-rule preprocess__nonpareil:
-    input:
-        rules.preprocess__nonpareil__aggregate.output,

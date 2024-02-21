@@ -69,18 +69,3 @@ rule quantify__bowtie2:
             for sample_id, library_id in SAMPLE_LIBRARY
             for mag_catalogue in MAG_CATALOGUES
         ],
-
-
-# rule quantify__bowtie2__report:
-#     """Generate bowtie2 reports for all PE libraries:
-#     - samtools stats
-#     - samtools flagstats
-#     - samtools idxstats
-#     """
-#     input:
-#         [
-#             QUANT_BOWTIE2 / mag_catalogue / f"{sample_id}.{library_id}.{report}"
-#             for sample_id, library_id in SAMPLE_LIBRARY
-#             for report in BAM_REPORTS
-#             for mag_catalogue in MAG_CATALOGUES
-#         ],

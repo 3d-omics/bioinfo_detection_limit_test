@@ -65,7 +65,8 @@ rule preprocess__kraken2:
     """Run kraken2 over all samples at once using the /dev/shm/ trick."""
     input:
         [
-            KRAKEN2 / kraken2_db / f"{sample_id}.{library_id}.report"
+            KRAKEN2 / kraken2_db / f"{sample_id}.{library_id}.{extension}"
             for sample_id, library_id in SAMPLE_LIBRARY
             for kraken2_db in KRAKEN2_DBS
+            for extension in ["out.gz", "report"]
         ],

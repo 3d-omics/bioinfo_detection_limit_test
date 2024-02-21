@@ -13,5 +13,5 @@ rule preprocess:
         rules.preprocess__fastp.input,
         rules.preprocess__bowtie2.input,
         rules.preprocess__kraken2.input,
-        rules.preprocess__nonpareil.input,
+        rules.preprocess__nonpareil.output,
         rules.preprocess__singlem.input,
