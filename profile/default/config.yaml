@@ -1,0 +1,91 @@
+# Default resources for snakemake
+---
+__use_yte__: true
+
+# __definitions__:
+#     - |
+#         def double_ram(initial, attemtp):
+#             return initial * 2 ** (attempt - 1)
+
+
+jobname: "{rule}.{wildcards}.{jobid}"
+
+# executor: slurm
+
+default-resources:
+    - threads=1
+    - runtime=60
+    - mem_mb=1024
+
+
+
+set-threads:
+
+    preprocess__fastp__: 24
+    preprocess__fastp__import: 24
+    preprocess__index__: 24
+    preprocess__bowtie2__: 24
+    preprocess__kraken2__service: 0
+
+    quantify__index__: 24
+    quantify__bowtie2__: 24
+
+set-resources:
+
+    preprocess__fastp__:
+        mem_mb: 8096
+        runtime: 30
+    preprocess__index__:
+        mem_mb: 16 * 1024 * 2 ** (attempt - 1)
+        runtime: 24 * 60
+    preprocess__bowtie2__:
+        mem_mb: 32 * 1024 * 2 ** (attempt - 1)
+        runtime: 24 * 60
+    preprocess__kraken2__service:
+        mem_mb: 500 * 1024
+        runtime: 30
+    preprocess__kraken2__assign:
+        mem_mb: 1024
+        runtime: 60
+    preprocess__nonpareil__:
+        runtime: 24 * 60
+    preprocess__singlem__pipe:
+        runtime: 24 * 60
+        mem_mb: 16 * 1024
+    preprocess__singlem__condense:
+        runtime: 6 * 60
+
+    quantify__index__:
+        mem_mb: 16 * 1024 * 2 ** (attempt - 1)
+        runtime: 24 * 60
+    quantify__bowtie2__:
+        mem_mb: 32 * 1024 * 2 ** (attempt - 1)
+        runtime: 24 * 60
+    quantify__coverm__genome__aggregate:
+        mem_mb: 8 * 1024
+    quantify__coverm__contig__aggregate:
+        mem_mb: 8 * 1024
+
+    helpers__samtools_flagstats_cram:
+        mem_mb: 8 * 1024
+    helpers__samtools_idxstats_cram:
+        mem_mb: 4 * 1024
+
+
+
+
+groups:
+
+    - preprocess__fastp__=sample
+    - preprocess__fastp__import=sample
+    - preprocess__bowtie2__=sample
+
+    - preprocess__kraken2__service=kraken2
+    - preprocess__kraken2__assign=kraken2
+
+    - quantify__bowtie2__=sample
+
+
+group_components:
+    - sample: 1
+    - kraken2: 1
