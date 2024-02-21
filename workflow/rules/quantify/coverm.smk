@@ -47,12 +47,7 @@ rule quantify__coverm__genome__aggregate:
     conda:
         "__environment__.yml"
     params:
-        input_dir=lambda wildcards: COVERM
-        / wildcards.mag_catalogue
-        / "genome"
-        / wildcards.method,
-    resources:
-        mem_mb=8 * 1024,
+        input_dir=lambda w: COVERM / w.mag_catalogue / "genome" / w.method,
     shell:
         """
         Rscript --no-init-file workflow/scripts/aggregate_coverm.R \
@@ -114,12 +109,7 @@ rule quantify__coverm__contig__aggregate:
     conda:
         "__environment__.yml"
     params:
-        input_dir=lambda wildcards: COVERM
-        / wildcards.mag_catalogue
-        / "contig"
-        / wildcards.method,
-    resources:
-        mem_mb=8 * 1024,
+        input_dir=lambda w: COVERM / w.mag_catalogue / "contig" / w.method,
     shell:
         """
         Rscript --no-init-file workflow/scripts/aggregate_coverm.R \

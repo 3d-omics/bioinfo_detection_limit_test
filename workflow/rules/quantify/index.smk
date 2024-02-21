@@ -22,12 +22,7 @@ rule quantify__index__:
         "__environment__.yml"
     params:
         prefix=lambda w: QUANT_INDEX / f"{w.mag_catalogue}",
-    threads: 24
-    resources:
-        mem_mb=double_ram(params["preprocess"]["bowtie2"]["mem_gb"]),
-        runtime=24 * 60,
-    # retries: 5
-    cache: True
+    retries: 5
     shell:
         """
         bowtie2-build \
