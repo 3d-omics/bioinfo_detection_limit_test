@@ -8,6 +8,8 @@ preprocess:
     samtools_mem: 1G
 
 quantify:
+  bowtie2:
+    samtools_mem: 1G
   coverm:   # https://github.com/wwood/CoverM#calculation-methods
     genome:
       methods: ["count", "covered_bases", "length"]
