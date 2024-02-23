@@ -58,7 +58,6 @@ jobs:
             --conda-cleanup-pkgs cache
             --latency-wait 5
             preprocess__fastp
-            `#preprocess__kraken2`
             preprocess__bowtie2
 
       - name: Test workflow - Quantify
