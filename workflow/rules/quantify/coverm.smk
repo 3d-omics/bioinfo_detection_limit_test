@@ -24,7 +24,6 @@ rule quantify__coverm__genome__:
         ( samtools view \
             --with-header \
             --reference {input.reference} \
-            --exclude-flags 4 \
             {input.cram} \
         | coverm genome \
             --bam-files /dev/stdin \
@@ -87,7 +86,6 @@ rule quantify__coverm__contig__:
         ( samtools view \
             --with-header \
             --reference {input.reference} \
-            --exclude-flags 4 \
             {input.cram} \
         | coverm contig \
             --bam-files /dev/stdin \
