@@ -22,7 +22,7 @@ set-threads:
 
 set-resources:
     preprocess__fastp__:
-        mem_mb: 8096
+        mem_mb: 8 * 1024
         runtime: 30
     preprocess__index__:
         mem_mb: 16 * 1024 * 2 ** (attempt - 1)
@@ -31,8 +31,8 @@ set-resources:
         mem_mb: 32 * 1024 * 2 ** (attempt - 1)
         runtime: 24 * 60
     preprocess__kraken2__:
-        mem_mb: 500 * 1024
-        runtime: 24 * 60
+        mem_mb: ?500 * 1024
+        runtime: ?24 * 60
     preprocess__nonpareil__:
         runtime: 24 * 60
     preprocess__singlem__pipe:
