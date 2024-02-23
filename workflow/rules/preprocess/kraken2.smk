@@ -51,30 +51,23 @@ rule preprocess__kraken2__:
                 {params.kraken_db_shm} \
             2>> {log} 1>&2
 
-            for file in {input.forwards} ; do \
 
-                sample_id=$(basename $file _1.fq.gz)
-                forward={params.in_folder}/${{sample_id}}_1.fq.gz
-                reverse={params.in_folder}/${{sample_id}}_2.fq.gz
-                output={params.out_folder}/${{sample_id}}.out.gz
-                report={params.out_folder}/${{sample_id}}.report
-                log={params.out_folder}/${{sample_id}}.log
-
-                echo $(date) Processing $sample_id 2>> {log} 1>&2
-
+            parallel \
+                --jobs {threads} \
                 kraken2 \
                     --db {params.kraken_db_shm} \
-                    --threads {threads} \
+                    --threads 1 \
                     --gzip-compressed \
                     --paired \
-                    --output >(pigz --processes {threads} > $output) \
-                    --report $report \
+                    --output {params.out_folder}/{{}}.out.gz \
+                    --report {params.out_folder}/{{}}.report \
                     --memory-mapping \
-                    $forward \
-                    $reverse \
-                2> $log 1>&2
+                    {params.in_folder}/{{}}_1.fq.gz \
+                    {params.in_folder}/{{}}_2.fq.gz \
+                "2> {params.out_folder}/{{}}.log 1>&2" \
+            ::: $(ls -1 {input.forwards} | xargs -I "{{}}" basename {{}} _1.fq.gz) \
+            2>> {log} 1>&2
 
-            done
         }} || {{
             echo "Failed job" 2>> {log} 1>&2
         }}
