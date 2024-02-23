@@ -45,7 +45,7 @@ rule preprocess__kraken2__:
                 --recursive \
                 --times \
                 --verbose \
-                --chown $USER:$USER \
+                --chown $(whoami):$(whoami) \
                 --chmod u+rw \
                 {input.database}/*.k2d \
                 {params.kraken_db_shm} \
@@ -72,7 +72,7 @@ rule preprocess__kraken2__:
             echo "Failed job" 2>> {log} 1>&2
         }}
 
-        rm --force --recursive --verbose {params.kraken_db_shm} 2>>{log} 1>&2
+        rm --force --recursive --verbose {params.kraken_db_shm} 2>> {log} 1>&2
         """
 
 
