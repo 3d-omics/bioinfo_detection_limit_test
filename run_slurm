@@ -7,10 +7,17 @@ snakemake \
     --conda-frontend mamba \
     --rerun-incomplete \
     --jobs 100 \
-    --cores 96 \
+    --cores 24 \
     --keep-going \
     --notemp \
-    --slurm \
-    --profile config/profile \
+    --executor slurm \
+    --profile profile/default \
     --latency-wait 60 \
+    --groups \
+        preprocess__fastp__=sample \
+        preprocess__fastp__import=sample \
+        preprocess__bowtie2__=sample \
+        quantify__bowtie2__=sample \
+    --group-components \
+        sample=1 \
     "$@"
