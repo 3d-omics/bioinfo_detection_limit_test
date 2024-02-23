@@ -59,6 +59,7 @@ jobs:
             --latency-wait 5
             preprocess__fastp
             preprocess__bowtie2
+            preprocess__kraken2
 
       - name: Test workflow - Quantify
         uses: snakemake/snakemake-github-action@v1.25.1
