@@ -22,7 +22,7 @@ rule preprocess__index__:
         "__environment__.yml"
     params:
         prefix=lambda w: str(PRE_INDEX / f"{w.genome}"),
-    cache: True
+    cache: "omit-software"
     # retries: 5
     shell:
         """
