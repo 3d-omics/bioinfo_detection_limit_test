@@ -21,8 +21,9 @@ rule quantify__index__:
     conda:
         "__environment__.yml"
     params:
-        prefix=lambda w: QUANT_INDEX / f"{w.mag_catalogue}",
+        prefix=lambda w: str(QUANT_INDEX / f"{w.mag_catalogue}"),
     retries: 5
+    cache: "omit-software"
     shell:
         """
         bowtie2-build \

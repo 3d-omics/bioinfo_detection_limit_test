@@ -21,8 +21,9 @@ rule preprocess__index__:
     conda:
         "__environment__.yml"
     params:
-        prefix=lambda w: PRE_INDEX / f"{w.genome}",
-    retries: 5
+        prefix=lambda w: str(PRE_INDEX / f"{w.genome}"),
+    cache: True
+    # retries: 5
     shell:
         """
         bowtie2-build \

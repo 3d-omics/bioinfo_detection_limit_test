@@ -8,6 +8,7 @@ rule reference__recompress__host__:
         REFERENCE / "{genome}.log",
     conda:
         "__environment__.yml"
+    cache: True
     shell:
         """
         ( gzip \
@@ -33,6 +34,7 @@ rule _reference__recompress__mags__:
         REFERENCE / "mags" / "{catalogue}.log",
     conda:
         "__environment__.yml"
+    cache: True
     shell:
         """
         ( gzip \
