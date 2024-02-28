@@ -4,13 +4,13 @@ __use_yte__: true
 
 
 default-resources:
-    - threads=1
-    - runtime=60
-    - mem_mb=1024
+    threads: 1
+    runtime: 1h
+    mem_mb: 1G
 
 
 set-threads:
-    preprocess__fastp__: 24
+    preprocess__fastp__: 16
     preprocess__fastp__import: 24
     preprocess__kraken2__: 24
     reference__recompress__host__: 8
@@ -23,37 +23,37 @@ set-threads:
 set-resources:
     preprocess__fastp__:
         mem_mb: 8 * 1024
-        runtime: 30
+        runtime: 30m
     preprocess__index__:
         mem_mb: 16 * 1024 * 2 ** (attempt - 1)
-        runtime: 24 * 60
+        runtime: 1d
     preprocess__bowtie2__:
         mem_mb: 32 * 1024 * 2 ** (attempt - 1)
-        runtime: 24 * 60
+        runtime: 1d
     preprocess__kraken2__:
-        mem_mb: ?500 * 1024
-        runtime: ?24 * 60
+        mem_mb: 500G  # check this!
+        runtime: 1d
     preprocess__nonpareil__:
-        runtime: 24 * 60
+        runtime: 1d
     preprocess__singlem__pipe:
-        runtime: 24 * 60
-        mem_mb: 16 * 1024
+        runtime: 1d
+        mem_mb: 16G
     preprocess__singlem__condense:
-        runtime: 6 * 60
+        runtime: 6h
     quantify__index__:
         mem_mb: 16 * 1024 * 2 ** (attempt - 1)
-        runtime: 24 * 60
+        runtime: 1d
     quantify__bowtie2__:
         mem_mb: 32 * 1024 * 2 ** (attempt - 1)
-        runtime: 24 * 60
+        runtime: 1d
     quantify__coverm__genome__aggregate:
-        mem_mb: 8 * 1024
+        mem_mb: 8G
     quantify__coverm__contig__aggregate:
-        mem_mb: 8 * 1024
+        mem_mb: 8G
     helpers__samtools_flagstats_cram:
-        mem_mb: 8 * 1024
+        mem_mb: 8G
     helpers__samtools_idxstats_cram:
-        mem_mb: 4 * 1024
+        mem_mb: 4G
     report__step__reads:
         mem_mb: 2 * 1024 * 2 ** (attempt - 1)
     report__step__preprocess:
