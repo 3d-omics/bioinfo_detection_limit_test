@@ -51,21 +51,23 @@ rule preprocess__kraken2__:
                 {params.kraken_db_shm} \
             2>> {log} 1>&2
 
+            ulimit -n 90000 2>> {log} 1>&2
 
             parallel \
                 --jobs {threads} \
+                --retries 5 \
                 kraken2 \
                     --db {params.kraken_db_shm} \
                     --threads 1 \
                     --gzip-compressed \
                     --paired \
-                    --output {params.out_folder}/{{}}.out.gz \
+                    --output ">(gzip > {params.out_folder}/{{}}.out.gz)" \
                     --report {params.out_folder}/{{}}.report \
                     --memory-mapping \
                     {params.in_folder}/{{}}_1.fq.gz \
                     {params.in_folder}/{{}}_2.fq.gz \
                 "2> {params.out_folder}/{{}}.log 1>&2" \
-            ::: $(ls -1 {input.forwards} | xargs -I "{{}}" basename {{}} _1.fq.gz) \
+            ::: $(ls -1 -S {input.forwards} | xargs -I "{{}}" basename {{}} _1.fq.gz) \
             2>> {log} 1>&2
 
         }} || {{
