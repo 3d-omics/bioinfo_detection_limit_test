@@ -5,18 +5,18 @@ __use_yte__: true
 
 
 default-resources:
-    threads: 1
     runtime: 1h
-    memory: 1024
+    mem_mb: 1G
 
 
 set-threads:
+    reference__recompress__host__: 8
+    reference__recompress__mags__: 8
     preprocess__fastp__: 16
     preprocess__fastp__import: 24
     preprocess__kraken2__: 24
-    reference__recompress__host__: 8
-    reference__recompress__mags__: 8
     preprocess__index__: 24
+    preprocess__bowtie2__: 24
     quantify__index__: 24
     quantify__bowtie2__: 24
 
