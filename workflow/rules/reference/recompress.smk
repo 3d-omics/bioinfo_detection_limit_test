@@ -12,7 +12,7 @@ rule reference__recompress__host__:
     shell:
         """
         ( gzip \
-            --decompres \
+            --decompress \
             --stdout {input.fa_gz} \
         | bgzip \
             --compress-level 9 \
@@ -24,7 +24,7 @@ rule reference__recompress__host__:
         """
 
 
-rule _reference__recompress__mags__:
+rule reference__recompress__mags__:
     """Extract the fasta.gz on config.yaml into genome.fa,gz with bgzip"""
     input:
         fa_gz=lambda wildcards: features["mag_catalogues"][wildcards.catalogue],
@@ -38,7 +38,7 @@ rule _reference__recompress__mags__:
     shell:
         """
         ( gzip \
-            --decompres \
+            --decompress \
             --stdout {input.fa_gz} \
         | bgzip \
             --compress-level 9 \
