@@ -19,10 +19,10 @@ rule preprocess__fastp__:
     shell:
         """
         fastp \
-            --in1 {input.forward_} \
-            --in2 {input.reverse_} \
-            --out1 {output.forward_} \
-            --out2 {output.reverse_} \
+            --in1 <(gzip --decompress --stdout {input.forward_}) \
+            --in2 <(gzip --decompress --stdout {input.reverse_}) \
+            --out1 >(pigz --processes {threads} --fast > {output.forward_}) \
+            --out2 >(pigz --processes {threads} --fast > {output.reverse_}) \
             --adapter_sequence {params.forward_adapter} \
             --adapter_sequence_r2 {params.reverse_adapter} \
             --html {output.html} \
@@ -31,7 +31,6 @@ rule preprocess__fastp__:
             --thread {threads} \
             --trim_poly_g \
             --trim_poly_x \
-            --compression 1 \
             --verbose \
         2> {log} 1>&2
         """
