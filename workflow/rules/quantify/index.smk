@@ -17,7 +17,7 @@ rule quantify__index__:
             ".rev.2.bt2",
         ),
     log:
-        QUANT_BOWTIE2 / "{mag_catalogue}.log",
+        QUANT_INDEX / "{mag_catalogue}.log",
     conda:
         "__environment__.yml"
     params:
