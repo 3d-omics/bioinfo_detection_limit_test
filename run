@@ -17,7 +17,7 @@ snakemake \
         quantify__index__ \
     --groups \
         preprocess__fastp__="run_{sample_id}" \
-        preprocess__fastp__import="run_{sample_id}" \
-        preprocess__bowtie2="run_{sample_id}" \
+        preprocess__fastp__import__="run_{sample_id}" \
+        preprocess__bowtie2__="run_{sample_id}" \
         quantify__bowtie2__="run_{sample_id}" \
     "$@"
