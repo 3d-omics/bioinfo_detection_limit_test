@@ -15,6 +15,12 @@ rule quantify__index__:
             ".4.bt2",
             ".rev.1.bt2",
             ".rev.2.bt2",
+            ".1.bt2l",
+            ".2.bt2l",
+            ".3.bt2l",
+            ".4.bt2l",
+            ".rev.1.bt2l",
+            ".rev.2.bt2l",
         ),
     log:
         QUANT_INDEX / "{mag_catalogue}.log",
@@ -31,6 +37,8 @@ rule quantify__index__:
             {input.reference} \
             {params.prefix} \
         2> {log} 1>&2
+
+        touch {output}
         """
 
 
