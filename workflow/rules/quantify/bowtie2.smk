@@ -7,12 +7,12 @@ rule quantify__bowtie2__:
         cram=get_host_clean_cram,
         mock=multiext(
             str(QUANT_INDEX) + "/{mag_catalogue}",
-            ".1.bt2",
-            ".2.bt2",
-            ".3.bt2",
-            ".4.bt2",
-            ".rev.1.bt2",
-            ".rev.2.bt2",
+            ".1.bt2l",
+            ".2.bt2l",
+            ".3.bt2l",
+            ".4.bt2l",
+            ".rev.1.bt2l",
+            ".rev.2.bt2l",
         ),
         reference=REFERENCE / "mags" / "{mag_catalogue}.fa.gz",
     output:

@@ -9,12 +9,6 @@ rule quantify__index__:
     output:
         multiext(
             str(QUANT_INDEX) + "/{mag_catalogue}",
-            ".1.bt2",
-            ".2.bt2",
-            ".3.bt2",
-            ".4.bt2",
-            ".rev.1.bt2",
-            ".rev.2.bt2",
             ".1.bt2l",
             ".2.bt2l",
             ".3.bt2l",
@@ -33,6 +27,7 @@ rule quantify__index__:
     shell:
         """
         bowtie2-build \
+            --large-index \
             --threads {threads} \
             {input.reference} \
             {params.prefix} \
@@ -46,6 +41,13 @@ rule quantify__index:
     input:
         [
             QUANT_INDEX / f"{mag_catalogue}.{end}"
-            for end in ["1.bt2", "2.bt2", "3.bt2", "4.bt2", "rev.1.bt2", "rev.2.bt2"]
+            for end in [
+                "1.bt2l",
+                "2.bt2l",
+                "3.bt2l",
+                "4.bt2l",
+                "rev.1.bt2l",
+                "rev.2.bt2l",
+            ]
             for mag_catalogue in MAG_CATALOGUES
         ],
