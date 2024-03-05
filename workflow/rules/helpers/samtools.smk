@@ -1,4 +1,4 @@
-rule helpers__samtools__crai:
+rule helpers__samtools__crai__:
     input:
         "{prefix}.cram",
     output:
@@ -11,7 +11,7 @@ rule helpers__samtools__crai:
         "samtools index {input} 2> {log} 1>&2"
 
 
-rule helpers__samtools__flagstats_cram:
+rule helpers__samtools__flagstats_cram__:
     """Compute flagstats for a cram"""
     input:
         cram="{prefix}.cram",
@@ -26,7 +26,7 @@ rule helpers__samtools__flagstats_cram:
         "samtools flagstats {input.cram} > {output.txt} 2> {log}"
 
 
-rule helpers__samtools__idxstats_cram:
+rule helpers__samtools__idxstats_cram__:
     """Compute idxstats for a cram"""
     input:
         cram="{prefix}.cram",
@@ -41,7 +41,7 @@ rule helpers__samtools__idxstats_cram:
         "samtools idxstats {input.cram} > {output.tsv} 2> {log}"
 
 
-rule helpers__samtools__index_fa_gz:
+rule helpers__samtools__index_fa_gz__:
     """Index a fa.gz file"""
     input:
         "{prefix}.fa.gz",
@@ -51,5 +51,6 @@ rule helpers__samtools__index_fa_gz:
         "{prefix}.fa.gz.fai.log",
     conda:
         "__environment__.yml"
+    cache: "omit-software"
     shell:
         "samtools faidx {input} 2> {log} 1>&2"

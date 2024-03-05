@@ -10,10 +10,11 @@ snakemake \
     --keep-going \
     --latency-wait 60 \
     --cache \
-        preprocess__index__ \
-        quantify__index__ \
         preprocess__recompress__host__ \
         preprocess__recompress__mags__ \
+        helpers__samtools__index_fa_gz__ \
+        preprocess__index__ \
+        quantify__index__ \
     --groups \
         preprocess__fastp__="run_{sample_id}" \
         preprocess__fastp__import="run_{sample_id}" \
