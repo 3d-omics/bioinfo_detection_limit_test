@@ -36,7 +36,7 @@ rule preprocess__fastp__:
         """
 
 
-rule preprocess__fastp__import:
+rule preprocess__fastp__import__:
     input:
         forward_=FASTP / "{sample_id}.{library_id}_1.fq.gz",
         reverse_=FASTP / "{sample_id}.{library_id}_2.fq.gz",
