@@ -15,6 +15,8 @@ rule preprocess__bowtie2__:
             ".rev.2.bt2",
         ),
         reference=REFERENCE / "{genome}.fa.gz",
+        fai=REFERENCE / "{genome}.fa.gz.fai",
+        gzi=REFERENCE / "{genome}.fa.gz.gzi",
     output:
         cram=PRE_BOWTIE2 / "{genome}" / "{sample_id}.{library_id}.cram",
     log:
@@ -32,10 +34,11 @@ rule preprocess__bowtie2__:
             -f 12 \
             -u \
             {input.cram} \
-        | samtools sort \
+        | samtools collate \
             -u \
-            -n \
+            -O \
             --threads {threads} \
+            - \
         | bowtie2 \
             -x {params.prefix} \
             -b /dev/stdin \

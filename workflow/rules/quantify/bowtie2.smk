@@ -15,6 +15,8 @@ rule quantify__bowtie2__:
             ".rev.2.bt2l",
         ),
         reference=REFERENCE / "mags" / "{mag_catalogue}.fa.gz",
+        fai=REFERENCE / "mags" / "{mag_catalogue}.fa.gz.fai",
+        gzi=REFERENCE / "mags" / "{mag_catalogue}.fa.gz.gzi",
     output:
         cram=QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}.cram",
     log:
@@ -33,10 +35,11 @@ rule quantify__bowtie2__:
             -u \
             -f 12 \
             {input.cram} \
-        | samtools sort \
+        | samtools collate \
             -u \
-            -n \
+            -O \
             --threads {threads} \
+            - \
         | bowtie2 \
             -x {params.index} \
             -b /dev/stdin \

@@ -46,7 +46,7 @@ rule helpers__samtools__index_fa_gz__:
     input:
         "{prefix}.fa.gz",
     output:
-        "{prefix}.fa.gz.fai",
+        multiext("{prefix}.fa.gz", ".fai", ".gzi"),
     log:
         "{prefix}.fa.gz.fai.log",
     conda:
