@@ -30,15 +30,15 @@ rule preprocess__bowtie2__:
         "__environment__.yml"
     shell:
         """
-        ( samtools view \
-            -f 12 \
-            -u \
-            {input.cram} \
-        | samtools collate \
+        ( samtools collate \
             -u \
             -O \
             -T {output.cram}.collate \
             --threads {threads} \
+            {input.cram} \
+        |  samtools view \
+            -f 12 \
+            -u \
             /dev/stdin \
         | bowtie2 \
             -x {params.prefix} \

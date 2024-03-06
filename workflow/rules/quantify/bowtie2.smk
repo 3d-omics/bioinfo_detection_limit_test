@@ -28,16 +28,16 @@ rule quantify__bowtie2__:
     retries: 5
     shell:
         """
-        ( samtools view \
-            -u \
-            -f 12 \
-            {input.cram} \
-        | samtools collate \
+        ( samtools collate \
             -u \
             -O \
             -T {output.cram}.collate \
             --threads {threads} \
-            - \
+            {input.cram} \
+        | samtools view \
+            -u \
+            -f 12 \
+            /dev/stdin \
         | bowtie2 \
             -x {params.index} \
             -b /dev/stdin \
