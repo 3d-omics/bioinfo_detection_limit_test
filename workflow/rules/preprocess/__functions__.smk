@@ -26,7 +26,7 @@ def compose_rg_id(wildcards):
 
 def compose_rg_extra(wildcards):
     """Compose the read group extra information for bowtie2"""
-    return f"LB:truseq_{wildcards.library_id}\tPL:Illumina\tSM:{wildcards.sample_id}"
+    return f"LB:truseq_{wildcards.library_id}\\tPL:Illumina\\tSM:{wildcards.sample_id}"
 
 
 def get_input_cram_for_host_mapping(wildcards):
