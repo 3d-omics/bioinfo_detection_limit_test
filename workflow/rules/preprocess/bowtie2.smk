@@ -37,6 +37,7 @@ rule preprocess__bowtie2__:
         | samtools collate \
             -u \
             -O \
+            -T {output.cram}.collate \
             --threads {threads} \
             - \
         | bowtie2 \

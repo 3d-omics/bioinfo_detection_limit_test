@@ -1,8 +1,5 @@
 rule quantify__bowtie2__:
-    """Map one library to reference genome using bowtie2
-
-    Output SAM file is piped to samtools sort to generate a CRAM file.
-    """
+    """Map one library to reference genome using bowtie2"""
     input:
         cram=get_host_clean_cram,
         mock=multiext(
@@ -38,6 +35,7 @@ rule quantify__bowtie2__:
         | samtools collate \
             -u \
             -O \
+            -T {output.cram}.collate \
             --threads {threads} \
             - \
         | bowtie2 \
