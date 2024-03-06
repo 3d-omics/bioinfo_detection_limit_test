@@ -39,7 +39,7 @@ rule preprocess__bowtie2__:
             -O \
             -T {output.cram}.collate \
             --threads {threads} \
-            - \
+            /dev/stdin \
         | bowtie2 \
             -x {params.prefix} \
             -b /dev/stdin \
