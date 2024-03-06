@@ -32,12 +32,12 @@ rule preprocess__bowtie2__:
         """
         ( samtools view \
             -f 12 \
-            -1 \
+            -u \
             {input.cram} \
-        | samtools collate \
-            -f \
-            -O \
-            -T {output.cram}.collate \
+        | samtools sort \
+            -n \
+            -u \
+            -T {output.cram}.name \
             - \
         | bowtie2 \
             -x {params.index} \
