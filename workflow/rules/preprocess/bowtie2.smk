@@ -22,7 +22,7 @@ rule preprocess__bowtie2__:
     log:
         PRE_BOWTIE2 / "{genome}" / "{sample_id}.{library_id}.log",
     params:
-        prefix=lambda w: PRE_INDEX / f"{w.genome}",
+        index=lambda w: PRE_INDEX / f"{w.genome}",
         samtools_mem=params["preprocess"]["bowtie2"]["samtools_mem"],
         rg_id=compose_rg_id,
         rg_extra=compose_rg_extra,
@@ -30,30 +30,30 @@ rule preprocess__bowtie2__:
         "__environment__.yml"
     shell:
         """
-        ( samtools collate \
+        ( samtools view \
             -u \
-            -O \
-            -T {output.cram}.collate \
-            --threads {threads} \
-            {input.cram} \
-        |  samtools view \
             -f 12 \
+            {input.cram} \
+        | samtools sort \
+            -n \
             -u \
-            /dev/stdin \
+            -T {output.cram}.sort_by_name \
+            --threads {threads} \
+            -m {params.samtools_mem} \
         | bowtie2 \
-            -x {params.prefix} \
+            -x {params.index} \
             -b /dev/stdin \
             --align-paired-reads \
-            --threads {threads} \
-            --rg-id '{params.rg_id}' \
             --rg '{params.rg_extra}' \
+            --rg-id '{params.rg_id}' \
+            --threads {threads} \
         | samtools sort \
             --output-fmt CRAM \
             --reference {input.reference} \
             --threads {threads} \
             -T {output.cram} \
             -m {params.samtools_mem} \
-            -o {output.cram}
+            -o {output.cram} \
         ) 2> {log} 1>&2
         """
 
