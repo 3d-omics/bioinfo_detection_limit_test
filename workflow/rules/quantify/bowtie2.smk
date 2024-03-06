@@ -29,15 +29,14 @@ rule quantify__bowtie2__:
     shell:
         """
         ( samtools view \
-            -u \
             -f 12 \
+            -1 \
             {input.cram} \
-        | samtools sort \
-            -n \
-            -u \
-            -T {output.cram}.sort_by_name \
-            --threads {threads} \
-            -m {params.samtools_mem} \
+        | samtools collate \
+            -f \
+            -O \
+            -T {output.cram}.collate \
+            - \
         | bowtie2 \
             -x {params.index} \
             -b /dev/stdin \

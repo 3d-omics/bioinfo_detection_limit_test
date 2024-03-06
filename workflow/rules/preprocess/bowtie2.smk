@@ -30,14 +30,15 @@ rule preprocess__bowtie2__:
         "__environment__.yml"
     shell:
         """
-        ( samtools collate \
+        ( samtools view \
+            -f 12 \
+            -1 \
+            {input.cram} \
+        | samtools collate \
             -f \
             -O \
             -T {output.cram}.collate \
-            {input.cram} \
-        | samtools view \
-            -f 12 \
-            -1 \
+            - \
         | bowtie2 \
             -x {params.index} \
             -b /dev/stdin \
@@ -54,33 +55,6 @@ rule preprocess__bowtie2__:
             -o {output.cram} \
         ) 2> {log} 1>&2
         """
-        # """
-        # ( samtools view \
-        #     -u \
-        #     -f 12 \
-        #     {input.cram} \
-        # | samtools sort \
-        #     -n \
-        #     -u \
-        #     -T {output.cram}.sort_by_name \
-        #     --threads {threads} \
-        #     -m {params.samtools_mem} \
-        # | bowtie2 \
-        #     -x {params.index} \
-        #     -b /dev/stdin \
-        #     --align-paired-reads \
-        #     --rg '{params.rg_extra}' \
-        #     --rg-id '{params.rg_id}' \
-        #     --threads {threads} \
-        # | samtools sort \
-        #     --output-fmt CRAM \
-        #     --reference {input.reference} \
-        #     --threads {threads} \
-        #     -T {output.cram} \
-        #     -m {params.samtools_mem} \
-        #     -o {output.cram} \
-        # ) 2> {log} 1>&2
-        # """
 
 
 rule preprocess__bowtie2:
