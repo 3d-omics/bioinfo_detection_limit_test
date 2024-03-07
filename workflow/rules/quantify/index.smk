@@ -32,8 +32,6 @@ rule quantify__index__:
             {input.reference} \
             {params.prefix} \
         2> {log} 1>&2
-
-        touch {output}
         """
 
 
