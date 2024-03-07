@@ -1,7 +1,50 @@
+rule quantify__bowtie2__cram_to_fastq__:
+    input:
+        cram=get_host_clean_cram,
+    output:
+        forward_=temp(
+            QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}_1.fq.gz"
+        ),
+        reverse_=temp(
+            QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}_2.fq.gz"
+        ),
+    log:
+        QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}.cram_to_fastq.log",
+    conda:
+        "__environment__.yml"
+    shell:
+        """
+        rm -rf {output.forward_}.collate
+
+        ( samtools view \
+            -f 12 \
+            -u \
+            --threads {threads} \
+            {input} \
+        | samtools collate \
+            -O \
+            -u \
+            -T {output.forward_}.collate \
+            --threads {threads} \
+            - \
+        | samtools fastq \
+            -1 {output.forward_} \
+            -2 {output.reverse_} \
+            --threads {threads} \
+            -c 0 \
+            /dev/stdin \
+        ) 2> {log} 1>&2
+        """
+
+
+# bowtie2 does not like pipes and/or bams
+
+
 rule quantify__bowtie2__:
     """Map one library to reference genome using bowtie2"""
     input:
-        cram=get_host_clean_cram,
+        forward_=QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}_1.fq.gz",
+        reverse_=QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}_2.fq.gz",
         mock=multiext(
             str(QUANT_INDEX) + "/{mag_catalogue}",
             ".1.bt2l",
@@ -28,19 +71,10 @@ rule quantify__bowtie2__:
     retries: 5
     shell:
         """
-        ( samtools view \
-            -f 12 \
-            -1 \
-            {input.cram} \
-        | samtools collate \
-            -f \
-            -O \
-            -T {output.cram}.collate \
-            - \
-        | bowtie2 \
+        ( bowtie2 \
             -x {params.index} \
-            -b /dev/stdin \
-            --align-paired-reads \
+            -1 {input.forward_} \
+            -2 {input.reverse_} \
             --rg '{params.rg_extra}' \
             --rg-id '{params.rg_id}' \
             --threads {threads} \

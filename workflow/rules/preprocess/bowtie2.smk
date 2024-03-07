@@ -10,55 +10,30 @@ rule preprocess__bowtie2__cram_to_fastq__:
         "__environment__.yml"
     shell:
         """
-        rm -rf {output.forward_}.name
+        rm -rf {output.forward_}.collate
 
         ( samtools view \
             -f 12 \
             -u \
+            --threads {threads} \
             {input} \
         | samtools collate \
             -O \
             -u \
-            -T {output.forward_}.name \
+            -T {output.forward_}.collate \
+            --threads {threads} \
             - \
         | samtools fastq \
             -1 {output.forward_} \
             -2 {output.reverse_} \
+            --threads {threads} \
             -c 0 \
             /dev/stdin \
         ) 2> {log} 1>&2
         """
 
 
-# rule preprocess__bowtie2__collate_cram__:
-#     input:
-#         get_input_cram_for_host_mapping,
-#     output:
-#         bam=temp(PRE_BOWTIE2 / "{genome}" / "{sample_id}.{library_id}.bam"),
-#     log:
-#         PRE_BOWTIE2 / "{genome}" / "{sample_id}.{library_id}.collate_cram.log",
-#     conda:
-#         "__environment__.yml"
-#     shell:
-#         """
-#         rm -rf {output.bam}.collate
-
-#         ( samtools view \
-#             -f 12 \
-#             -u \
-#             --threads {threads} \
-#             {input} \
-#         | samtools collate \
-#             -o {output.bam} \
-#             -u \
-#             -T {output.bam}.collate \
-#             --threads {threads} \
-#             - \
-#         ) 2> {log} 1>&2
-#         """
-
-
-# bowtie2 does not like pipes nor bams
+# bowtie2 does not like pipes and/or bams
 
 
 rule preprocess__bowtie2__:

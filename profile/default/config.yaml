@@ -15,9 +15,11 @@ set-threads:
     preprocess__fastp__import: 24
     preprocess__kraken2__: 24
     preprocess__index__: 24
+    preprocess__bowtie2__cram_to_fastq__: 24
     preprocess__bowtie2__collate_cram__: 24
     preprocess__bowtie2__: 24
     quantify__index__: 24
+    quantify__bowtie2__cram_to_fastq__: 24
     quantify__bowtie2__: 24
 
 
@@ -28,9 +30,9 @@ set-resources:
     preprocess__index__:
         mem_mb: 16 * 1024 * 2 ** (attempt - 1)
         runtime: 1d
-    preprocess__bowtie2__collate_cram__:
-        mem_mb: 16 * 1024 * 2 ** (attempt - 1)
-        runtime: 1h
+    preprocess__bowtie2__cram_to_fastq__:
+        mem_mb: 4 * 1024
+        runtime: 60
     preprocess__bowtie2__:
         mem_mb: 32 * 1024 * 2 ** (attempt - 1)
         runtime: 1d
@@ -47,6 +49,9 @@ set-resources:
     quantify__index__:
         mem_mb: 16 * 1024 * 2 ** (attempt - 1)
         runtime: 1d
+    quantify__bowtie2__cram_to_fastq__:
+        mem_mb: 4 * 1024
+        runtime: 60
     quantify__bowtie2__:
         mem_mb: 32 * 1024 * 2 ** (attempt - 1)
         runtime: 1d
