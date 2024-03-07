@@ -18,6 +18,8 @@ snakemake \
     --groups \
         preprocess__fastp__="run_{sample_id}" \
         preprocess__fastp__import__="run_{sample_id}" \
+        preprocess__bowtie2__cram_to_fastq__="run_{sample_id}" \
         preprocess__bowtie2__="run_{sample_id}" \
+        quantify__bowtie2__cram_to_fastq__="run_{sample_id}" \
         quantify__bowtie2__="run_{sample_id}" \
     "$@"
