@@ -1,10 +1,73 @@
+# rule preprocess__bowtie2__cram_to_fastq__:
+#     input:
+#         get_input_cram_for_host_mapping,
+#     output:
+#         forward_ = temp(PRE_BOWTIE2 / "{genome}" / "{sample_id}.{library_id}_1.fq.gz"),
+#         reverse_ = temp(PRE_BOWTIE2 / "{genome}" / "{sample_id}.{library_id}_2.fq.gz"),
+#     log:
+#         PRE_BOWTIE2 / "{genome}" / "{sample_id}.{library_id}.cram_to_fastq.log",
+#     conda:
+#         "__environment__.yml"
+#     shell:
+#         """
+#         rm -rf {output.forward_}.name
+
+#         ( samtools view \
+#             -f 12 \
+#             -u \
+#             {input} \
+#         | samtools collate \
+#             -O \
+#             -u \
+#             -T {output.forward_}.name \
+#             - \
+#         | samtools fastq \
+#             -1 {output.forward_} \
+#             -2 {output.reverse_} \
+#             -c 0 \
+#             /dev/stdin \
+#         ) 2> {log} 1>&2
+#         """
+
+
+rule preprocess__bowtie2__collate_cram__:
+    input:
+        get_input_cram_for_host_mapping,
+    output:
+        bam=temp(PRE_BOWTIE2 / "{genome}" / "{sample_id}.{library_id}.bam"),
+    log:
+        PRE_BOWTIE2 / "{genome}" / "{sample_id}.{library_id}.collate_cram.log",
+    conda:
+        "__environment__.yml"
+    shell:
+        """
+        rm -rf {output.bam}.collate
+
+        ( samtools view \
+            -f 12 \
+            -u \
+            --threads {threads} \
+            {input} \
+        | samtools collate \
+            -o {output.bam} \
+            -u \
+            -T {output.bam}.collate \
+            --threads {threads} \
+            - \
+        ) 2> {log} 1>&2
+        """
+
+
+# bowtie2 does not like pipes nor bams
+
+
 rule preprocess__bowtie2__:
     """Map one library to reference genome using bowtie2
 
     Output SAM file is piped to samtools sort to generate a CRAM file.
     """
     input:
-        cram=get_input_cram_for_host_mapping,
+        bam=PRE_BOWTIE2 / "{genome}" / "{sample_id}.{library_id}.bam",
         mock=multiext(
             str(PRE_INDEX) + "/{genome}",
             ".1.bt2",
@@ -30,18 +93,9 @@ rule preprocess__bowtie2__:
         "__environment__.yml"
     shell:
         """
-        ( samtools view \
-            -f 12 \
-            -u \
-            {input.cram} \
-        | samtools sort \
-            -n \
-            -u \
-            -T {output.cram}.name \
-            - \
-        | bowtie2 \
+        ( bowtie2 \
             -x {params.index} \
-            -b /dev/stdin \
+            -b {input.bam} \
             --align-paired-reads \
             --rg '{params.rg_extra}' \
             --rg-id '{params.rg_id}' \
