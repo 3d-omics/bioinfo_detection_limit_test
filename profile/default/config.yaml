@@ -15,11 +15,11 @@ set-threads:
     preprocess__fastp__import: 24
     preprocess__kraken2__: 24
     preprocess__index__: 24
-    preprocess__bowtie2__cram_to_fastq__: 24
+    preprocess__bowtie2__cram_to_fastq__: 4
     preprocess__bowtie2__collate_cram__: 24
     preprocess__bowtie2__: 24
     quantify__index__: 24
-    quantify__bowtie2__cram_to_fastq__: 24
+    quantify__bowtie2__cram_to_fastq__: 4
     quantify__bowtie2__: 24
 
 

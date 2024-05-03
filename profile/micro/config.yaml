@@ -16,11 +16,11 @@ set-threads:
     preprocess__fastp__import: 24
     preprocess__kraken2__: 24
     preprocess__index__: 24
-    preprocess__bowtie2__cram_to_fastq__: 24
+    preprocess__bowtie2__cram_to_fastq__: 4
     preprocess__bowtie2__collate_cram__: 24
     preprocess__bowtie2__: 24
     quantify__index__: 24
-    quantify__bowtie2__cram_to_fastq__: 24
+    quantify__bowtie2__cram_to_fastq__: 4
     quantify__bowtie2__: 24
 
 
@@ -55,14 +55,14 @@ set-resources:
         runtime: 30m
     quantify__bowtie2__:
         mem_mb: 32 * 1024 * 2 ** (attempt - 1)
-        runtime: 1h
+        runtime: 4h
     quantify__coverm__genome__aggregate:
         mem_mb: 8G
     quantify__coverm__contig__aggregate:
         mem_mb: 8G
-    helpers__samtools_flagstats_cram:
+    helpers__samtools__flagstats_cram__:
         mem_mb: 8G
-    helpers__samtools_idxstats_cram:
+    helpers__samtools__idxstats_cram__:
         mem_mb: 4G
     report__step__reads:
         mem_mb: 2 * 1024 * 2 ** (attempt - 1)
