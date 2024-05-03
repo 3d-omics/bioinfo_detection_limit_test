@@ -43,13 +43,13 @@ def get_input_cram_for_host_mapping(wildcards):
 
 # Kraken2 ----
 def get_kraken2_database(wildcards):
-    """Get the kraken2 database"""
+    """Get the path to the kraken2 database to be used"""
     return features["databases"]["kraken2"][wildcards.kraken2_db]
 
 
-def compose_out_folder_for_pre_kraken2_assign_all(wildcards):
-    """Compose the output folder for pre kraken2 assign all"""
-    return KRAKEN2 / f"{wildcards.kraken2_db}"
+def compose_out_folder_for_eval_kraken2_assign_all(wildcards):
+    """Just compose the output folder"""
+    return KRAKEN2 / wildcards.kraken2_db
 
 
 # Nonpareil ----
