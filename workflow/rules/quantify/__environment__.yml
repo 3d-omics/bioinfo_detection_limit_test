@@ -1,14 +1,12 @@
-# Tools to get statistics on the metagenomes without assembling
----
 channels:
   - conda-forge
   - bioconda
   - defaults
 dependencies:
-  - bird_tool_utils_python=0.4.1
-  - bowtie2=2.5.1
-  - coverm=0.6.1
-  - gzip=1.12
-  - pigz=2.6
-  - r-argparse=2.2.2
-  - r-tidyverse=2.0.0
+  - bird_tool_utils_python =0.4.1
+  - bowtie2 =2.5.3
+  - coverm =0.7.0
+  - gzip =1.13
+  - pigz =2.8
+  - r-argparse =2.2.2
+  - r-tidyverse =2.0.0

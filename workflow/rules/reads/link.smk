@@ -1,4 +1,4 @@
-rule _reads__link:
+rule reads__link__:
     """Make a link to the original forward file, with a prettier name than default"""
     input:
         forward_=get_forward,
@@ -28,4 +28,4 @@ rule reads__link:
 
 
 localrules:
-    _reads__link,
+    reads__link__,

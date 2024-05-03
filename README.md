@@ -1,6 +1,6 @@
 # Snakemake workflow: `mg_quant`
 
-[![Snakemake](https://img.shields.io/badge/snakemake-≥6.3.0-brightgreen.svg)](https://snakemake.github.io)
+[![Snakemake](https://img.shields.io/badge/snakemake-≥8.0.0-brightgreen.svg)](https://snakemake.github.io)
 [![GitHub actions status](https://github.com/3d-omics/mg_quant/workflows/Tests/badge.svg)](https://github.com/3d-omics/mg_quant/actions)
 
 

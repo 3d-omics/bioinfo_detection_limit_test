@@ -1,4 +1,4 @@
-rule _helpers__samtools__stats_cram_host:
+rule preprocess__samtools__stats_cram_host:
     """Compute stats for a host cram"""
     input:
         cram=PRE_BOWTIE2 / "{genome}" / "{sample_id}.{library_id}.cram",

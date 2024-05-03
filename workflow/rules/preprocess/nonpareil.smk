@@ -1,4 +1,4 @@
-rule _preprocess__nonpareil__run:
+rule preprocess__nonpareil__:
     """Run nonpareil over one sample
 
     Note: Nonpareil only ask for one of the pair-end reads
@@ -7,7 +7,7 @@ rule _preprocess__nonpareil__run:
     empty files
     """
     input:
-        forward_=get_host_clean_forward,
+        cram=get_host_clean_cram,
     output:
         npa=touch(NONPAREIL / "run" / "{sample_id}.{library_id}.npa"),
         npc=touch(NONPAREIL / "run" / "{sample_id}.{library_id}.npc"),
@@ -19,19 +19,17 @@ rule _preprocess__nonpareil__run:
         "__environment__.yml"
     params:
         prefix=compose_prefix_for_nonpareil,
-        forward_fq=lambda wildcards: NONPAREIL
-        / "run"
-        / f"{wildcards.sample_id}.{wildcards.library_id}_1.fq",
-    resources:
-        runtime=24 * 60,
+        forward_fq=lambda w: NONPAREIL / "run" / f"{w.sample_id}.{w.library_id}_1.fq",
     shell:
         """
-        gzip \
-            --decompress \
-            --stdout \
-            {input.forward_} \
-        > {params.forward_fq} \
-        2> {log}
+        samtools fastq \
+            --threads {threads} \
+            -1 {params.forward_fq} \
+            -2 /dev/null \
+            -0 /dev/null \
+            -f 12 \
+            {input.cram} \
+        2> {log} 1>&2
 
         nonpareil \
             -s {params.forward_fq} \
@@ -46,20 +44,14 @@ rule _preprocess__nonpareil__run:
         """
 
 
-rule preprocess__nonpareil__run:
-    """Run stats_nonpareil_one for all the samples"""
-    input:
-        [
-            NONPAREIL / "run" / f"{sample_id}.{library_id}.{extension}"
-            for extension in ["npa", "npc", "npl", "npo"]
-            for sample_id, library_id in SAMPLE_LIBRARY
-        ],
-
-
-rule _preprocess__nonpareil__aggregate:
+rule preprocess__nonpareil:
     """Aggregate all the nonpareil results into a single table"""
     input:
-        rules.preprocess__nonpareil__run.input,
+        [
+            NONPAREIL / "run" / f"{sample_id}.{library_id}.{suffix}"
+            for sample_id, library_id in SAMPLE_LIBRARY
+            for suffix in ["npa", "npc", "npl", "npo"]
+        ],
     output:
         NONPAREIL / "nonpareil.tsv",
     log:
@@ -75,8 +67,3 @@ rule _preprocess__nonpareil__aggregate:
             --output-file {output} \
         2> {log} 1>&2
         """
-
-
-rule preprocess__nonpareil:
-    input:
-        rules._preprocess__nonpareil__aggregate.output,

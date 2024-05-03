@@ -1,12 +1,46 @@
-rule _preprocess__singlem__pipe:
+rule preprocess__singlem__fastq:
+    input:
+        cram=get_host_clean_cram,
+    output:
+        forward_=temp(SINGLEM / "fastq" / "{sample_id}.{library_id}_1.fq.gz"),
+        reverse_=temp(SINGLEM / "fastq" / "{sample_id}.{library_id}_2.fq.gz"),
+    log:
+        SINGLEM / "fastq" / "{sample_id}.{library_id}.log",
+    conda:
+        "__environment__.yml"
+    shell:
+        """
+        ( samtools view \
+            --threads {threads} \
+            -u \
+            -o /dev/stdout \
+            -f 12 \
+            {input.cram} \
+        | samtools collate \
+            -O \
+            -u \
+            -f \
+            --threads {threads} \
+            - \
+        | samtools fastq \
+            -1 {output.forward_} \
+            -2 {output.reverse_} \
+            -0 /dev/null \
+            -c 1 \
+            --threads {threads} \
+        ) 2> {log} 1>&2
+        """
+
+
+rule preprocess__singlem__pipe:
     """Run singlem over one sample
 
     Note: SingleM asks in the documentation for the raw reads. Here we are
     passing it the non-host and trimmed ones.
     """
     input:
-        forward_=get_host_clean_forward,
-        reverse_=get_host_clean_reverse,
+        forward_=SINGLEM / "fastq" / "{sample_id}.{library_id}_1.fq.gz",
+        reverse_=SINGLEM / "fastq" / "{sample_id}.{library_id}_2.fq.gz",
         data=features["databases"]["singlem"],
     output:
         archive_otu_table=SINGLEM / "pipe" / "{sample_id}.{library_id}.archive.json",
@@ -16,9 +50,6 @@ rule _preprocess__singlem__pipe:
         SINGLEM / "pipe" / "{sample_id}.{library_id}.log",
     conda:
         "__environment__.yml"
-    resources:
-        runtime=24 * 60,
-        mem_mb=16 * 1024,
     shell:
         """
         singlem pipe \
@@ -33,7 +64,7 @@ rule _preprocess__singlem__pipe:
         """
 
 
-rule _preprocess__singlem__condense:
+rule preprocess__singlem__condense:
     """Aggregate all the singlem results into a single table"""
     input:
         archive_otu_tables=[
@@ -49,8 +80,6 @@ rule _preprocess__singlem__condense:
         "__environment__.yml"
     params:
         input_dir=SINGLEM,
-    resources:
-        runtime=6 * 60,
     shell:
         """
         singlem condense \
@@ -61,11 +90,11 @@ rule _preprocess__singlem__condense:
         """
 
 
-rule _preprocess__singlem__microbial_fraction:
+rule preprocess__singlem__microbial_fraction:
     """Run singlem microbial_fraction over one sample"""
     input:
-        forward_=get_host_clean_forward,
-        reverse_=get_host_clean_reverse,
+        forward_=SINGLEM / "fastq" / "{sample_id}.{library_id}_1.fq.gz",
+        reverse_=SINGLEM / "fastq" / "{sample_id}.{library_id}_2.fq.gz",
         data=features["databases"]["singlem"],
         condense=SINGLEM / "pipe" / "{sample_id}.{library_id}.condense.tsv",
     output:
@@ -88,7 +117,7 @@ rule _preprocess__singlem__microbial_fraction:
         """
 
 
-rule _preprocess__singlem__aggregate_microbial_fraction:
+rule preprocess__singlem__aggregate_microbial_fraction:
     """Aggregate all the microbial_fraction files into one tsv"""
     input:
         tsvs=[
@@ -116,5 +145,5 @@ rule _preprocess__singlem__aggregate_microbial_fraction:
 rule preprocess__singlem:
     """Run all stats singlem rules"""
     input:
-        rules._preprocess__singlem__condense.output,
-        rules._preprocess__singlem__aggregate_microbial_fraction.output,
+        rules.preprocess__singlem__condense.output,
+        rules.preprocess__singlem__aggregate_microbial_fraction.output,

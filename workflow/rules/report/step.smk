@@ -1,4 +1,4 @@
-rule _report__step__reads:
+rule report__step__reads:
     """Collect all reports for the reads step"""
     input:
         [
@@ -14,8 +14,6 @@ rule _report__step__reads:
         "__environment__.yml"
     params:
         dir=REPORT_STEP,
-    resources:
-        mem_mb=double_ram(2),
     retries: 5
     shell:
         """
@@ -29,7 +27,7 @@ rule _report__step__reads:
         """
 
 
-rule _report__step__preprocess:
+rule report__step__preprocess:
     """Collect all reports for the preprocess step"""
     input:
         fastp=[
@@ -60,8 +58,6 @@ rule _report__step__preprocess:
         "__environment__.yml"
     params:
         dir=REPORT_STEP,
-    resources:
-        mem_mb=double_ram(2),
     retries: 5
     shell:
         """
@@ -77,7 +73,7 @@ rule _report__step__preprocess:
         """
 
 
-rule _report__step__quantify:
+rule report__step__quantify:
     """Collect all reports for the bowtie2 step when mapping to a mag catalogue"""
     input:
         reports=[
@@ -94,8 +90,6 @@ rule _report__step__quantify:
         "__environment__.yml"
     params:
         dir=REPORT_STEP,
-    resources:
-        mem_mb=double_ram(2),
     retries: 5
     shell:
         """
@@ -114,6 +108,6 @@ rule _report__step__quantify:
 rule report__step:
     """Collect all per step reports for the pipeline"""
     input:
-        rules._report__step__reads.output,
-        rules._report__step__preprocess.output,
-        rules._report__step__quantify.output,
+        rules.report__step__reads.output,
+        rules.report__step__preprocess.output,
+        rules.report__step__quantify.output,

@@ -1,4 +1,4 @@
-rule _quantify__coverm__genome:
+rule quantify__coverm__genome__:
     """Run coverm genome for one library and one mag catalogue"""
     input:
         cram=QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}.cram",
@@ -24,7 +24,6 @@ rule _quantify__coverm__genome:
         ( samtools view \
             --with-header \
             --reference {input.reference} \
-            --exclude-flags 4 \
             {input.cram} \
         | coverm genome \
             --bam-files /dev/stdin \
@@ -36,7 +35,7 @@ rule _quantify__coverm__genome:
         """
 
 
-rule _quantify__coverm__aggregate_genome:
+rule quantify__coverm__genome__aggregate:
     """Aggregate all the nonpareil results into a single table"""
     input:
         get_coverm_genome_tsv_files_for_aggregation,
@@ -47,12 +46,7 @@ rule _quantify__coverm__aggregate_genome:
     conda:
         "__environment__.yml"
     params:
-        input_dir=lambda wildcards: COVERM
-        / wildcards.mag_catalogue
-        / "genome"
-        / wildcards.method,
-    resources:
-        mem_mb=8 * 1024,
+        input_dir=lambda w: COVERM / w.mag_catalogue / "genome" / w.method,
     shell:
         """
         Rscript --no-init-file workflow/scripts/aggregate_coverm.R \
@@ -72,7 +66,7 @@ rule quantify__coverm__genome:
         ],
 
 
-rule _quantify__coverm__contig:
+rule quantify__coverm__contig__:
     """Run coverm contig for one library and one mag catalogue"""
     input:
         cram=QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}.cram",
@@ -92,7 +86,6 @@ rule _quantify__coverm__contig:
         ( samtools view \
             --with-header \
             --reference {input.reference} \
-            --exclude-flags 4 \
             {input.cram} \
         | coverm contig \
             --bam-files /dev/stdin \
@@ -103,7 +96,7 @@ rule _quantify__coverm__contig:
         """
 
 
-rule _quantify__coverm__aggregate_contig:
+rule quantify__coverm__contig__aggregate:
     """Aggregate all the nonpareil results into a single table"""
     input:
         get_coverm_contig_tsv_files_for_aggregation,
@@ -114,12 +107,7 @@ rule _quantify__coverm__aggregate_contig:
     conda:
         "__environment__.yml"
     params:
-        input_dir=lambda wildcards: COVERM
-        / wildcards.mag_catalogue
-        / "contig"
-        / wildcards.method,
-    resources:
-        mem_mb=8 * 1024,
+        input_dir=lambda w: COVERM / w.mag_catalogue / "contig" / w.method,
     shell:
         """
         Rscript --no-init-file workflow/scripts/aggregate_coverm.R \

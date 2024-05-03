@@ -5,14 +5,10 @@ preprocess:
   fastp:
     length_required: 75  # nonpareil requires at least 25bp
   bowtie2:  # mem_gb >= mem_host + threads * samtools_mem
-    mem_gb: 32
     samtools_mem: 1G
-  kraken2:
-    memory_gb: 1  # This should be the size of the database in disk
 
 quantify:
-  bowtie2:  # mem_gb >= mem_mag + threads * samtools_mem
-    mem_gb: 64
+  bowtie2:
     samtools_mem: 1G
   coverm:   # https://github.com/wwood/CoverM#calculation-methods
     genome:

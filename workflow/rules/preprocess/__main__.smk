@@ -1,4 +1,5 @@
 include: "__functions__.smk"
+include: "index.smk"
 include: "bowtie2.smk"
 include: "fastp.smk"
 include: "kraken2.smk"
@@ -12,5 +13,5 @@ rule preprocess:
         rules.preprocess__fastp.input,
         rules.preprocess__bowtie2.input,
         rules.preprocess__kraken2.input,
-        rules.preprocess__nonpareil.input,
+        rules.preprocess__nonpareil.output,
         rules.preprocess__singlem.input,

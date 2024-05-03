@@ -1,4 +1,4 @@
-rule _report__library:
+rule report__library__:
     """Make a MultiQC report for a single library"""
     input:
         get_reads_reports_for_library_reports,
@@ -15,8 +15,6 @@ rule _report__library:
     params:
         library=lambda w: f"{w.sample_id}.{w.library_id}",
         out_dir=REPORT_LIBRARY,
-    resources:
-        mem_mb=double_ram(2),
     retries: 5
     shell:
         """

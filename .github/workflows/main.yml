@@ -16,11 +16,11 @@ jobs:
   Pre-Commit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           lfs: 'true'
       - name: Run pre-commit on all files
-        uses: pre-commit/action@v3.0.0
+        uses: pre-commit/action@v3.0.1
         with:
           extra_args: --all-files
 
@@ -31,12 +31,12 @@ jobs:
     steps:
 
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           lfs: 'true'
 
       - name: Set up caches
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             .snakemake/conda
@@ -47,7 +47,7 @@ jobs:
         run: conda clean --all --yes
 
       - name: Test workflow - Preprocess
-        uses: ezherman/snakemake-github-action@5027c0e706ada924ab91e0501bd92185fc98de3c
+        uses: snakemake/snakemake-github-action@v1.25.1
         with:
           directory: .
           snakefile: workflow/Snakefile
@@ -58,11 +58,11 @@ jobs:
             --conda-cleanup-pkgs cache
             --latency-wait 5
             preprocess__fastp
-            preprocess__kraken2
             preprocess__bowtie2
+            preprocess__kraken2
 
       - name: Test workflow - Quantify
-        uses: ezherman/snakemake-github-action@5027c0e706ada924ab91e0501bd92185fc98de3c
+        uses: snakemake/snakemake-github-action@v1.25.1
         with:
           directory: .
           snakefile: workflow/Snakefile
@@ -75,7 +75,7 @@ jobs:
             quantify
 
       - name: Test workflow - Report
-        uses: ezherman/snakemake-github-action@5027c0e706ada924ab91e0501bd92185fc98de3c
+        uses: snakemake/snakemake-github-action@v1.25.1
         with:
           directory: .
           snakefile: workflow/Snakefile
@@ -87,7 +87,7 @@ jobs:
             --latency-wait 5
             report
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: results

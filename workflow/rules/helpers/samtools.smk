@@ -1,4 +1,4 @@
-rule _helpers__samtools__crai:
+rule helpers__samtools__crai__:
     input:
         "{prefix}.cram",
     output:
@@ -11,7 +11,7 @@ rule _helpers__samtools__crai:
         "samtools index {input} 2> {log} 1>&2"
 
 
-rule _helpers__samtools__flagstats_cram:
+rule helpers__samtools__flagstats_cram__:
     """Compute flagstats for a cram"""
     input:
         cram="{prefix}.cram",
@@ -22,13 +22,11 @@ rule _helpers__samtools__flagstats_cram:
         "{prefix}.flagstats.log",
     conda:
         "__environment__.yml"
-    resources:
-        mem_mb=4 * 1024,
     shell:
         "samtools flagstats {input.cram} > {output.txt} 2> {log}"
 
 
-rule _helpers__samtools__idxstats_cram:
+rule helpers__samtools__idxstats_cram__:
     """Compute idxstats for a cram"""
     input:
         cram="{prefix}.cram",
@@ -39,21 +37,20 @@ rule _helpers__samtools__idxstats_cram:
         "{prefix}.idxstats.log",
     conda:
         "__environment__.yml"
-    resources:
-        mem_mb=4 * 1024,
     shell:
         "samtools idxstats {input.cram} > {output.tsv} 2> {log}"
 
 
-rule _helpers__samtools__index_fa_gz:
+rule helpers__samtools__index_fa_gz__:
     """Index a fa.gz file"""
     input:
         "{prefix}.fa.gz",
     output:
-        "{prefix}.fa.gz.fai",
+        multiext("{prefix}.fa.gz", ".fai", ".gzi"),
     log:
         "{prefix}.fa.gz.fai.log",
     conda:
         "__environment__.yml"
+    cache: "omit-software"
     shell:
         "samtools faidx {input} 2> {log} 1>&2"
