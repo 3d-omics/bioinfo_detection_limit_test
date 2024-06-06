@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/3d-omics/mg_quant/compare/v1.0.0...v1.0.1) (2024-06-06)
+
+
+### Bug Fixes
+
+* fix rule names in profile ([79ca5a0](https://github.com/3d-omics/mg_quant/commit/79ca5a01499f54bddf2b25d645bbbb80ff96c05e))
+
 ## 1.0.0 (2024-05-13)
 
 
