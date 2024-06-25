@@ -18,13 +18,12 @@ rule preprocess__nonpareil__:
     conda:
         "__environment__.yml"
     params:
-        prefix=compose_prefix_for_nonpareil,
-        forward_fq=lambda w: NONPAREIL / "run" / f"{w.sample_id}.{w.library_id}_1.fq",
+        prefix=lambda w: NONPAREIL / "run" / f"{w.sample_id}.{w.library_id}",
     shell:
         """
         samtools fastq \
             --threads {threads} \
-            -1 {params.forward_fq} \
+            -1 {params.prefix}_1.fq \
             -2 /dev/null \
             -0 /dev/null \
             -f 12 \
@@ -32,7 +31,7 @@ rule preprocess__nonpareil__:
         2> {log} 1>&2
 
         nonpareil \
-            -s {params.forward_fq} \
+            -s {params.prefix}_1.fq \
             -T kmer \
             -b {params.prefix} \
             -f fastq \
@@ -40,7 +39,7 @@ rule preprocess__nonpareil__:
         2>> {log} \
         1>&2 || true
 
-        rm --force --verbose {params.forward_fq} 2>> {log} 1>&2
+        rm --force --verbose {params.prefix}_1.fq 2>> {log} 1>&2
         """
 
 
