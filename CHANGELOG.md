@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.1.0](https://github.com/3d-omics/mg_quant/compare/v1.0.1...v1.1.0) (2024-08-06)
+
+
+### Features
+
+* pin dependencies ([2f53db9](https://github.com/3d-omics/mg_quant/commit/2f53db95e7e8b2bcf57eb18a1d65a2b50ea521ce))
+
+
+### Bug Fixes
+
+* add cache rule to the bottom ([2c3c9fd](https://github.com/3d-omics/mg_quant/commit/2c3c9fd76052d1365033307c127c264e38c6db96))
+* nonpareil ([3ac7cc3](https://github.com/3d-omics/mg_quant/commit/3ac7cc354d63634ea9e2a4fec9665fbcc628ee3a))
+* **singlem:** pin smafa version ([ef89c21](https://github.com/3d-omics/mg_quant/commit/ef89c219b1cb24f31c1da648ed90e2923632af64))
+
 ## [1.0.1](https://github.com/3d-omics/mg_quant/compare/v1.0.0...v1.0.1) (2024-06-06)
 
 
