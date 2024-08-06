@@ -52,12 +52,6 @@ def compose_out_folder_for_eval_kraken2_assign_all(wildcards):
     return KRAKEN2 / wildcards.kraken2_db
 
 
-# Nonpareil ----
-def compose_prefix_for_nonpareil(wildcards):
-    """Compose prefix for nonpareil output files"""
-    return NONPAREIL / f"{wildcards.sample_id}.{wildcards.library_id}"
-
-
 # last cram files ----
 def get_host_clean_cram(wildcards):
     """Get the input file that is clean from hosts"""
