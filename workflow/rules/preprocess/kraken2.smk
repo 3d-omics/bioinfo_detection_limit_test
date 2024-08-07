@@ -27,6 +27,7 @@ rule preprocess__kraken2__assign__:
         in_folder=FASTP,
         out_folder=compose_out_folder_for_eval_kraken2_assign_all,
         kraken_db_name="{kraken2_db}",
+        samples=lambda w: [f"{sample}.{library}" for sample, library in SAMPLE_LIBRARY],
     conda:
         "__environment__.yml"
     shell:
@@ -49,35 +50,32 @@ rule preprocess__kraken2__assign__:
                 /dev/shm/{params.kraken_db_name} \
             2>> {log} 1>&2
 
-            for file in {input.forwards} ; do \
-
-                sample_id=$(basename $file _1.fq.gz)
-                forward={params.in_folder}/${{sample_id}}_1.fq.gz
-                reverse={params.in_folder}/${{sample_id}}_2.fq.gz
-                output={params.out_folder}/${{sample_id}}.out.gz
-                report={params.out_folder}/${{sample_id}}.report
-                log={params.out_folder}/${{sample_id}}.log
-
-                echo $(date) Processing $sample_id 2>> {log} 1>&2
-
+            parallel \
+                --line-buffer \
                 kraken2 \
                     --db /dev/shm/{params.kraken_db_name} \
-                    --threads {threads} \
+                    --threads 1 \
                     --gzip-compressed \
                     --paired \
-                    --output >(pigz --processes {threads} > $output) \
-                    --report $report \
-                    --memory-mapping \
-                    $forward \
-                    $reverse \
-                2> $log 1>&2
+                    --output ">("gzip ">" {params.out_folder}/{{}}.out.gz")" \
+                    --report {params.out_folder}/{{}}.report \
+                    {params.in_folder}/{{}}_1.fq.gz \
+                    {params.in_folder}/{{}}_2.fq.gz \
+                "2>" {params.out_folder}/{{}}.log  "1>&2" \
+            ::: {params.samples}
 
-            done
         }} || {{
+
             echo "Failed job" 2>> {log} 1>&2
+
         }}
 
-        rm --force --recursive --verbose /dev/shm/{params.kraken_db_name} 2>>{log} 1>&2
+        rm \
+            --force \
+            --recursive \
+            --verbose \
+            /dev/shm/{params.kraken_db_name} \
+        2>>{log} 1>&2
         """
 
 
