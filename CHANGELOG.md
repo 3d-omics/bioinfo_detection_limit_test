@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/3d-omics/mg_quant/compare/v1.1.0...v1.1.1) (2024-08-07)
+
+
+### Performance Improvements
+
+* correct kraken2 rule name in profiles ([870167c](https://github.com/3d-omics/mg_quant/commit/870167cd0ac1d93f988fdd4e4e3219cc01c6a571))
+
 ## [1.1.0](https://github.com/3d-omics/mg_quant/compare/v1.0.1...v1.1.0) (2024-08-06)
 
 
