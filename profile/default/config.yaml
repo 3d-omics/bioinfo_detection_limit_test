@@ -13,7 +13,7 @@ set-threads:
     reference__recompress__mags__: 8
     preprocess__fastp__: 16
     preprocess__fastp__import: 24
-    preprocess__kraken2__: 24
+    preprocess__kraken2__assign__: 24
     preprocess__index__: 24
     preprocess__bowtie2__cram_to_fastq__: 4
     preprocess__bowtie2__collate_cram__: 24
