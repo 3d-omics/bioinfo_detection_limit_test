@@ -35,11 +35,9 @@ nonempty_files <-
   pull(file)
 
 if (length(nonempty_files) > 0) {
-  nonpareil_curve <-
-    nonempty_files %>%
-    Nonpareil::Nonpareil.set(plot = FALSE)
 
-  nonpareil_curve %>%
+  nonempty_files %>%
+    Nonpareil::Nonpareil.set(plot = FALSE) %>%
     summary() %>%
     as.data.frame() %>%
     rownames_to_column("sample_id") %>%
@@ -47,5 +45,7 @@ if (length(nonempty_files) > 0) {
     write_tsv(output_tsv)
 
 } else {
+
   write_tsv(data.frame(), output_tsv)
+
 }
