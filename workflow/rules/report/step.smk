@@ -39,6 +39,10 @@ rule report__step__preprocess:
             for sample_id, library_id in SAMPLE_LIBRARY
             for end in ["1", "2"]
         ],
+        nonpareil=[
+            NONPAREIL / "run" / f"{sample_id}.{library_id}.json"
+            for sample_id, library_id in SAMPLE_LIBRARY
+        ],
         kraken2=[
             KRAKEN2 / kraken2_db / f"{sample_id}.{library_id}.report"
             for sample_id, library_id in SAMPLE_LIBRARY

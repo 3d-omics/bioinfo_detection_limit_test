@@ -3,6 +3,7 @@ rule report__library__:
     input:
         get_reads_reports_for_library_reports,
         get_fastp_reports_for_library_reports,
+        get_nonpareil_reports_for_library_reports,
         get_bowtie2_host_for_library_reports,
         get_kraken2_for_library_reports,
         get_bowtie2_mags_for_library_reports,

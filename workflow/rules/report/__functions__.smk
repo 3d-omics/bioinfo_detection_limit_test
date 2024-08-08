@@ -16,6 +16,11 @@ def get_fastp_reports_for_library_reports(wildcards):
     ]
 
 
+def get_nonpareil_reports_for_library_reports(wildcards):
+    """Compose the paths to the nonpareil json reports"""
+    return NONPAREIL / f"{wildcards.sample_id}.{wildcards.library_id}.json"
+
+
 def get_bowtie2_host_for_library_reports(wildcards):
     """Compose the paths for the bowtie2_hosts reports"""
     sample_id = wildcards.sample_id
