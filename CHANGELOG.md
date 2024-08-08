@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/3d-omics/mg_quant/compare/v1.1.1...v1.1.2) (2024-08-08)
+
+
+### Bug Fixes
+
+* update multiqc so it properly reports fastp ([ca1fbb2](https://github.com/3d-omics/mg_quant/commit/ca1fbb24cb0e5e95611440efde3ee971a43cff32))
+
 ## [1.1.1](https://github.com/3d-omics/mg_quant/compare/v1.1.0...v1.1.1) (2024-08-07)
 
 
