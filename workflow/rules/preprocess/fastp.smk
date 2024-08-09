@@ -1,7 +1,7 @@
 rule preprocess__fastp__:
     """Run fastp on one PE library
 
-    Note: don't use process substitution not because fastp cannot handle it,
+    NOTE: don't use process substitution not because fastp cannot handle it,
     but because MultiQC reports will show /dev/fd/{63,64} as the sample names.
     """
     input:
@@ -41,6 +41,7 @@ rule preprocess__fastp__:
 
 
 rule preprocess__fastp__import__:
+    """Convert fastp output fastqs to CRAM"""
     input:
         forward_=FASTP / "{sample_id}.{library_id}_1.fq.gz",
         reverse_=FASTP / "{sample_id}.{library_id}_2.fq.gz",

@@ -1,10 +1,9 @@
 rule preprocess__nonpareil__:
     """Run nonpareil over one sample
 
-    Note: Nonpareil only ask for one of the pair-end reads
-    Note2: it has to be fastq. The process substitution trick does not work
-    Note3: in case that nonpareil fails for low coverage samples, it creates
-    empty files
+    NOTE: Nonpareil only ask for one of the pair-end reads
+    NOTE: it has to be fastq. The process substitution trick does not work
+    NOTE: in case that nonpareil fails for low coverage samples, it creates empty files
     """
     input:
         cram=get_host_clean_cram,
@@ -44,6 +43,7 @@ rule preprocess__nonpareil__:
 
 
 rule preprocess__nonpareil__export_json__:
+    """Export nonpareil results to json for multiqc"""
     input:
         NONPAREIL / "run" / "{sample_id}.{library_id}.npo",
     output:
@@ -87,6 +87,7 @@ rule preprocess__nonpareil__aggregate__:
 
 
 rule preprocess__nonpareil:
+    """Run nonpareil over all samples and produce JSONs for multiqc"""
     input:
         [
             NONPAREIL / "run" / f"{sample_id}.{library_id}.json"

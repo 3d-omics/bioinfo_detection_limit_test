@@ -1,4 +1,5 @@
 rule helpers__samtools__crai__:
+    """Index a cram file"""
     input:
         "{prefix}.cram",
     output:

@@ -1,4 +1,5 @@
-rule preprocess__singlem__fastq:
+rule preprocess__singlem__fastq__:
+    """"Extract the non-host reads from the cram file and convert them to fastq"""
     input:
         cram=get_host_clean_cram,
     output:
@@ -32,10 +33,10 @@ rule preprocess__singlem__fastq:
         """
 
 
-rule preprocess__singlem__pipe:
+rule preprocess__singlem__pipe__:
     """Run singlem over one sample
 
-    Note: SingleM asks in the documentation for the raw reads. Here we are
+    NOTE: SingleM asks in the documentation for the raw reads. Here we are
     passing it the non-host and trimmed ones.
     """
     input:
@@ -90,7 +91,7 @@ rule preprocess__singlem__condense:
         """
 
 
-rule preprocess__singlem__microbial_fraction:
+rule preprocess__singlem__microbial_fraction__:
     """Run singlem microbial_fraction over one sample"""
     input:
         forward_=SINGLEM / "fastq" / "{sample_id}.{library_id}_1.fq.gz",

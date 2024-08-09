@@ -17,7 +17,7 @@ Clone the repository, and set it as the working directory.
 
 ```
 git clone --recursive https://github.com/3d-omics/mg_quant.git
-cd detection_limit_test
+cd mg_quant
 ```
 
 2. Run the pipeline with the test data (takes 5 minutes to download the required software)
@@ -25,7 +25,7 @@ cd detection_limit_test
 snakemake \
     --use-conda \
     --conda-frontend mamba \
-    -j 8
+    --jobs 8
 ```
 
 3. Edit the following files:
@@ -35,7 +35,7 @@ snakemake \
       sample1	lib1	resources/reads/sample1_1.fq.gz	resources/reads/sample1_2.fq.gz	AGATCGGAAGAGCACACGTCTGAACTCCAGTCA	AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT
       sample2	lib1	resources/reads/sample2_1.fq.gz	resources/reads/sample2_2.fq.gz	AGATCGGAAGAGCACACGTCTGAACTCCAGTCA	AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT
       ```
-   2. `config/features.yml`: the references and databases against which to screen the libraries: human, chicken / pig, MAG catalogue.
+   2. `config/features.yml`: the references and databases against which to screen the libraries: hosts and MAG catalogues.
       ```
       references:  # Reads will be mapped sequentially
          human: resources/reference/human_22_sub.fa.gz
@@ -58,8 +58,7 @@ snakemake \
 4. Run the pipeline and go for a walk:
 
 ```
-./run  # locally
-./run_slurm  # in a cluster environment with slurm
+snakemake --use-conda --profile profile/default --jobs 100 --cores 24 `#--executor slurm`
 ```
 
 ## Rulegraph

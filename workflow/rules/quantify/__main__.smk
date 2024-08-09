@@ -6,6 +6,6 @@ include: "coverm.smk"
 
 
 rule quantify:
-    """Run the stats analyses: nonpareil and coverm"""
+    """Quantify MAG abundances"""
     input:
         rules.quantify__coverm.input,
