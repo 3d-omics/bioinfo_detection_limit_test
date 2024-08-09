@@ -56,9 +56,9 @@ set-resources:
     quantify__bowtie2__:
         mem_mb: 32 * 1024 * 2 ** (attempt - 1)
         runtime: 4h
-    quantify__coverm__genome__aggregate:
+    quantify__coverm__genome__aggregate__:
         mem_mb: 8G
-    quantify__coverm__contig__aggregate:
+    quantify__coverm__contig__aggregate__:
         mem_mb: 8G
     helpers__samtools__flagstats_cram__:
         mem_mb: 8G
