@@ -7,6 +7,7 @@ rule preprocess__nonpareil__:
     """
     input:
         cram=get_host_clean_cram,
+        reference=REFERENCE / f"{LAST_HOST}.fa.gz",
     output:
         npa=touch(NONPAREIL / "run" / "{sample_id}.{library_id}.npa"),
         npc=touch(NONPAREIL / "run" / "{sample_id}.{library_id}.npc"),
@@ -22,6 +23,7 @@ rule preprocess__nonpareil__:
         """
         samtools fastq \
             --threads {threads} \
+            --reference {input.reference} \
             -1 {params.prefix}_1.fq \
             -2 /dev/null \
             -0 /dev/null \
@@ -42,7 +44,7 @@ rule preprocess__nonpareil__:
         """
 
 
-rule preprocess__nonpareil__export_json__:
+rule preprocess__nonpareil__curves__:
     """Export nonpareil results to json for multiqc"""
     input:
         NONPAREIL / "run" / "{sample_id}.{library_id}.npo",
@@ -52,11 +54,14 @@ rule preprocess__nonpareil__export_json__:
         NONPAREIL / "run" / "{sample_id}.{library_id}.json.log",
     conda:
         "__environment__.yml"
+    params:
+        labels=lambda w: f"{w.sample_id}.{w.library_id}",
     shell:
         """
-        Rscript --no-init-file workflow/scripts/nonpareil_export_json.R \
-            --input-npo   {input} \
-            --output-json {output} \
+        Rscript --no-init-file $(which NonpareilCurves.R) \
+            --labels {params.labels} \
+            --json {output} \
+            {input} \
         2> {log} 1>&2
         """
 
