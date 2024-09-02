@@ -1,8 +1,7 @@
 rule quantify__index__:
-    """Build bowtie2 index for the mag reference
+    """Build bowtie2 index for the MAG reference
 
-    Let the script decide to use a small or a large index based on the size of
-    the reference genome.
+    NOTE: the index is built big on purpose. Bowtie2 creates different indexes depending on the size, bt2 for small and bt2l for large, and it is a pain in the ass to separate cases.
     """
     input:
         reference=REFERENCE / "mags" / "{mag_catalogue}.fa.gz",
@@ -36,6 +35,7 @@ rule quantify__index__:
 
 
 rule quantify__index:
+    """Build bowtie2 indexes for all the MAG catalogues"""
     input:
         [
             QUANT_INDEX / f"{mag_catalogue}.{end}"

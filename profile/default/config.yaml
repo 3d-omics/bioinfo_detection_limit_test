@@ -11,8 +11,8 @@ default-resources:
 set-threads:
     reference__recompress__host__: 8
     reference__recompress__mags__: 8
-    preprocess__fastp__: 16
-    preprocess__fastp__import: 24
+    preprocess__fastp__: 12
+    preprocess__fastp__import__: 24
     preprocess__kraken2__assign__: 24
     preprocess__index__: 24
     preprocess__bowtie2__cram_to_fastq__: 4
@@ -41,7 +41,7 @@ set-resources:
         runtime: 1d
     preprocess__nonpareil__:
         runtime: 1d
-    preprocess__singlem__pipe:
+    preprocess__singlem__pipe__:
         runtime: 1d
         mem_mb: 16G
     preprocess__singlem__condense:
@@ -55,13 +55,13 @@ set-resources:
     quantify__bowtie2__:
         mem_mb: 32 * 1024 * 2 ** (attempt - 1)
         runtime: 1d
-    quantify__coverm__genome__aggregate:
+    quantify__coverm__genome__aggregate__:
         mem_mb: 8G
-    quantify__coverm__contig__aggregate:
+    quantify__coverm__contig__aggregate__:
         mem_mb: 8G
-    helpers__samtools_flagstats_cram:
+    helpers__samtools_flagstats_cram__:
         mem_mb: 8G
-    helpers__samtools_idxstats_cram:
+    helpers__samtools_idxstats_cram__:
         mem_mb: 4G
     report__step__reads:
         mem_mb: 2 * 1024 * 2 ** (attempt - 1)

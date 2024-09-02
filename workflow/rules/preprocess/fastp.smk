@@ -1,5 +1,9 @@
 rule preprocess__fastp__:
-    """Run fastp on one PE library"""
+    """Run fastp on one PE library
+
+    NOTE: don't use process substitution not because fastp cannot handle it,
+    but because MultiQC reports will show /dev/fd/{63,64} as the sample names.
+    """
     input:
         forward_=READS / "{sample_id}.{library_id}_1.fq.gz",
         reverse_=READS / "{sample_id}.{library_id}_2.fq.gz",
@@ -19,10 +23,10 @@ rule preprocess__fastp__:
     shell:
         """
         fastp \
-            --in1 <(gzip --decompress --stdout {input.forward_}) \
-            --in2 <(gzip --decompress --stdout {input.reverse_}) \
-            --out1 >(pigz --processes {threads} --fast > {output.forward_}) \
-            --out2 >(pigz --processes {threads} --fast > {output.reverse_}) \
+            --in1 {input.forward_} \
+            --in2 {input.reverse_} \
+            --out1 {output.forward_} \
+            --out2 {output.reverse_} \
             --adapter_sequence {params.forward_adapter} \
             --adapter_sequence_r2 {params.reverse_adapter} \
             --html {output.html} \
@@ -37,6 +41,7 @@ rule preprocess__fastp__:
 
 
 rule preprocess__fastp__import__:
+    """Convert fastp output fastqs to CRAM"""
     input:
         forward_=FASTP / "{sample_id}.{library_id}_1.fq.gz",
         reverse_=FASTP / "{sample_id}.{library_id}_2.fq.gz",
@@ -46,8 +51,6 @@ rule preprocess__fastp__import__:
         FASTP / "{sample_id}.{library_id}.cram.log",
     conda:
         "__environment__.yml"
-    group:
-        "sample"
     shell:
         """
         samtools import \

@@ -57,7 +57,10 @@ rule all:
 
 
 rule cache:
-    """Rule to retrieve files from the cache or to execute them"""
+    """Rule to retrieve files from the cache or to execute them.
+
+    NOTE: do this rule first to trigger the cache retrieval before using an executor.
+    """
     input:
         rules.reference__recompress.input,
         rules.preprocess__index.input,

@@ -63,6 +63,7 @@ rule reference__recompress__mags:
 
 
 rule reference__recompress:
+    """Recompress all reference genomes and MAG catalogues"""
     input:
         rules.reference__recompress__hosts.input,
         rules.reference__recompress__mags.input,

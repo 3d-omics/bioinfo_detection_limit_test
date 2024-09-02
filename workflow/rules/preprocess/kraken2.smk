@@ -1,7 +1,8 @@
 rule preprocess__kraken2__assign__:
     """
-    Run kraken2 over all samples at once using the /dev/shm/ trick.
+    Run kraken2 over all samples at once
 
+    NOTE: it uses using the /dev/shm/ trick.
     NOTE: /dev/shm may be not empty after the job is done.
     """
     input:
@@ -82,7 +83,7 @@ rule preprocess__kraken2__assign__:
 
 
 rule preprocess__kraken2:
-    """Run kraken2 over all samples at once using the /dev/shm/ trick."""
+    """Run kraken2"""
     input:
         [
             KRAKEN2 / kraken2_db / f"{sample_id}.{library_id}.{extension}"

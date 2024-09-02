@@ -35,7 +35,7 @@ rule quantify__coverm__genome__:
         """
 
 
-rule quantify__coverm__genome__aggregate:
+rule quantify__coverm__genome__aggregate__:
     """Aggregate all the nonpareil results into a single table"""
     input:
         get_coverm_genome_tsv_files_for_aggregation,
@@ -96,7 +96,7 @@ rule quantify__coverm__contig__:
         """
 
 
-rule quantify__coverm__contig__aggregate:
+rule quantify__coverm__contig__aggregate__:
     """Aggregate all the nonpareil results into a single table"""
     input:
         get_coverm_contig_tsv_files_for_aggregation,

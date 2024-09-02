@@ -1,7 +1,7 @@
 rule preprocess__index__:
     """Build bowtie2 index for a reference
 
-    Let the script decide to use a small or a large index based on the size of
+    NOTE: Let the script decide to use a small or a large index based on the size of
     the reference genome.
     """
     input:
@@ -35,6 +35,7 @@ rule preprocess__index__:
 
 
 rule preprocess__index:
+    """Build bowtie2 index for all host genomes"""
     input:
         [
             PRE_INDEX / f"{genome}.{end}"

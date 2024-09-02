@@ -9,6 +9,14 @@ include: "singlem.smk"
 
 
 rule preprocess:
+    """
+    Run all the preprocessing steps:
+    - fastp
+    - bowtie2
+    - kraken2
+    - nonpareil
+    - singlem
+    """
     input:
         rules.preprocess__fastp.input,
         rules.preprocess__bowtie2.input,

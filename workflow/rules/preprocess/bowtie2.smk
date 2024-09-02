@@ -1,4 +1,9 @@
 rule preprocess__bowtie2__cram_to_fastq__:
+    """Convert CRAM to FASTQ using samtools and using the correct reference
+
+    NOTE: bowtie2 does not like CRAM files, and although can use a BAM file as an input,
+    bowtie2 fails to receive a piped SAM input. Therefore, we need to convert the CRAM file to a physical FASTQ file.
+    """
     input:
         get_input_cram_for_host_mapping,
     output:
@@ -37,10 +42,7 @@ rule preprocess__bowtie2__cram_to_fastq__:
 
 
 rule preprocess__bowtie2__:
-    """Map one library to reference genome using bowtie2
-
-    Output SAM file is piped to samtools sort to generate a CRAM file.
-    """
+    """Map one library to reference genome using bowtie2"""
     input:
         # bam=PRE_BOWTIE2 / "{genome}" / "{sample_id}.{library_id}.bam",
         forward_=PRE_BOWTIE2 / "{genome}" / "{sample_id}.{library_id}_1.fq.gz",
@@ -89,7 +91,7 @@ rule preprocess__bowtie2__:
 
 
 rule preprocess__bowtie2:
-    """Run bowtie2 on all libraries and generate reports"""
+    """Run bowtie2 on all libraries"""
     input:
         [
             PRE_BOWTIE2 / LAST_HOST / f"{sample_id}.{library_id}.cram"
