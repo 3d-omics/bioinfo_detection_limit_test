@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.2.0](https://github.com/3d-omics/mg_quant/compare/v1.1.2...v1.2.0) (2024-09-02)
+
+
+### Features
+
+* start adding support for nonpareil multiqc reports ([047a216](https://github.com/3d-omics/mg_quant/commit/047a21679590bbb7e122c3592c58d53e1dab591a))
+* update nonpareil and multiqc so they do the jsoning and the reporting ([5fc6bdd](https://github.com/3d-omics/mg_quant/commit/5fc6bdd9f0e3d2b48dcba1aed135a774cbb6cd08))
+
+
+### Bug Fixes
+
+* add missing script ([39fbc23](https://github.com/3d-omics/mg_quant/commit/39fbc23a1dc121846dba36a139a19834b47b33f6))
+* disable process substitution in fastp since multiqc can't handle it properly ([f593508](https://github.com/3d-omics/mg_quant/commit/f593508f506ae21fa04012cfd061452bd2d98e30))
+* remove group from import ([6071514](https://github.com/3d-omics/mg_quant/commit/6071514aaaab119e2b6a2e749281e34f2a4128b7))
+* wrong path ([e7ecb4e](https://github.com/3d-omics/mg_quant/commit/e7ecb4e71d2060fcc2370621ff6ee93338ccd26b))
+
 ## [1.1.2](https://github.com/3d-omics/mg_quant/compare/v1.1.1...v1.1.2) (2024-08-08)
 
 
