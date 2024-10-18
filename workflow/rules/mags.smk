@@ -1,13 +1,13 @@
-rule reference__recompress__mags__:
+rule quantify__mags:
     """Extract the fasta.gz on config.yaml into genome.fa,gz with bgzip"""
     input:
         fa_gz=lambda wildcards: features["mag_catalogues"][wildcards.catalogue],
     output:
-        fa_gz=REFERENCE / "mags" / "{catalogue}.fa.gz",
+        fa_gz=MAGS / "{catalogue}.fa.gz",
     log:
-        REFERENCE / "mags" / "{catalogue}.log",
+        MAGS / "{catalogue}.log",
     conda:
-        "__environment__.yml"
+        "../environments/mags.yml"
     cache: "omit-software"
     shell:
         """
@@ -24,13 +24,7 @@ rule reference__recompress__mags__:
         """
 
 
-rule reference__recompress__mags:
+rule quantify__mags__all:
     """Recompress all MAG catalogues"""
     input:
-        [REFERENCE / "mags" / f"{catalogue}.fa.gz" for catalogue in MAG_CATALOGUES],
-
-
-rule reference__recompress:
-    """Recompress all reference genomes and MAG catalogues"""
-    input:
-        rules.reference__recompress__mags.input,
+        [MAGS / f"{catalogue}.fa.gz" for catalogue in MAG_CATALOGUES],

@@ -1,4 +1,4 @@
-rule report__step__quantify:
+rule quantify__multiqc:
     """Collect all reports for the bowtie2 step when mapping to a mag catalogue"""
     input:
         reports=[
@@ -8,13 +8,13 @@ rule report__step__quantify:
             for report in ["stats.tsv", "flagstats.txt"]
         ],
     output:
-        REPORT_STEP / "quantify.html",
+        RESULTS / "quantify.html",
     log:
-        REPORT_STEP / "quantify.log",
+        RESULTS / "quantify.log",
     conda:
-        "__environment__.yml"
+        "../environments/multiqc.yml"
     params:
-        dir=REPORT_STEP,
+        dir=RESULTS,
     retries: 5
     shell:
         """
@@ -30,7 +30,7 @@ rule report__step__quantify:
         """
 
 
-rule report__step:
+rule quantify__multiqc__all:
     """Collect all per step reports for the pipeline"""
     input:
-        rules.report__step__quantify.output,
+        rules.quantify__multiqc.output,

@@ -48,14 +48,14 @@ use rule * from preprocess as preprocess__*
 
 # Import subworkflows
 include: "rules/folders.smk"
-include: "rules/reference/__main__.smk"
+include: "rules/mags.smk"
 include: "rules/bowtie2.smk"
-include: "rules/quantify/__main__.smk"
-include: "rules/report/__main__.smk"
+include: "rules/coverm.smk"
+include: "rules/multiqc.smk"
 
 
 rule all:
     input:
         rules.preprocess__all.input,
-        rules.quantify.input,
-        rules.report.input,
+        rules.quantify__coverm__all.input,
+        rules.quantify__multiqc__all.input,

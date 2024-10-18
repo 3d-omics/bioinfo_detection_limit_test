@@ -4,7 +4,7 @@ include: "bowtie2_functions.smk"
 rule quantify__bowtie2__build:
     """Build bowtie2 index for the MAG reference"""
     input:
-        ref=REFERENCE / "mags" / "{mag_catalogue}.fa.gz",
+        ref=MAGS / "{mag_catalogue}.fa.gz",
     output:
         multiext(
             str(QUANT_INDEX) + "/{mag_catalogue}",
@@ -29,12 +29,12 @@ rule quantify__bowtie2__build__all:
         [
             QUANT_INDEX / f"{mag_catalogue}.{extension}"
             for extension in [
-                "1.bt2l",
-                "2.bt2l",
-                "3.bt2l",
-                "4.bt2l",
-                "rev.1.bt2l",
-                "rev.2.bt2l",
+                "1.bt2",
+                "2.bt2",
+                "3.bt2",
+                "4.bt2",
+                "rev.1.bt2",
+                "rev.2.bt2",
             ]
             for mag_catalogue in MAG_CATALOGUES
         ],
@@ -47,16 +47,13 @@ rule quantify__bowtie2__map:
         reverse_=PRE_BOWTIE2 / "{sample_id}.{library_id}_2.fq.gz",
         mock=multiext(
             str(QUANT_INDEX) + "/{mag_catalogue}",
-            ".1.bt2l",
-            ".2.bt2l",
-            ".3.bt2l",
-            ".4.bt2l",
-            ".rev.1.bt2l",
-            ".rev.2.bt2l",
+            ".1.bt2",
+            ".2.bt2",
+            ".3.bt2",
+            ".4.bt2",
+            ".rev.1.bt2",
+            ".rev.2.bt2",
         ),
-        reference=REFERENCE / "mags" / "{mag_catalogue}.fa.gz",
-        fai=REFERENCE / "mags" / "{mag_catalogue}.fa.gz.fai",
-        gzi=REFERENCE / "mags" / "{mag_catalogue}.fa.gz.gzi",
     output:
         bam=QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}.bam",
     log:
@@ -80,7 +77,6 @@ rule quantify__bowtie2__map:
             --threads {threads} \
         | samtools sort \
             --output-fmt BAM \
-            --reference {input.reference} \
             --threads {threads} \
             -T {output.bam} \
             -m {params.samtools_mem} \

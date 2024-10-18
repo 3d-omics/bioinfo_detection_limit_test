@@ -25,6 +25,7 @@ set-threads:
 
 
 set-resources:
+    # preprocess
     preprocess__fastp__:
         mem_mb: 8 * 1024
         runtime: 30m
@@ -47,6 +48,7 @@ set-resources:
         mem_mb: 16G
     preprocess__singlem__condense:
         runtime: 6h
+    # quantify
     quantify__index__:
         mem_mb: 16 * 1024 * 2 ** (attempt - 1)
         runtime: 1d

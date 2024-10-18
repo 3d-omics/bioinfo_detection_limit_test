@@ -3,7 +3,11 @@ def get_coverm_file(wildcards, coverm_type):
     mag_catalogue = wildcards.mag_catalogue
     method = wildcards.method
     return [
-        COVERM / mag_catalogue / coverm_type / method / f"{sample_id}.{library_id}.tsv"
+        COVERM
+        / mag_catalogue
+        / coverm_type
+        / method
+        / f"{sample_id}.{library_id}.tsv.gz"
         for sample_id, library_id in SAMPLE_LIBRARY
     ]
 

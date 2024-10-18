@@ -1,15 +1,16 @@
-rule quantify__coverm__genome__:
+include: "coverm_functions.smk"
+
+
+rule quantify__coverm__genome:
     """Run coverm genome for one library and one mag catalogue"""
     input:
         bam=QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}.bam",
-        reference=REFERENCE / "mags" / "{mag_catalogue}.fa.gz",
-        fai=REFERENCE / "mags" / "{mag_catalogue}.fa.gz.fai",
     output:
         tsv=touch(
-            COVERM / "{mag_catalogue}/genome/{method}/{sample_id}.{library_id}.tsv"
+            COVERM / "{mag_catalogue}/genome/{method}/{sample_id}.{library_id}.tsv.gz"
         ),
     conda:
-        "__environment__.yml"
+        "../environments/coverm.yml"
     log:
         COVERM / "{mag_catalogue}/genome/{method}/{sample_id}.{library_id}.log",
     params:
@@ -30,16 +31,16 @@ rule quantify__coverm__genome__:
         """
 
 
-rule quantify__coverm__genome__aggregate__:
+rule quantify__coverm__genome__aggregate:
     """Aggregate all the nonpareil results into a single table"""
     input:
         get_coverm_genome_tsv_files_for_aggregation,
     output:
-        COVERM / "coverm_genome_{mag_catalogue}.{method}.tsv",
+        COVERM / "coverm_genome_{mag_catalogue}.{method}.tsv.gz",
     log:
         COVERM / "coverm_genome_{mag_catalogue}.{method}.log",
     conda:
-        "__environment__.yml"
+        "../environments/coverm.yml"
     params:
         input_dir=lambda w: COVERM / w.mag_catalogue / "genome" / w.method,
     shell:
@@ -51,26 +52,24 @@ rule quantify__coverm__genome__aggregate__:
         """
 
 
-rule quantify__coverm__genome:
+rule quantify__coverm__genome__all:
     """Run all rules to run coverm genome over all MAG catalogues"""
     input:
         [
-            COVERM / f"coverm_genome_{mag_catalogue}.{method}.tsv"
+            COVERM / f"coverm_genome_{mag_catalogue}.{method}.tsv.gz"
             for mag_catalogue in MAG_CATALOGUES
             for method in params["quantify"]["coverm"]["genome"]["methods"]
         ],
 
 
-rule quantify__coverm__contig__:
+rule quantify__coverm__contig:
     """Run coverm contig for one library and one mag catalogue"""
     input:
         bam=QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}.bam",
-        reference=REFERENCE / "mags" / "{mag_catalogue}.fa.gz",
-        fai=REFERENCE / "mags" / "{mag_catalogue}.fa.gz.fai",
     output:
-        tsv=COVERM / "{mag_catalogue}/contig/{method}/{sample_id}.{library_id}.tsv",
+        tsv=COVERM / "{mag_catalogue}/contig/{method}/{sample_id}.{library_id}.tsv.gz",
     conda:
-        "__environment__.yml"
+        "../environments/coverm.yml"
     log:
         COVERM / "{mag_catalogue}/contig/{method}/{sample_id}.{library_id}.log",
     params:
@@ -86,16 +85,16 @@ rule quantify__coverm__contig__:
         """
 
 
-rule quantify__coverm__contig__aggregate__:
+rule quantify__coverm__contig__aggregate:
     """Aggregate all the nonpareil results into a single table"""
     input:
         get_coverm_contig_tsv_files_for_aggregation,
     output:
-        COVERM / "coverm_contig_{mag_catalogue}.{method}.tsv",
+        COVERM / "coverm_contig_{mag_catalogue}.{method}.tsv.gz",
     log:
         COVERM / "coverm_contig_{mag_catalogue}.{method}.log",
     conda:
-        "__environment__.yml"
+        "../environments/coverm.yml"
     params:
         input_dir=lambda w: COVERM / w.mag_catalogue / "contig" / w.method,
     shell:
@@ -107,18 +106,18 @@ rule quantify__coverm__contig__aggregate__:
         """
 
 
-rule quantify__coverm__contig:
+rule quantify__coverm__contig__all:
     """Run all rules to run coverm contig over all MAG catalogues"""
     input:
         [
-            COVERM / f"coverm_contig_{mag_catalogue}.{method}.tsv"
+            COVERM / f"coverm_contig_{mag_catalogue}.{method}.tsv.gz"
             for mag_catalogue in MAG_CATALOGUES
             for method in params["quantify"]["coverm"]["contig"]["methods"]
         ],
 
 
-rule quantify__coverm:
+rule quantify__coverm__all:
     """Run both coverm overall and contig"""
     input:
-        rules.quantify__coverm__genome.input,
-        rules.quantify__coverm__contig.input,
+        rules.quantify__coverm__genome__all.input,
+        rules.quantify__coverm__contig__all.input,
