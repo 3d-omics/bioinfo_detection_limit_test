@@ -1,7 +1,8 @@
 # Configuration file for the features, aka, references and databases
 ---
-references:  # Reads will be mapped sequentially
-  human: resources/reference/human_22_sub.fa.gz
+
+hosts:  # Reads will be mapped sequentially
+  popo: resources/reference/human_22_sub.fa.gz
   chicken: resources/reference/chicken_39_sub.fa.gz
   # GRCh38: resources/references/REF0001-GRC38/GCF_000001405.40_GRCh38.p14_genomic.fna.gz
   # GRCg7b: resources/references/REF0003-GRCg7b/GCF_016699485.2_bGalGal1.mat.broiler.GRCg7b_genomic.fna.gz

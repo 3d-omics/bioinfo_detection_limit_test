@@ -1,8 +1,7 @@
 rule quantify__coverm__genome__:
     """Run coverm genome for one library and one mag catalogue"""
     input:
-        cram=QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}.cram",
-        crai=QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}.cram.crai",
+        bam=QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}.bam",
         reference=REFERENCE / "mags" / "{mag_catalogue}.fa.gz",
         fai=REFERENCE / "mags" / "{mag_catalogue}.fa.gz.fai",
     output:
@@ -21,17 +20,13 @@ rule quantify__coverm__genome__:
         separator=params["quantify"]["coverm"]["genome"]["separator"],
     shell:
         """
-        ( samtools view \
-            --with-header \
-            --reference {input.reference} \
-            {input.cram} \
-        | coverm genome \
-            --bam-files /dev/stdin \
+        coverm genome \
+            --bam-files {input.bam} \
             --methods {params.method} \
             --separator "{params.separator}" \
             --min-covered-fraction {params.min_covered_fraction} \
             --output-file {output.tsv} \
-        ) 2> {log} 1>&2
+        2> {log} 1>&2
         """
 
 
@@ -69,8 +64,7 @@ rule quantify__coverm__genome:
 rule quantify__coverm__contig__:
     """Run coverm contig for one library and one mag catalogue"""
     input:
-        cram=QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}.cram",
-        crai=QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}.cram.crai",
+        bam=QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}.bam",
         reference=REFERENCE / "mags" / "{mag_catalogue}.fa.gz",
         fai=REFERENCE / "mags" / "{mag_catalogue}.fa.gz.fai",
     output:
@@ -83,16 +77,12 @@ rule quantify__coverm__contig__:
         method="{method}",
     shell:
         """
-        ( samtools view \
-            --with-header \
-            --reference {input.reference} \
-            {input.cram} \
-        | coverm contig \
-            --bam-files /dev/stdin \
+        coverm contig \
+            --bam-files {input.bam} \
             --methods {params.method} \
             --proper-pairs-only \
             --output-file {output.tsv} \
-        ) 2> {log} 1>&2
+        2> {log} 1>&2
         """
 
 
