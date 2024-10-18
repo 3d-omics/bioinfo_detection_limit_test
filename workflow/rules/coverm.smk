@@ -83,7 +83,7 @@ rule quantify__coverm__contig:
     conda:
         "../environments/coverm.yml"
     log:
-        COVERM / "{mag_catalogue}" / "contig.{method}" / " {sample_id}.{library_id}.log",
+        COVERM / "{mag_catalogue}" / "contig.{method}" / "{sample_id}.{library_id}.log",
     params:
         method="{method}",
     shell:
@@ -92,7 +92,7 @@ rule quantify__coverm__contig:
             --bam-files {input.bam} \
             --methods {params.method} \
             --proper-pairs-only \
-            --output-file >(gzip --fast >{output.tsv}) \
+            --output-file >(gzip --fast > {output.tsv}) \
         2> {log} 1>&2
         """
 

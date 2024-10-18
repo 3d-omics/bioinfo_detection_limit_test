@@ -37,15 +37,23 @@ LAST_HOST = HOST_NAMES[-1] if len(HOST_NAMES) > 0 else None
 # Import modules
 module preprocess:
     snakefile:
-        github("jlanga/mg_preprocess", path="workflow/Snakefile", branch="main")
+        github("jlanga/mg_preprocess", path="workflow/Snakefile", branch="devel")
     config:
         params
 
 
-use rule * from preprocess as preprocess__*
+use rule * from preprocess
+
+
+# module helpers:
+#     snakefile:
+#         github("jlanga/snakehelpers", path="workflow/Snakefile", branch="main")
+#     config: params
+# use rule * from helpers as helpers__*
 
 
 # Import subworkflows
+include: "rules/reads_tsv_functions.smk"
 include: "rules/folders.smk"
 include: "rules/quantify.smk"
 

@@ -9,68 +9,55 @@ default-resources:
 
 
 set-threads:
-    reference__recompress__host__: 8
-    reference__recompress__mags__: 8
-    preprocess__fastp__: 12
-    preprocess__fastp__import__: 24
-    preprocess__kraken2__assign__: 24
-    preprocess__index__: 24
-    preprocess__bowtie2__cram_to_fastq__: 4
-    preprocess__bowtie2__collate_cram__: 24
-    preprocess__bowtie2__clean__: 24
-    preprocess__bowtie2__: 24
-    quantify__index__: 24
-    quantify__bowtie2__cram_to_fastq__: 4
-    quantify__bowtie2__: 24
+    # preprocess
+    preprocess__fastp: 8
+    preprocess__bowtie2__build: 24
+    preprocess__bowtie2__map: 24
+    preprocess__bowtie2__fastq: 24
+    preprocess__bowtie2__clean: 24
+    preprocess__kraken2__assign: 8
+    # quantify
+    quantify__mags: 8
+    quantify__bowtie2__build: 24
+    quantify__bowtie2__map: 24
 
 
 set-resources:
+    # helpers
+    helpers__samtools__flagstats_bam:
+        mem_mb: 8G
+    helpers__samtools__idxstats_bam:
+        mem_mb: 8G
+    helpers__samtools__stats_bam:
+        mem_mb: 8G
     # preprocess
-    preprocess__fastp__:
-        mem_mb: 8 * 1024
+    preprocess__fastp:
+        mem_mb: 8G
         runtime: 30m
-    preprocess__index__:
-        mem_mb: 16 * 1024 * 2 ** (attempt - 1)
-        runtime: 1d
-    preprocess__bowtie2__cram_to_fastq__:
-        mem_mb: 4 * 1024
-        runtime: 60
-    preprocess__bowtie2__:
+    preprocess__bowtie2__build:
         mem_mb: 32 * 1024 * 2 ** (attempt - 1)
-        runtime: 1d
-    preprocess__kraken2__assign__:
-        mem_mb: 500G  # check this!
-        runtime: 1d
-    preprocess__nonpareil__:
-        runtime: 1d
-    preprocess__singlem__pipe__:
-        runtime: 1d
-        mem_mb: 16G
-    preprocess__singlem__condense:
+        runtime: 12h
+    preprocess__bowtie2__map:
+        mem_mb: 32 * 1024 * 2 ** (attempt - 1)
+        runtime: 12h
+    preprocess__bowtie2__fastq:
+        mem_mb: 8G
+        runtime: 1h
+    preprocess__nonpareil__run:
+        mem_mb: 4G
         runtime: 6h
+    preprocess__multiqc:
+        mem_mb: 8 * 1024 * 2 ** (attempt - 1)
     # quantify
-    quantify__index__:
-        mem_mb: 16 * 1024 * 2 ** (attempt - 1)
-        runtime: 1d
-    quantify__bowtie2__cram_to_fastq__:
-        mem_mb: 4 * 1024
-        runtime: 60
-    quantify__bowtie2__:
+    quantify__bowtie2__build:
         mem_mb: 32 * 1024 * 2 ** (attempt - 1)
         runtime: 1d
-    quantify__coverm__genome__aggregate__:
+    quantify__bowtie2__map:
+        mem_mb: 32 * 1024 * 2 ** (attempt - 1)
+        runtime: 1d
+    quantify__coverm__genome__aggregate:
         mem_mb: 8G
     quantify__coverm__contig__aggregate__:
         mem_mb: 8G
-    helpers__samtools_flagstats_cram__:
-        mem_mb: 8G
-    helpers__samtools_idxstats_cram__:
-        mem_mb: 4G
-    report__step__reads:
-        mem_mb: 2 * 1024 * 2 ** (attempt - 1)
-    report__step__preprocess:
-        mem_mb: 2 * 1024 * 2 ** (attempt - 1)
-    report__step__quantify:
-        mem_mb: 2 * 1024 * 2 ** (attempt - 1)
-    report__library__:
-        mem_mb: 2 * 1024 * 2 ** (attempt - 1)
+    quantify__multiqc:
+        mem_mb: 8 * 1024 * 2 ** (attempt - 1)

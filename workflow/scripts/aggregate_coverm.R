@@ -33,7 +33,7 @@ output_folder <- dirname(output_file)
 
 dir.create(output_folder, showWarnings = FALSE, recursive = TRUE)
 
-input_folder <- "results/quantify/coverm/mag1/genome.count"
+# input_folder <- "results/quantify/coverm/mag1/genome.count"
 
 files <- input_folder |> list.files(pattern = "*.tsv.gz", full.names = TRUE)
 
