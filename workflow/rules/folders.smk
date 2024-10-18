@@ -2,8 +2,8 @@ READS = Path("results/reads/")
 
 REFERENCE = Path("results/reference/")
 
+# All the other preprocessing folders are inherited from mg_preprocess
 PRE_BOWTIE2 = Path("results/preprocess/bowtie2/")
-
 
 QUANT = Path("results/quantify/")
 QUANT_INDEX = QUANT / "index"

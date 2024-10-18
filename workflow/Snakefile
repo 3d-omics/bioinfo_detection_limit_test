@@ -49,6 +49,7 @@ use rule * from preprocess as preprocess__*
 # Import subworkflows
 include: "rules/folders.smk"
 include: "rules/reference/__main__.smk"
+include: "rules/bowtie2.smk"
 include: "rules/quantify/__main__.smk"
 include: "rules/report/__main__.smk"
 
