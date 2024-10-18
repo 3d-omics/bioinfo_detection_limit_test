@@ -26,7 +26,7 @@ rule quantify__coverm__genome:
             --methods {params.method} \
             --separator "{params.separator}" \
             --min-covered-fraction {params.min_covered_fraction} \
-            --output-file {output.tsv} \
+            --output-file >(gzip --best > {output.tsv}) \
         2> {log} 1>&2
         """
 
@@ -80,7 +80,7 @@ rule quantify__coverm__contig:
             --bam-files {input.bam} \
             --methods {params.method} \
             --proper-pairs-only \
-            --output-file {output.tsv} \
+            --output-file >(gzip --best >{output.tsv}) \
         2> {log} 1>&2
         """
 
