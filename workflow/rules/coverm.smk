@@ -83,7 +83,7 @@ rule quantify__coverm__contig:
     conda:
         "../environments/coverm.yml"
     log:
-        COVERM / "{mag_catalogue}/contig/{method}/{sample_id}.{library_id}.log",
+        COVERM / "{mag_catalogue}" / "contig.{method}" / " {sample_id}.{library_id}.log",
     params:
         method="{method}",
     shell:
