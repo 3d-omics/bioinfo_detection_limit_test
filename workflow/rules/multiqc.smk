@@ -5,10 +5,11 @@ rule quantify__multiqc:
             QUANT_BOWTIE2 / mag_catalogue / f"{sample_id}.{library_id}.{report}"
             for mag_catalogue in MAG_CATALOGUES
             for sample_id, library_id in SAMPLE_LIBRARY
-            for report in ["stats.tsv", "flagstats.txt"]
+            for report in BAM_REPORTS
         ],
     output:
-        RESULTS / "quantify.html",
+        html=RESULTS / "quantify.html",
+        folder=directory(RESULTS / "quantify_data"),
     log:
         RESULTS / "quantify.log",
     conda:
