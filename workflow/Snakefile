@@ -40,7 +40,7 @@ module preprocess:
     snakefile:
         github("jlanga/mg_preprocess", path="workflow/Snakefile", branch="main")
     config:
-        config
+        params
 
 
 use rule * from preprocess as preprocess__*
@@ -48,17 +48,13 @@ use rule * from preprocess as preprocess__*
 
 # Import subworkflows
 include: "rules/folders.smk"
-# include: "rules/helpers/__main__.smk"
 include: "rules/reference/__main__.smk"
 include: "rules/quantify/__main__.smk"
-
-
-# include: "rules/report/__main__.smk"
+include: "rules/report/__main__.smk"
 
 
 rule all:
     input:
-        #rules.preprocess_all.output,
-        rules.reference.input,
+        rules.preprocess__all.input,
         rules.quantify.input,
-        # rules.report.input,
+        rules.report.input,
