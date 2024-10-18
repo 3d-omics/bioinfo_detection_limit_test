@@ -7,12 +7,17 @@ rule quantify__coverm__genome:
         bam=QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}.bam",
     output:
         tsv=touch(
-            COVERM / "{mag_catalogue}/genome/{method}/{sample_id}.{library_id}.tsv.gz"
+            temp(
+                COVERM
+                / "{mag_catalogue}"
+                / "genome.{method}"
+                / "{sample_id}.{library_id}.tsv.gz"
+            )
         ),
     conda:
         "../environments/coverm.yml"
     log:
-        COVERM / "{mag_catalogue}/genome/{method}/{sample_id}.{library_id}.log",
+        COVERM / "{mag_catalogue}" / "genome.{method}" / "{sample_id}.{library_id}.log",
     params:
         method="{method}",
         min_covered_fraction=params["quantify"]["coverm"]["genome"][
@@ -26,7 +31,7 @@ rule quantify__coverm__genome:
             --methods {params.method} \
             --separator "{params.separator}" \
             --min-covered-fraction {params.min_covered_fraction} \
-            --output-file >(gzip --best > {output.tsv}) \
+            --output-file >(gzip --fast > {output.tsv}) \
         2> {log} 1>&2
         """
 
@@ -36,13 +41,13 @@ rule quantify__coverm__genome__aggregate:
     input:
         get_coverm_genome_tsv_files_for_aggregation,
     output:
-        COVERM / "coverm_genome_{mag_catalogue}.{method}.tsv.gz",
+        COVERM / "{mag_catalogue}.genome.{method}.tsv.gz",
     log:
-        COVERM / "coverm_genome_{mag_catalogue}.{method}.log",
+        COVERM / "{mag_catalogue}.genome.{method}.log",
     conda:
         "../environments/coverm.yml"
     params:
-        input_dir=lambda w: COVERM / w.mag_catalogue / "genome" / w.method,
+        input_dir=lambda w: COVERM / w.mag_catalogue / f"genome.{w.method}",
     shell:
         """
         Rscript --no-init-file workflow/scripts/aggregate_coverm.R \
@@ -56,7 +61,7 @@ rule quantify__coverm__genome__all:
     """Run all rules to run coverm genome over all MAG catalogues"""
     input:
         [
-            COVERM / f"coverm_genome_{mag_catalogue}.{method}.tsv.gz"
+            COVERM / f"{mag_catalogue}.genome.{method}.tsv.gz"
             for mag_catalogue in MAG_CATALOGUES
             for method in params["quantify"]["coverm"]["genome"]["methods"]
         ],
@@ -67,7 +72,14 @@ rule quantify__coverm__contig:
     input:
         bam=QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}.bam",
     output:
-        tsv=COVERM / "{mag_catalogue}/contig/{method}/{sample_id}.{library_id}.tsv.gz",
+        tsv=touch(
+            temp(
+                COVERM
+                / "{mag_catalogue}"
+                / "contig.{method}"
+                / "{sample_id}.{library_id}.tsv.gz"
+            )
+        ),
     conda:
         "../environments/coverm.yml"
     log:
@@ -80,7 +92,7 @@ rule quantify__coverm__contig:
             --bam-files {input.bam} \
             --methods {params.method} \
             --proper-pairs-only \
-            --output-file >(gzip --best >{output.tsv}) \
+            --output-file >(gzip --fast >{output.tsv}) \
         2> {log} 1>&2
         """
 
@@ -90,13 +102,13 @@ rule quantify__coverm__contig__aggregate:
     input:
         get_coverm_contig_tsv_files_for_aggregation,
     output:
-        COVERM / "coverm_contig_{mag_catalogue}.{method}.tsv.gz",
+        COVERM / "{mag_catalogue}.contig.{method}.tsv.gz",
     log:
-        COVERM / "coverm_contig_{mag_catalogue}.{method}.log",
+        COVERM / "{mag_catalogue}.contig.{method}.log",
     conda:
         "../environments/coverm.yml"
     params:
-        input_dir=lambda w: COVERM / w.mag_catalogue / "contig" / w.method,
+        input_dir=lambda w: COVERM / w.mag_catalogue / f"contig.{w.method}",
     shell:
         """
         Rscript --no-init-file workflow/scripts/aggregate_coverm.R \
@@ -110,7 +122,7 @@ rule quantify__coverm__contig__all:
     """Run all rules to run coverm contig over all MAG catalogues"""
     input:
         [
-            COVERM / f"coverm_contig_{mag_catalogue}.{method}.tsv.gz"
+            COVERM / f"{mag_catalogue}.contig.{method}.tsv.gz"
             for mag_catalogue in MAG_CATALOGUES
             for method in params["quantify"]["coverm"]["contig"]["methods"]
         ],
