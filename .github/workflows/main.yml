@@ -60,7 +60,7 @@ jobs:
             preprocess__fastp__all
             preprocess__bowtie2__all
             preprocess__kraken2__all
-            preprocess__nonpareil_all
+            preprocess__nonpareil__all
 
       - name: Test workflow - Quantify
         uses: snakemake/snakemake-github-action@v1.25.1
