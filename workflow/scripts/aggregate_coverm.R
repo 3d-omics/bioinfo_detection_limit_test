@@ -3,6 +3,13 @@
 library(tidyverse)
 library(argparse)
 
+read_coverm <- function(filename) {
+  read_tsv(
+    file = filename, col_types = cols(), col_names = c("sequence_id", "counts"),
+    skip = 1
+  )
+}
+
 parser <- ArgumentParser()
 
 parser$add_argument(
@@ -26,25 +33,22 @@ output_folder <- dirname(output_file)
 
 dir.create(output_folder, showWarnings = FALSE, recursive = TRUE)
 
-files <- list.files(args$input_folder, pattern = "*.tsv", full.names = TRUE)
+# input_folder <- "results/quantify/coverm/mag1/genome.count"
+
+files <- input_folder |> list.files(pattern = "*.tsv.gz", full.names = TRUE)
 
 sample_names <-
-  files %>%
-  basename() %>%
-  str_remove(".tsv")
+  files |>
+  basename() |>
+  str_remove(".tsv.gz")
 
-files %>%
-  set_names(sample_names) %>%
-  map(
-    function(x) {
-      read_tsv(
-        file = x, col_types = cols(), col_names = c("sequence_id", "counts"),
-        skip = 1
-      )
-    }
-  ) %>%
-  bind_rows(.id = "sample_id") %>%
+files |>
+  set_names(sample_names) |>
+  map_dfr(
+    read_coverm,
+    .id = "sample_id"
+  ) |>
   pivot_wider(
     names_from = "sample_id", values_from = "counts", values_fill = NA
-  ) %>%
+  ) |>
   write_tsv(output_file)

@@ -1,12 +1,10 @@
 channels:
   - conda-forge
   - bioconda
-  - defaults
+  - nodefaults
 dependencies:
   - bird_tool_utils_python =0.4.1
-  - bowtie2 =2.5.3
   - coverm =0.7.0
   - gzip =1.13
-  - pigz =2.8
-  - r-argparse =2.2.2
+  - r-argparse =2.2.3
   - r-tidyverse =2.0.0
