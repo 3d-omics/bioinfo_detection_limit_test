@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.3.0](https://github.com/3d-omics/mg_quant/compare/v1.2.0...v1.3.0) (2024-10-22)
+
+
+### Features
+
+* compress coverm files ([b4cd436](https://github.com/3d-omics/mg_quant/commit/b4cd4369333277def3939850a3479bd8e6d29a5d))
+* cover, mags, multiqc; delete useless code; compress coverm files" ([af82953](https://github.com/3d-omics/mg_quant/commit/af829536817ed3e7feb62ae186faace0ace87a90))
+* insert mg_preprocess and delete redundant code ([b1532a3](https://github.com/3d-omics/mg_quant/commit/b1532a393ad5301b1a52421ead6f3f2863a14d7b))
+* pin dependencies ([711e700](https://github.com/3d-omics/mg_quant/commit/711e70058b3f25724838f3ed14ec891785b76b04))
+* rename rules and add meta-rule ([ab9e99f](https://github.com/3d-omics/mg_quant/commit/ab9e99fbf050fc592557f8f9ca35d9af7a72e5f2))
+* simplify coverm file names, remove singlem script ([a660727](https://github.com/3d-omics/mg_quant/commit/a660727fede2ff4fd627c90a1773a1dfe3ec0a2a))
+* use helpers and preprocess modules. update params ([89915b4](https://github.com/3d-omics/mg_quant/commit/89915b416e93a33d1c55e958cf6f887c5e4d8f11))
+
+
+### Bug Fixes
+
+* add idxstats, ask for folder as output too ([de73fd3](https://github.com/3d-omics/mg_quant/commit/de73fd34b35b966df130597fe4b8f03386de99bb))
+* typo ([50799a5](https://github.com/3d-omics/mg_quant/commit/50799a5762c6bfc1e93105520bbd6a92073108de))
+
 ## [1.2.0](https://github.com/3d-omics/mg_quant/compare/v1.1.2...v1.2.0) (2024-09-02)
 
 
