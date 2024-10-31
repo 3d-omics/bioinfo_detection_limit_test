@@ -2,8 +2,9 @@
 ---
 __use_yte__: true
 
+executor: slurm
+latency-wait: 60
 use-conda: true
-
 rerun-incomplete: true
 keep-going: false
 

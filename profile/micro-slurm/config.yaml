@@ -1,14 +1,17 @@
-# Default resources for snakemake
+# This profile asumes slurm and that the reads to quantify are hundrets to thousands
+# but very small
 ---
 __use_yte__: true
 
-use-conda: true
 
+executor: slurm
+latency-wait: 60
+use-conda: true
 rerun-incomplete: true
 keep-going: false
 
 default-resources:
-    runtime: 1h
+    runtime: 5m
     mem_mb: 1024
 
 
@@ -27,41 +30,41 @@ set-threads:
 
 
 set-resources:
-    # helpers
-    helpers__samtools__flagstats_bam:
-        mem_mb: 8G
-    helpers__samtools__idxstats_bam:
-        mem_mb: 8G
-    helpers__samtools__stats_bam:
-        mem_mb: 8G
     # preprocess
     preprocess__fastp:
-        mem_mb: 8G
-        runtime: 30m
+        mem_mb: 8 * 1024
+        runtime: 10 * 2 ** (attempt - 1)
     preprocess__bowtie2__build:
         mem_mb: 32 * 1024 * 2 ** (attempt - 1)
-        runtime: 12h
+        runtime: 12 * 2 ** (attempt - 1)
     preprocess__bowtie2__map:
         mem_mb: 32 * 1024 * 2 ** (attempt - 1)
-        runtime: 12h
+        runtime: 60 * 2 ** (attempt - 1)
     preprocess__bowtie2__fastq:
-        mem_mb: 8G
-        runtime: 1h
+        mem_mb: 8 * 1024
+        runtime: 30
     preprocess__nonpareil__run:
-        mem_mb: 4G
-        runtime: 6h
+        mem_mb: 4 * 1024
+        runtime: 30 * 2 ** (attempt - 1)
+    preprocess__singlem__pipe:
+        mem_mb: 8G
+        runtime: 30 * 2 ** (attempt - 1)
     preprocess__multiqc:
         mem_mb: 8 * 1024 * 2 ** (attempt - 1)
+        runtime: 2h
     # quantify
     quantify__bowtie2__build:
         mem_mb: 32 * 1024 * 2 ** (attempt - 1)
-        runtime: 1d
+        runtime: 12h
     quantify__bowtie2__map:
-        mem_mb: 32 * 1024 * 2 ** (attempt - 1)
-        runtime: 1d
+        mem_mb: 32 * 1024
+        runtime: 30 * 2 ** (attempt - 1)
     quantify__coverm__genome__aggregate:
         mem_mb: 8G
+        runtime: 10m
     quantify__coverm__contig__aggregate:
         mem_mb: 8G
+        runtime: 10m
     quantify__multiqc:
         mem_mb: 8 * 1024 * 2 ** (attempt - 1)
+        runtime: 1h
