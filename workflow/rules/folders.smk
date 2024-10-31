@@ -7,6 +7,6 @@ PRE_BOWTIE2 = RESULTS / "preprocess" / "bowtie2"
 # folders for this pipeline
 QUANT = Path("results/quantify/")
 MAGS = QUANT / "mags"
-QUANT_INDEX = QUANT / "index"
+QUANT_INDEX = QUANT / "build"
 QUANT_BOWTIE2 = QUANT / "bowtie2"
 COVERM = QUANT / "coverm"
