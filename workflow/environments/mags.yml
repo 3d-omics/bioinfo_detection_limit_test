@@ -3,6 +3,5 @@ channels:
   - bioconda
   - defaults
 dependencies:
-  - coreutils =9.5
-  - gzip =1.13
   - htslib =1.21
+  - gzip =1.13

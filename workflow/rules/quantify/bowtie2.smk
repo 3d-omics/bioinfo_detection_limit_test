@@ -49,8 +49,6 @@ use rule bowtie2__map from mg_assembly as quantify__bowtie2__map with:
         QUANT_BOWTIE2 / "{mag_catalogue}.{sample_id}.{library_id}.bam",
     log:
         QUANT_BOWTIE2 / "{mag_catalogue}.{sample_id}.{library_id}.log",
-    # conda:
-    #     "../../environments/bowtie2.yml"
     params:
         index=lambda w: QUANT_BUILD / f"{w.mag_catalogue}",
         bowtie2_extra=params["quantify"]["bowtie2"]["bowtie2_extra"],

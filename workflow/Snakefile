@@ -43,37 +43,23 @@ module mg_assembly:
         params
 
 
-# use rule \
-#     bowtie2__build, bowtie2__map, \
-#     csvkit__csvstack, \
-#     preprocess__reads, preprocess__reads__all \
-#     preprocess__fastp, preprocess__fastp__all \
-#     preprocess__bowtie2__build, preprocess__bowtie2__build__all, \
-#     preprocess__bowtie2__map, preprocess__bowtie2__map__all, \
-#     preprocess__bowtie2__all, \
-#     preprocess__clean, preprocess__clean__all, \
-#     preprocess__kraken2, preprocess__kraken2__all, \
-#     preprocess__singlem__microbial_fraction, preprocess__singlem__microbial_fraction__csvstack, \
-#     preprocess__singlem__all, \
-#     preprocess__nonpareil__all, \
-#     preprocess__multiqc, preprocess__multiqc__all \
-#     from mg_assembly
-
-
-use rule * from mg_assembly exclude all
+use rule * from mg_assembly exclude all, test
 
 
 # Import subworkflows
-# include: "rules/reads_tsv_functions.smk"
 include: "rules/folders.smk"
 include: "rules/functions.smk"
 include: "rules/quantify.smk"
 
 
-# use rule prokaryotes__quantify__bowtie2__build as quantify__bowtie2__build with:
-
-
 rule all:
     input:
         rules.preprocess__all.input,
+        rules.quantify__all.input,
+
+
+rule test:
+    input:
+        rules.preprocess__clean__all.input,
+        rules.preprocess__multiqc__all.input,
         rules.quantify__all.input,
