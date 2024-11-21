@@ -38,7 +38,7 @@ LAST_HOST = HOST_NAMES[-1] if len(HOST_NAMES) > 0 else None
 # Import modules
 module mg_assembly:
     snakefile:
-        github("3d-omics/mg_assembly", path="workflow/Snakefile", branch="ci")
+        github("3d-omics/mg_assembly", path="workflow/Snakefile", branch="devel")
     config:
         params
 
