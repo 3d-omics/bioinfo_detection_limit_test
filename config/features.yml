@@ -25,6 +25,7 @@ databases:
   virsorter2: resources/databases/virsorter2/20200511/
 
 
+# Ignored. This is for the import from mg_assembly
 magscot:
   pfam_hmm: workflow/scripts/MAGScoT/hmm/gtdbtk_rel207_Pfam-A.hmm.gz
   tigr_hmm: workflow/scripts/MAGScoT/hmm/gtdbtk_rel207_tigrfam.hmm.gz
