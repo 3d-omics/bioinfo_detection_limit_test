@@ -1,7 +1,9 @@
-include: "mags.smk"
-include: "bowtie2.smk"
-include: "coverm.smk"
-include: "multiqc.smk"
+include: "quantify/mags.smk"
+include: "quantify/bowtie2.smk"
+include: "quantify/coverm.smk"
+
+
+# include: "multiqc.smk"
 
 
 rule quantify__all:
@@ -9,4 +11,4 @@ rule quantify__all:
         rules.quantify__mags__all.input,
         rules.quantify__bowtie2__all.input,
         rules.quantify__coverm__all.input,
-        rules.quantify__multiqc__all.input,
+        # rules.quantify__multiqc__all.input,

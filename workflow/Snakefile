@@ -14,6 +14,7 @@ import yaml
 params = yaml.load(open("config/params.yml", "r"), Loader=yaml.SafeLoader)
 features = yaml.load(open("config/features.yml", "r"), Loader=yaml.SafeLoader)
 samples = pd.read_table("config/samples.tsv", comment="#", dtype="str")
+samples["assembly_ids"] = ""
 
 # Generate useful variables
 
@@ -35,27 +36,41 @@ LAST_HOST = HOST_NAMES[-1] if len(HOST_NAMES) > 0 else None
 
 
 # Import modules
-module preprocess:
+module mg_assembly:
     snakefile:
-        github("jlanga/mg_preprocess", path="workflow/Snakefile", branch="devel")
+        github("3d-omics/mg_assembly", path="workflow/Snakefile", branch="ci")
     config:
         params
 
 
-use rule * from preprocess
+# use rule \
+#     bowtie2__build, bowtie2__map, \
+#     csvkit__csvstack, \
+#     preprocess__reads, preprocess__reads__all \
+#     preprocess__fastp, preprocess__fastp__all \
+#     preprocess__bowtie2__build, preprocess__bowtie2__build__all, \
+#     preprocess__bowtie2__map, preprocess__bowtie2__map__all, \
+#     preprocess__bowtie2__all, \
+#     preprocess__clean, preprocess__clean__all, \
+#     preprocess__kraken2, preprocess__kraken2__all, \
+#     preprocess__singlem__microbial_fraction, preprocess__singlem__microbial_fraction__csvstack, \
+#     preprocess__singlem__all, \
+#     preprocess__nonpareil__all, \
+#     preprocess__multiqc, preprocess__multiqc__all \
+#     from mg_assembly
 
 
-# module helpers:
-#     snakefile:
-#         github("jlanga/snakehelpers", path="workflow/Snakefile", branch="main")
-#     config: params
-# use rule * from helpers as helpers__*
+use rule * from mg_assembly exclude all
 
 
 # Import subworkflows
-include: "rules/reads_tsv_functions.smk"
+# include: "rules/reads_tsv_functions.smk"
 include: "rules/folders.smk"
+include: "rules/functions.smk"
 include: "rules/quantify.smk"
+
+
+# use rule prokaryotes__quantify__bowtie2__build as quantify__bowtie2__build with:
 
 
 rule all:
