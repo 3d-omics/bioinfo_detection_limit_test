@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.4.0](https://github.com/3d-omics/mg_quant/compare/v1.3.0...v1.4.0) (2024-11-26)
+
+
+### Features
+
+* populate profiles ([79244a7](https://github.com/3d-omics/mg_quant/commit/79244a7aa3a49b1db99bc7c002fecd265e769924))
+
+
+### Bug Fixes
+
+* pick everything from devel ([7e98394](https://github.com/3d-omics/mg_quant/commit/7e983948aea8acb2bb512f7d6e694b127b0141d9))
+
 ## [1.3.0](https://github.com/3d-omics/mg_quant/compare/v1.2.0...v1.3.0) (2024-10-22)
 
 
