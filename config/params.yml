@@ -3,19 +3,51 @@
 preprocess:
   fastp:
     extra: " --length_required 75 --trim_poly_g --trim_poly_x"
-
   bowtie2:
     bowtie2_extra: ""
     samtools_extra: "-m 1G"
+  kraken2:
+    bracken:
+      extra: "-r 150 -t 0 -l S"
 
 
 quantify:
   bowtie2:
-    samtools_mem: 1G
+    bowtie2_extra: ""
+    samtools_extra: "-m 1G"
   coverm:   # https://github.com/wwood/CoverM#calculation-methods
     genome:
       methods: ["count", "covered_bases", "length"]
-      min_covered_fraction: 0.0
       separator: "@"
+      extra: "--min-covered-fraction 0"
     contig:
       methods: ["count", "covered_bases", "length"]
+
+
+
+# All of this is to import mg_assembly. It will be ignored
+assemble:
+  megahit:
+    extra: "--min-contig-len 1500"  # --presets meta-large
+  samtools:
+    mem: 1G
+
+
+prokaryotes:
+  annotate:
+    drep:
+      secondary_anis:
+        - 0.95
+        - 0.98
+        - 0.99
+      minimum_completeness: 75
+      maximum_contamination: 25
+    dram:
+      annotate:
+        min_contig_size: 1500
+
+viral:
+  genomad:
+    filtering: ""  # nothing, --conservative, or --relaxed
+    use_cuda: "export CUDA_VISIBLE_DEVICES=-1"  # in case you have problems with cuda and tensorflow
+    extra: "--disable-nn-classification"  # leave empty if you want to use. it is here to disable it for testing
