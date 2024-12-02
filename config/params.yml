@@ -17,11 +17,9 @@ quantify:
     samtools_extra: "-m 1G"
   coverm:   # https://github.com/wwood/CoverM#calculation-methods
     genome:
-      methods: ["count", "covered_bases", "length"]
+      methods: ["count", "covered_bases"]
       separator: "@"
       extra: "--min-covered-fraction 0"
-    contig:
-      methods: ["count", "covered_bases", "length"]
 
 
 
