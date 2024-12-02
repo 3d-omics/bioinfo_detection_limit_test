@@ -66,6 +66,5 @@ rule all:
 
 rule test:
     input:
-        rules.preprocess__clean__all.input,
         rules.preprocess__multiqc__all.input,
         rules.quantify__all.input,
