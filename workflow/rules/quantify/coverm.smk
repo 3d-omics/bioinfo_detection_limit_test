@@ -46,50 +46,7 @@ rule quantify__coverm__genome__all:
         ],
 
 
-# coverm contig ----
-# use rule coverm__contig as quantify__coverm__contig with:
-#     input:
-#         QUANT_BOWTIE2 / "{mag_catalogue}.{sample_id}.{library_id}.bam",
-#     output:
-#         temp(
-#             QUANT_COVERM
-#             / "files"
-#             / "contig.{method}.{mag_catalogue}.{sample_id}.{library_id}.tsv.gz"
-#         ),
-#     log:
-#         QUANT_COVERM
-#         / "files"
-#         / "contig.{method}.{mag_catalogue}.{sample_id}.{library_id}.log",
-
-
-# use rule csvkit__csvjoin as quantify__coverm__contig__csvjoin with:
-#     input:
-#         lambda w: [
-#             QUANT_COVERM
-#             / "files"
-#             / f"contig.{w.method}.{w.mag_catalogue}.{sample_id}.{library_id}.tsv.gz"
-#             for sample_id, library_id in SAMPLE_LIBRARY
-#         ],
-#     output:
-#         QUANT_COVERM / "coverm.contig.{method}.{mag_catalogue}.tsv.gz",
-#     log:
-#         QUANT_COVERM / "coverm.contig.{method}.{mag_catalogue}.log",
-#     conda:
-#         "../../environments/csvkit.yml"
-
-
-# rule quantify__coverm__contig__all:
-#     """Run all rules to run coverm contig over all MAG catalogues"""
-#     input:
-#         [
-#             QUANT_COVERM / f"coverm.contig.{method}.{mag_catalogue}.tsv.gz"
-#             for mag_catalogue in MAG_CATALOGUES
-#             for method in params["quantify"]["coverm"]["contig"]["methods"]
-#         ],
-
-
 rule quantify__coverm__all:
     """Run both coverm overall and contig"""
     input:
         rules.quantify__coverm__genome__all.input,
-        # rules.quantify__coverm__contig__all.input,
