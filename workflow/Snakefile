@@ -10,10 +10,16 @@ min_version("8.0")
 import pandas as pd
 import yaml
 
+
 # Import configuration files
-params = yaml.load(open("config/params.yml", "r"), Loader=yaml.SafeLoader)
-features = yaml.load(open("config/features.yml", "r"), Loader=yaml.SafeLoader)
-samples = pd.read_table("config/samples.tsv", comment="#", dtype="str")
+configfile: "config/config.yml"
+
+
+samples = pd.read_table(config["samples"], comment="#", dtype="str")
+features = yaml.load(open(config["features"], "r"), Loader=yaml.SafeLoader)
+params = yaml.load(open(config["params"], "r"), Loader=yaml.SafeLoader)
+
+# Add missing columns
 samples["assembly_ids"] = ""
 
 # Generate useful variables
@@ -60,6 +66,5 @@ rule all:
 
 rule test:
     input:
-        rules.preprocess__clean__all.input,
         rules.preprocess__multiqc__all.input,
         rules.quantify__all.input,
