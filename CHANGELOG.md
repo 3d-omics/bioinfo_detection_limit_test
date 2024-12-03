@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.5.0](https://github.com/3d-omics/mg_quant/compare/v1.4.0...v1.5.0) (2024-12-02)
+
+
+### Features
+
+* use config.yml ([586d5c9](https://github.com/3d-omics/mg_quant/commit/586d5c909f96fc40f784ae6693fec59a2cddea0c))
+
+
+### Bug Fixes
+
+* place coverm files so mag catalogue stays outside the sample name ([f540560](https://github.com/3d-omics/mg_quant/commit/f540560dbf87a42d8ffa62279bd3e8b5e5779a94))
+
 ## [1.4.0](https://github.com/3d-omics/mg_quant/compare/v1.3.0...v1.4.0) (2024-11-26)
 
 
