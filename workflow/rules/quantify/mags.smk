@@ -7,6 +7,7 @@ use rule preprocess__hosts as quantify__mags with:
         QUANT_MAGS / "{mag_catalogue}.log",
     conda:
         "../../environments/mags.yml"
+    cache: "omit-software"
 
 
 rule quantify__mags__all:

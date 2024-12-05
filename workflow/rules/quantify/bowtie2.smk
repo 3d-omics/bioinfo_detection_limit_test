@@ -13,6 +13,7 @@ use rule bowtie2__build from mg_assembly as quantify__bowtie2__build with:
         ),
     log:
         QUANT_BUILD / "{mag_catalogue}.log",
+    cache: "omit-software"
     retries: 5
 
 
