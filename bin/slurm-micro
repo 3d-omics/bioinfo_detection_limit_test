@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+snakemake \
+    --cache \
+    --cores 24  \
+    --executor slurm \
+    --jobs 100 \
+    --keep-going \
+    --latency-wait 60 \
+    --profile profile/micro-slurm \
+    --rerun-incomplete \
+    --use-conda \
+    --groups \
+        preprocess__reads="preprocess__{sample_id}.{library_id}" \
+        preprocess__fastp="preprocess__{sample_id}.{library_id}" \
+        helpers__samtools__index__bam="preprocess__{sample_id}.{library_id}" \
+        preprocess__bowtie2__map="preprocess__{sample_id}.{library_id}" \
+        preprocess__bowtie2__fastq="preprocess__{sample_id}.{library_id}" \
+        preprocess__clean="preprocess__{sample_id}.{library_id}" \
+        quantify__bowtie2__map="preprocess__{sample_id}.{library_id}" \
+    --group-components \
+        "preprocess__{sample_id}.{library_id}"=10 \
+    "$@"
