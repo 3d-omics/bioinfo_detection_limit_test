@@ -11,7 +11,6 @@ snakemake \
     --latency-wait 60 \
     --profile profile/micro-slurm \
     --rerun-incomplete \
-    --use-conda \
     --groups \
         preprocess__reads="preprocess__{sample_id}.{library_id}" \
         preprocess__fastp="preprocess__{sample_id}.{library_id}" \
@@ -22,4 +21,5 @@ snakemake \
         quantify__bowtie2__map="preprocess__{sample_id}.{library_id}" \
     --group-components \
         "preprocess__{sample_id}.{library_id}"=10 \
+    --use-conda \
     "$@"
