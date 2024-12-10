@@ -27,9 +27,9 @@ rule quantify__coverm__genome__join:
             for sample_id, library_id in SAMPLE_LIBRARY
         ],
     output:
-        QUANT_COVERM / "genome.{method}.{mag_catalogue}.tsv.gz",
+        QUANT_COVERM / "genome.{method, \w+}.{mag_catalogue}.tsv.gz",
     log:
-        QUANT_COVERM / "genome.{method}.{mag_catalogue}.log",
+        QUANT_COVERM / "genome.{method, \w+}.{mag_catalogue}.log",
     params:
         subcommand="join",
     wrapper:
