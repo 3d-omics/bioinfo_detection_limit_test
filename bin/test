@@ -7,5 +7,4 @@ snakemake \
     --rerun-incomplete \
     --cores 8  \
     --keep-going \
-    --profile profile/default \
     "$@"
