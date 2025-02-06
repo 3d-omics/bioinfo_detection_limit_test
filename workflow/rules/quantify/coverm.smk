@@ -1,7 +1,7 @@
 # coverm genome ----
 use rule coverm__genome as quantify__coverm__genome with:
     input:
-        QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}.bam",
+        QUANT_BOWTIE2 / "{mag_catalogue}.{sample_id}.{library_id}.bam",
     output:
         temp(
             QUANT_COVERM

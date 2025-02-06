@@ -47,9 +47,9 @@ use rule bowtie2__map from mg_assembly as quantify__bowtie2__map with:
             ".rev.2.bt2",
         ),
     output:
-        QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}.bam",
+        QUANT_BOWTIE2 / "{mag_catalogue}.{sample_id}.{library_id}.bam",
     log:
-        QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}.log",
+        QUANT_BOWTIE2 / "{mag_catalogue}.{sample_id}.{library_id}.log",
     params:
         index=lambda w: QUANT_BUILD / f"{w.mag_catalogue}",
         bowtie2_extra=params["quantify"]["bowtie2"]["bowtie2_extra"],
@@ -63,7 +63,7 @@ rule quantify__bowtie2__map__all:
     """Run bowtie2 over all mag catalogues and samples"""
     input:
         [
-            QUANT_BOWTIE2 / mag_catalogue / f"{sample_id}.{library_id}.bam"
+            QUANT_BOWTIE2 / f"{mag_catalogue}.{sample_id}.{library_id}.bam"
             for sample_id, library_id in SAMPLE_LIBRARY
             for mag_catalogue in MAG_CATALOGUES
         ],
