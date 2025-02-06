@@ -11,6 +11,7 @@ A Snakemake workflow for assessing detection limit from laser-microdissected sam
 0. Requirements
    1.  [`miniconda`](https://docs.conda.io/en/latest/miniconda.html) / [`mamba`](https://mamba.readthedocs.io)
    2.  [`snakemake`](snakemake.readthedocs.io/)
+   3.  (Optional) [An executor plugin if you are in an HPC environment](https://snakemake.github.io/snakemake-plugin-catalog/)
 
 1. Clone the repository
 Clone the repository, and set it as the working directory.
