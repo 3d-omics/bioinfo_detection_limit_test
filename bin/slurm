@@ -9,7 +9,6 @@ snakemake \
     --jobs 100 \
     --keep-going \
     --latency-wait 60 \
-    --profile profile/default \
     --rerun-incomplete \
     --use-conda \
     "$@"
