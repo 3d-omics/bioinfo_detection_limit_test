@@ -68,3 +68,11 @@ rule test:
     input:
         rules.preprocess__multiqc__all.input,
         rules.quantify__all.input,
+
+
+rule cache:
+    input:
+        rules.preprocess__hosts__all.input,
+        rules.preprocess__bowtie2__build__all.input,
+        rules.quantify__mags__all.input,
+        rules.quantify__bowtie2__build__all.input,

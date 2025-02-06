@@ -11,6 +11,7 @@ A Snakemake workflow for assessing detection limit from laser-microdissected sam
 0. Requirements
    1.  [`miniconda`](https://docs.conda.io/en/latest/miniconda.html) / [`mamba`](https://mamba.readthedocs.io)
    2.  [`snakemake`](snakemake.readthedocs.io/)
+   3.  (Optional) [An executor plugin if you are in an HPC environment](https://snakemake.github.io/snakemake-plugin-catalog/)
 
 1. Clone the repository
 Clone the repository, and set it as the working directory.
@@ -89,3 +90,14 @@ snakemake --use-conda --profile profile/default --jobs 100 --cores 24 `#--execut
 - [fastqc](https://github.com/s-andrews/FastQC)
 - [multiqc](https://multiqc.info/)
 - [kraken2](https://github.com/DerrickWood/kraken2)
+
+
+## Caveats
+
+### kraken2
+
+kraken2 has a performance flaw: it cannot process a batch of samples while loading the database once. As a workaround, we copy the database to `/dev/shm` (so it works at RAM speed), process in parallel each sample using a single CPU, and delete the database. In case of failure or canceling while it is running, it is possible that the database in `/dev/shm` is still there in a worker node. In that case you have to go there and delete it.
+
+### SingleM
+
+SingleM is very disk intensive, and if the database is in a computer cluster, probably extremely network intensive too. I've seen a cluster starting to slow down with 4-8 jobs working in parallel. Be careful.

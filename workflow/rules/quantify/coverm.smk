@@ -1,17 +1,17 @@
 # coverm genome ----
 use rule coverm__genome as quantify__coverm__genome with:
     input:
-        QUANT_BOWTIE2 / "{mag_catalogue}" / "{sample_id}.{library_id}.bam",
+        QUANT_BOWTIE2 / "{mag_catalogue}.{sample_id}.{library_id}.bam",
     output:
         temp(
             QUANT_COVERM
-            / "genome"
-            / "{method}.{mag_catalogue}.{sample_id}.{library_id}.tsv.gz"
+            / "{mag_catalogue}"
+            / "genome.{method}.{sample_id}.{library_id}.tsv.gz"
         ),
     log:
         QUANT_COVERM
-        / "genome"
-        / "{method}.{mag_catalogue}.{sample_id}.{library_id}.log",
+        / "{mag_catalogue}"
+        / "genome.{method}.{sample_id}.{library_id}.log",
     params:
         method=lambda w: w.method,
         extra=params["quantify"]["coverm"]["genome"]["extra"],
@@ -22,14 +22,14 @@ rule quantify__coverm__genome__join:
     input:
         lambda w: [
             QUANT_COVERM
-            / "genome"
-            / f"{w.method}.{w.mag_catalogue}.{sample_id}.{library_id}.tsv.gz"
+            / f"{w.mag_catalogue}"
+            / f"genome.{w.method}.{sample_id}.{library_id}.tsv.gz"
             for sample_id, library_id in SAMPLE_LIBRARY
         ],
     output:
-        QUANT_COVERM / "genome.{method}.{mag_catalogue}.tsv.gz",
+        QUANT_COVERM / "genome.{method, \w+}.{mag_catalogue}.tsv.gz",
     log:
-        QUANT_COVERM / "genome.{method}.{mag_catalogue}.log",
+        QUANT_COVERM / "genome.{method, \w+}.{mag_catalogue}.log",
     params:
         subcommand="join",
     wrapper:
